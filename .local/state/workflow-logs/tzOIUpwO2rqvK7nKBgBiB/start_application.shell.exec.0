@@ -1,0 +1,36 @@
+
+> nextn@0.1.0 dev
+> next dev --turbopack -p 5000 -H 0.0.0.0
+
+[1G[0K   [1m[38;2;173;127;168m▲ Next.js 15.5.10[39m[22m (Turbopack)
+   - Local:        http://localhost:5000
+   - Network:      http://0.0.0.0:5000
+
+ [32m[1m✓[22m[39m Starting...
+ [32m[1m✓[22m[39m Ready in 1443ms
+ [37m[1m○[22m[39m Compiling / ...
+ [32m[1m✓[22m[39m Compiled / in 8.1s
+ GET / [32m200[39m in 8697ms
+ GET / [32m200[39m in 8789ms
+ [37m[1m○[22m[39m Compiling /favicon.ico ...
+ [32m[1m✓[22m[39m Compiled /favicon.ico in 2.5s
+ GET /favicon.ico?favicon.7ed73651.ico [32m200[39m in 2885ms
+ [37m[1m○[22m[39m Compiling /allocation ...
+ [32m[1m✓[22m[39m Compiled /allocation in 2.6s
+ GET /allocation [32m200[39m in 2836ms
+ [37m[1m○[22m[39m Compiling /planner ...
+ [32m[1m✓[22m[39m Compiled /planner in 1204ms
+ GET /planner [32m200[39m in 1382ms
+ GET /allocation [32m200[39m in 153ms
+ GET /favicon.ico?favicon.7ed73651.ico [32m200[39m in 293ms
+ [32m[1m✓[22m[39m Compiled /api/calculate-optimized-goals in 489ms
+ POST /api/calculate-optimized-goals [32m200[39m in 783ms
+ GET / [32m200[39m in 119ms
+ GET / [32m200[39m in 105ms
+ GET /planner [32m200[39m in 73ms
+ POST /api/calculate-optimized-goals [32m200[39m in 252ms
+ POST /planner [32m200[39m in 2787ms
+ GET /allocation [32m200[39m in 101ms
+ POST /allocation [32m200[39m in 249ms
+ GET /allocation [32m200[39m in 68ms
+ POST /api/calculate-optimized-goals [32m200[39m in 241ms

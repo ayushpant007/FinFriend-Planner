@@ -1,0 +1,25 @@
+
+> nextn@0.1.0 dev
+> next dev --turbopack -p 5000 -H 0.0.0.0
+
+[1G[0K   [1m[38;2;173;127;168m▲ Next.js 15.5.10[39m[22m (Turbopack)
+   - Local:        http://localhost:5000
+   - Network:      http://0.0.0.0:5000
+
+ [32m[1m✓[22m[39m Starting...
+ [32m[1m✓[22m[39m Ready in 1336ms
+ [37m[1m○[22m[39m Compiling / ...
+ [32m[1m✓[22m[39m Compiled / in 9.5s
+ GET / [32m200[39m in 10013ms
+ GET /allocation [32m200[39m in 7264ms
+ [37m[1m○[22m[39m Compiling /favicon.ico ...
+ [32m[1m✓[22m[39m Compiled /favicon.ico in 1819ms
+ GET /favicon.ico?favicon.7ed73651.ico [32m200[39m in 2134ms
+ POST /api/calculate-optimized-goals [32m200[39m in 1109ms
+ GET /allocation [32m200[39m in 215ms
+ [37m[1m○[22m[39m Compiling /planner ...
+ [32m[1m✓[22m[39m Compiled /planner in 1372ms
+ GET /planner [32m200[39m in 1593ms
+ [32m[1m✓[22m[39m Compiled /api/allocation/fund-data in 325ms
+[funds-csv] Loaded 4845 fund rows across 5 CSVs
+ POST /api/allocation/fund-data [32m200[39m in 1140ms

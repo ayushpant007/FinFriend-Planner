@@ -1,0 +1,14 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "UFei3hrKmidRoyRXks_2v"
+uri = "file://FinFriend_Planner_PRD.docx"
+type = "word_document"
+title = "FinFriend Planner — Product Requirements Document (PRD)"
+
+[[outputs]]
+id = "0QX7_JJdTWkyNtJuGXbCH"
+uri = "file://FinFriend_Planner_PRD_v2.docx"
+type = "word_document"
+title = "FinFriend Planner — PRD v2 (50+ Pages, Fully Filled)"

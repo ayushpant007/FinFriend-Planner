@@ -1,0 +1,1 @@
+export { FundScorecard } from './FundScorecard';

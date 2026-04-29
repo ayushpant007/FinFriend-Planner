@@ -1,0 +1,83 @@
+"Note: For the newest funds like Large & Mid Cap and Small Cap, if the Regular code returns ""null"" in the API, it usually means the specific Plan IDCW/Growth mapping is still propagating in the free API database. You can use the Search API (https://api.mfapi.in/mf/search?q=Bajaj) to find the latest specific code"
+
+"Tip for Developers: If you ever need to find a code dynamically, you can use the search endpoint of the API with the fund's name: https://api.mfapi.in/mf/search?q=Axis+Small+Cap"
+
+"Note on ETFs: Angel One also manages several ETFs (e.g., Angel One Nifty 50 ETF, Angel One Silver ETF). ETFs trade directly on the exchange and do not have ""Regular"" or ""Direct"" plan codes like mutual funds"
+
+"Note on IDCW: The IDCW (Dividend) codes provided are generally for the Payout option. Some funds may have separate codes for ""Reinvestment"" or ""Weekly/Monthly"" frequencies."
+
+"Note: The Multi Asset Allocation Fund is a newer scheme (launched 2024), so its code is in the 15xxxx series"
+
+"Bandhan Mutual Fund was formerly known as IDFC Mutual Fund.API Continuity: The 6-digit AMFI codes (e.g., 109234) did not change during the rebranding.Search Tip: If you search by name in the API, you might still find some historical data under ""IDFC"", but the active NAVs are updated under the ""Bandhan"" name using the same codes."
+
+Note on Name Change: This fund house was formerly known as BOI AXA Mutual Fund. The scheme codes (1xxxxx) remained the same after the rebranding to Bank of India Mutual Fund
+
+Note on Merger:Large Cap & ELSS survived from the Baroda side (Codes 1003xx).Multi Cap & Liquid survived from the BNP Paribas side (Codes 1006xx).Small Cap is a new fund launched after the merger (Code 152xxx).
+
+"Important Notes: Emerging Equities: This fund was renamed to Canara Robec Large & Mid Cap Fund to comply with SEBI categorization, but it often retains the same legacy AMFI codes (102920).New Funds: For recently launched funds like Multi Cap and Manufacturing, the codes listed are the primary ones found. If 151824 or 152450 return ""Direct"" data in your specific query, try decrementing the last digit (e.g., 151823) as codes are often sequential (Regular followed by Direct)."
+
+"Note: For newer ETFs like DSP Gold ETF, the AMFI code might not yet be fully populated in all public API endpoints. You may need to search by its ISIN INF740KA1SW3 or Symbol GOLDETFADD."
+
+"Note: The Technology Fund is a newer scheme, so it currently only has Growth options listed prominently in the API"
+
+"Note: For Franklin India Liquid Fund, the code 100612 corresponds to the ""Super Institutional"" Regular plan, which is the primary plan used by most retail investors today."
+
+"Important Note on ""Direct"" vs. ""Regular"":Legacy Funds: For funds like Large Cap and Value, the codes 118xxx belong to the ""Regular"" plan (formerly Indiabulls).Newer Funds: For the Nifty Total Market Index Fund and Flexi Cap Fund, Groww is a ""Direct-first"" AMC. While Regular plans exist for distribution, the API often indexes the Direct Plan code (e.g., 152092) as the primary search result. If the Regular code returns no data, try the Direct code or use the search endpoint."
+
+Note on Name Changes:HDFC Flexi Cap Fund was formerly HDFC Equity Fund. The code 101625 remains the same.HDFC Mid Cap Fund was formerly HDFC Mid-Cap Opportunities Fund.HDFC ELSS Tax Saver Fund was formerly HDFC TaxSaver.HDFC Balanced Advantage Fund was formerly HDFC Prudence Fund.
+
+"(Note: ""IDCW"" typically refers to the Payout option unless specified otherwise.)"
+
+"Note: The Multi Cap Fund is a newer scheme (launched 2023), so it uses a new 15xxxx series code"
+
+"Note:ICICI Prudential Flexi Cap Fund is a newer scheme (launched 2021), so its codes start with 14xxxx.ICICI Prudential ELSS Tax Saver Fund was formerly known as ICICI Prudential Long Term Equity Fund (Tax Saving).For Liquid Funds, the ""IDCW"" code provided is typically for the Weekly or Monthly payout option, which is most common for retail investors."
+
+"Note: For the newer LIC schemes (Small Cap, Mid Cap), the codes provided are derived from the active Direct plan series. If these precise codes do not return data in your specific API, search by the new Scheme Name ""LIC MF Small Cap"
+
+"Note on Name Changes:Invesco India ELSS Tax Saver Fund was formerly known as Invesco India Tax Plan.Invesco India Large & Mid Cap Fund was formerly known as Invesco India Growth Opportunities Fund.Invesco India Focused 20 Equity Fund is often listed as Invesco India Focused Fund in some newer documents, but the code 147685 tracks the Regular Growth plan."
+
+"Developer Note on Pattern: For most ITI funds, the Regular Growth code is often (Regular IDCW + 2) and the Direct Growth code is (Regular Growth + 1).Example: Multi Cap IDCW (147180) -> Multi Cap Reg Growth (147182) -> Multi Cap Direct Growth (147183)"
+
+"Note on JM Midcap Fund: This is a relatively new scheme (launched Nov 2022), so it uses the higher series code 150812. Note on JM Value Fund: The code 100254 is the primary Regular Growth code used in recent AMFI/Exchange circulars"
+
+"Since mfapi.in is primarily indexed by AMFI Code (6-digit), but some older LIC Regular plans are indexed by ISIN in third-party databases, you may need to use the Search API to find the 6-digit code if your system requires it."
+
+"Note: For the Small Cap and Mid Cap funds (formerly IDBI), the AMFI codes in the 15xxxx series are the active ones post-merger"
+
+Note on Name Changes:Mirae Asset Large Cap Fund was formerly Mirae Asset India Opportunities Fund.Mirae Asset Aggressive Hybrid Fund was formerly Mirae Asset Hybrid Equity Fund.Mirae Asset Liquid Fund was formerly Mirae Asset Cash Management Services Fund.
+
+Note on Name Changes:Motilal Oswal Flexi Cap Fund was formerly Motilal Oswal Multicap 35 Fund.Motilal Oswal Midcap Fund was formerly Motilal Oswal Midcap 30 Fund.Motilal Oswal Focused Fund was formerly Motilal Oswal Focused 25 Fund.Motilal Oswal ELSS Tax Saver Fund was formerly Motilal Oswal Long Term Equity Fund.
+
+"Developer Note:Index Funds & FoFs: Navi's passive funds (Nifty 50, Nasdaq 100, etc.) typically do not have an IDCW (Dividend) option in the Regular plan.Direct vs Regular Logic: For many Navi funds, the Regular Growth code is often Direct Growth code + 1 (e.g., Nasdaq 100 Direct is 149910, Regular is 149911)."
+
+"Developer Note:NJ Overnight Fund: This scheme currently does not offer an IDCW (Dividend) plan; it is Growth only.NJ Arbitrage Fund: While Direct plans may have IDCW options, the Regular IDCW code is not widely indexed in public APIs yet.NJ Large Cap / Mid Cap: NJ Mutual Fund currently focuses on a limited set of ""Smart Beta"" or rule-based funds (like Flexi Cap and Balanced Advantage) rather than a full suite of plain vanilla equity funds."
+
+Note:Old Bridge Focused Fund was formerly Old Bridge Focused Equity Fund.Old Bridge Flexi Cap Fund is a newly approved scheme (as of late 2024/early 2025) and may not yet be live in all API endpoints.
+
+Note on Name Changes:PGIM India Flexi Cap Fund was formerly DHFL Pramerica Diversified Equity Fund.PGIM India Midcap Fund was formerly DHFL Pramerica Midcap Opportunities Fund.PGIM India Global Equity Opportunities Fund invests in the PGIM Jennison Global Equity Opportunities Fund.
+
+"Developer Tip: Verifying ""Direct"" Plans For PPFAS, the Direct Plan codes are often different from the standard ""Regular + 1"" pattern seen in other AMCs.Flexi Cap Direct Growth: 122640, Tax Saver Direct Growth: 147554"
+
+Note on Name Changes:Quant Active Fund: Often listed as Quant Multi Cap Fund.Quant Absolute Fund: Often listed as Quant Aggressive Hybrid Fund.Quant Tax Plan: Renamed to Quant ELSS Tax Saver Fund. Code 100175 is the primary Regular Growth code.
+
+Note on Names:Quantum Value Fund was formerly known as Quantum Long Term Equity Value Fund.Quantum Equity Fund of Funds is often listed as Quantum Diversified Equity All Cap Active FoF.
+
+Note on Name Changes:SBI ELSS Tax Saver Fund was formerly SBI Magnum Taxgain or SBI Long Term Equity Fund.SBI Flexicap Fund was formerly SBI Magnum Multicap Fund.SBI Large & Midcap Fund was formerly SBI Magnum Multiplier Fund.SBI Focused Fund was formerly SBI Emerging Businesses Fund.
+
+Note on Codes:Shriram Flexi Cap Fund was formerly Shriram Multicap Fund.Shriram ELSS Tax Saver Fund was formerly Shriram Long Term Equity Fund.Shriram Aggressive Hybrid Fund was formerly Shriram Hybrid Equity Fund.ISIN Note: The ISINs provided above are for the Regular Plan. Be careful not to confuse them with Direct Plan ISINs (which often end in different digits like 01117 vs 01109)
+
+"Developer Tip:Mid Cap: Code 101539 is one of the longest-running mid-cap funds (formerly Sundaram Select Midcap).Merged Schemes: For the schemes with ISINs (Aggressive Hybrid, Balanced Advantage, Liquid), the API lookup by 6-digit code might fail or return ""Principal"" legacy names. Using the ISIN or searching by name is recommended for accuracy."
+
+Note on Popular Funds:Tata Ethical Fund: One of the oldest Shariah-compliant funds in India.Tata Digital India Fund: A very popular technology sector fund.ISINs: The ISINs provided are for the Regular Plan. Be careful not to use Direct Plan ISINs (which are different) if your application is tracking broker-sold regular plans.
+
+Note on Name Changes:Taurus Flexi Cap Fund was formerly Taurus Starshare (Multi Cap) Fund.Taurus Mid Cap Fund was formerly Taurus Discovery (Midcap) Fund.Taurus Large Cap Fund was formerly Taurus Bonanza Fund.Taurus ELSS Tax Saver Fund was formerly Taurus Tax Shield.
+
+"Developer Note:TRUSTMF Flexi Cap Fund is their first Equity scheme (launched in 2024), so it has a very recent code (152646).Trust Mutual Fund typically uses the prefix ""TRUSTMF"" for all its schemes in the official registry."
+
+"Developer Note:IDCW Availability: Unifi Mutual Fund's initial offer documents (NFOs) for these schemes focused on the Growth option. As of now, no separate ""Regular Plan - IDCW"" codes are active in public API registries.Unifi Liquid Fund: The 6-digit code is not yet widely propagated in all public databases. Use the ISIN INF1MIY01064 or search by name to locate it."
+
+Note on Name Changes:Union Flexi Cap Fund was formerly Union Multi Cap Fund (renamed to comply with SEBI categorization).Union ELSS Tax Saver Fund was formerly Union Tax Saver (ELSS) Fund.
+
+Note on Name Changes:UTI Large Cap Fund is the new name for the famous UTI Mastershare Unit Scheme.UTI Flexi Cap Fund was formerly known as UTI Equity Fund.UTI ELSS Tax Saver Fund was formerly UTI Long Term Equity Fund (Tax Saving).UTI Liquid Cash Plan is the official name for their Liquid Fund
+
+"Developer Note:WhiteOak Capital Liquid Fund: The code 145968 is for the Regular Growth plan.ISIN Lookup: Since mfapi.in urls typically require the 6-digit code, for schemes listed with ISINs above, you may need to use the Search API (https://api.mfapi.in/mf/search?q=WhiteOak) to dynamically retrieve the latest 6-digit code if it has been recently assigned"

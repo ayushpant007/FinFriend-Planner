@@ -1,0 +1,11 @@
+node_modules/
+.next/
+.replit
+.env*
+*.log
+attached_assets/
+out/
+build/
+.DS_Store
+dist/
+.local-db.json
