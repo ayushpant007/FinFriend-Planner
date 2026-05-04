@@ -19,7 +19,7 @@ interface Props {
 
 const goalTypes = ["Child Education", "Marriage", "House", "Emergency Fund", "Wealth Accumulation", "Vacation Fund", "Vehicle Purchase", "Gadget/Technology Fund", "Other"];
 
-let nextId = 0;
+
 
 export function GoalsForm({ goals, setGoals, goalsWithCalculations }: Props) {
   
@@ -28,7 +28,15 @@ export function GoalsForm({ goals, setGoals, goalsWithCalculations }: Props) {
   };
   
   const handleAdd = () => {
-    const newGoal: Goal = { id: `new-${nextId++}`, name: '', corpus: '', years: '', rate: 12, currentSave: '', currentSip: '' };
+    const newGoal: Goal = { 
+      id: `goal-${Date.now()}-${Math.floor(Math.random() * 1000)}`, 
+      name: '', 
+      corpus: '', 
+      years: '', 
+      rate: 12, 
+      currentSave: '', 
+      currentSip: '' 
+    };
     setGoals(prevGoals => [...prevGoals, newGoal]);
   };
   

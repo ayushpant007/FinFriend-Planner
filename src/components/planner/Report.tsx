@@ -33,43 +33,80 @@ const StatCard = ({ title, value, icon, subValue }: { title: string; value: stri
 export function Report({ data }: Props) {
   const yearlyCashflow = data.monthlyCashflow * 12;
   
+  const [reportGeneratedForData, setReportGeneratedForData] = useState<string>("");
+
   const generatePdf = async () => {
     const reportElement = document.getElementById('report-section');
     if (!reportElement) {
         throw new Error("Report element not found");
     }
-    const canvas = await html2canvas(reportElement, { scale: 2, useCORS: true });
-    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    // Duplicate check
+    const currentDataHash = JSON.stringify({ 
+      name: data.personalDetails.name, 
+      email: data.personalDetails.email,
+      netWorth: data.netWorth
+    });
+
+    if (reportGeneratedForData === currentDataHash) {
+        toast({
+            title: "Report Already Generated",
+            description: "A report for these details has already been generated.",
+        });
+        // We throw to prevent download, or we can just return a dummy
+        return null; 
+    }
+
+    // Ensure we are at the top for clean capture
+    window.scrollTo(0, 0);
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const pdf = new jsPDF('p', 'mm', 'a4', true);
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
-    const scaleFactor = pdfWidth / canvas.width;
-    const pageCanvasHeight = Math.floor(pdfHeight / scaleFactor);
-    const totalPages = Math.ceil(canvas.height / pageCanvasHeight);
+    const marginMm = 5;
+    const usableWidth = pdfWidth - (marginMm * 2);
+    const usableHeight = pdfHeight - (marginMm * 2);
 
-    for (let page = 0; page < totalPages; page++) {
-        if (page > 0) pdf.addPage();
+    // Find all main cards/sections
+    const sections = Array.from(reportElement.querySelectorAll('.rounded-xl, .shadow-md, .shadow-lg')) as HTMLElement[];
+    
+    let currentY_Mm = marginMm;
+    let isFirstPage = true;
+
+    for (const section of sections) {
+        const canvas = await html2canvas(section, { 
+            scale: 2, 
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#FFFFFF'
+        });
+
+        const imgWidth = usableWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        if (!isFirstPage && (currentY_Mm + imgHeight > usableHeight)) {
+            pdf.addPage();
+            currentY_Mm = marginMm;
+        }
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        pdf.addImage(imgData, 'JPEG', marginMm, currentY_Mm, imgWidth, imgHeight, undefined, 'FAST');
         
-        const sourceY = page * pageCanvasHeight;
-        const sliceHeight = Math.min(pageCanvasHeight, canvas.height - sourceY);
-        
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = sliceHeight;
-        const ctx = pageCanvas.getContext('2d');
-        if (!ctx) continue;
-        ctx.drawImage(canvas, 0, sourceY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
-        
-        const pageImgData = pageCanvas.toDataURL('image/png');
-        const imgHeightMm = sliceHeight * scaleFactor;
-        pdf.addImage(pageImgData, 'PNG', 0, 0, pdfWidth, imgHeightMm);
+        currentY_Mm += imgHeight + 2; // Add 2mm spacing
+        isFirstPage = false;
     }
+    
+    setReportGeneratedForData(currentDataHash);
     return pdf;
   }
 
   const handleDownload = async () => {
     try {
       const pdf = await generatePdf();
-      pdf.save(`${data.personalDetails.name}-financial-report.pdf`);
+      if (pdf) {
+        pdf.save(`${data.personalDetails.name.replace(/\s+/g, '_')}-detailed-report.pdf`);
+      }
     } catch(e) {
       console.error("Failed to download PDF", e);
       alert("There was an error generating the PDF for download.");

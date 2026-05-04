@@ -255,22 +255,22 @@ const FundAllocationRow = ({ alloc, goalName, data }: { alloc: FundAllocation, g
     };
 
     return (
-        <TableRow>
-            <TableCell className="font-bold max-w-xs" style={{ fontSize: '11px' }}>
-                <p className="line-clamp-2">{shortenedSchemeName}</p>
+        <TableRow className="text-[10px]">
+            <TableCell className="font-bold max-w-[220px] py-3 px-2" style={{ fontSize: '10px' }}>
+                <p className="leading-normal whitespace-normal break-words">{shortenedSchemeName}</p>
             </TableCell>
-            <TableCell>{getGoalDisplayName(alloc.goalId)}</TableCell>
-            <TableCell>{formatCurrency(alloc.sipRequired)}</TableCell>
-            <TableCell>{typeof alloc.lumpsumAmount === 'number' && alloc.lumpsumAmount > 0 ? formatCurrency(alloc.lumpsumAmount) : '-'}</TableCell>
-            <TableCell>{alloc.fundCategory}</TableCell>
-            <TableCell className="text-center">
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : (returns?.threeYearReturn ?? 'N/A')}
+            <TableCell className="py-3 px-2">{getGoalDisplayName(alloc.goalId)}</TableCell>
+            <TableCell className="py-3 px-2 font-semibold roboto">{formatCurrency(alloc.sipRequired, '')}</TableCell>
+            <TableCell className="py-3 px-2 font-semibold roboto">{typeof alloc.lumpsumAmount === 'number' && alloc.lumpsumAmount > 0 ? formatCurrency(alloc.lumpsumAmount, '') : '-'}</TableCell>
+            <TableCell className="py-3 px-2">{alloc.fundCategory}</TableCell>
+            <TableCell className="text-center py-3 px-2 font-semibold">
+                {isLoading ? <Loader2 className="h-3 w-3 animate-spin mx-auto" /> : (returns?.threeYearReturn ?? 'N/A')}
             </TableCell>
-            <TableCell className="text-center">
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : (returns?.fiveYearReturn ?? 'N/A')}
+            <TableCell className="text-center py-3 px-2 font-semibold">
+                {isLoading ? <Loader2 className="h-3 w-3 animate-spin mx-auto" /> : (returns?.fiveYearReturn ?? 'N/A')}
             </TableCell>
-            <TableCell className="text-center">
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : (returns?.tenYearReturn ?? 'N/A')}
+            <TableCell className="text-center py-3 px-2 font-semibold">
+                {isLoading ? <Loader2 className="h-3 w-3 animate-spin mx-auto" /> : (returns?.tenYearReturn ?? 'N/A')}
             </TableCell>
         </TableRow>
     );
@@ -397,7 +397,7 @@ const FundDetailCard = ({
     v === null || v === undefined || Number.isNaN(v) ? 'N/A' : `${v.toFixed(digits)}%`;
 
   return (
-    <Card className="overflow-hidden border-primary/20 bg-white shadow-sm">
+    <Card className="overflow-visible border-primary/20 bg-white shadow-sm">
       <CardHeader className="bg-slate-50/80 border-b py-3 px-4">
         <div className="flex justify-between items-start gap-2">
           <div>
@@ -535,6 +535,8 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [reportGeneratedForData, setReportGeneratedForData] = useState<string>("");
 
   const sections = data.sections || {
     netWorth: true,
@@ -571,47 +573,103 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
     const reportElement = document.getElementById('report-container');
     if (!reportElement) return;
 
+    // Scroll to top
+    window.scrollTo(0, 0);
+
     try {
-        const canvas = await html2canvas(reportElement, { 
-            scale: 2,
-            useCORS: true, 
-            allowTaint: true 
+        setIsGenerating(true);
+        toast({ title: "Generating PDF", description: "Capturing high-fidelity report... This may take a moment." });
+
+        // Wait for all charts and dynamic content to settle
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // CAPTURE ENTIRE REPORT AS ONE GIANT CANVAS (Puppeteer-style fidelity)
+        const canvas = await html2canvas(reportElement, {
+            scale: 2, // High resolution
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#FFFFFF',
+            logging: false,
+            windowWidth: 1200,
+            onclone: (clonedDoc) => {
+                const el = clonedDoc.getElementById('report-container');
+                if (el) {
+                    el.style.width = '1200px';
+                    el.style.margin = '0';
+                    el.style.padding = '20px';
+                    el.style.transform = 'none';
+                    el.style.height = 'auto';
+                    el.style.overflow = 'visible';
+                    // Ensure all cards are visible
+                    el.querySelectorAll('.card').forEach(c => {
+                        (c as HTMLElement).style.overflow = 'visible';
+                    });
+                }
+            }
         });
-        
+
         const pdf = new jsPDF({
             orientation: 'p',
             unit: 'mm',
             format: 'a4',
+            compress: true
         });
 
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
-        const scaleFactor = pdfWidth / canvas.width;
-        const pageCanvasHeight = Math.floor(pdfHeight / scaleFactor);
-        const totalPages = Math.ceil(canvas.height / pageCanvasHeight);
+        
+        // User requested: 12mm margins
+        const marginY = 12; 
+        const marginX = 10; 
+        const usableWidth = pdfWidth - (marginX * 2);
+        const usableHeight = pdfHeight - (marginY * 2);
 
-        for (let page = 0; page < totalPages; page++) {
-            if (page > 0) pdf.addPage();
+        // Calculate scaling
+        const imgWidth = usableWidth;
+        const totalImgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        let remainingHeight = totalImgHeight;
+        let sourceY = 0;
+        let isFirstPage = true;
+
+        // Slice the giant canvas into A4 pages
+        while (remainingHeight > 0) {
+            if (!isFirstPage) {
+                pdf.addPage();
+            }
+
+            const drawHeight = Math.min(remainingHeight, usableHeight);
             
-            const sourceY = page * pageCanvasHeight;
-            const sliceHeight = Math.min(pageCanvasHeight, canvas.height - sourceY);
+            // Slice canvas
+            const sliceCanvas = document.createElement('canvas');
+            sliceCanvas.width = canvas.width;
+            sliceCanvas.height = (drawHeight * canvas.width) / imgWidth;
+            const ctx = sliceCanvas.getContext('2d');
+            if (ctx) {
+                ctx.drawImage(
+                    canvas, 
+                    0, sourceY * (canvas.width / imgWidth), 
+                    canvas.width, sliceCanvas.height, 
+                    0, 0, 
+                    sliceCanvas.width, sliceCanvas.height
+                );
+            }
+
+            const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95);
+            pdf.addImage(imgData, 'JPEG', marginX, marginY, imgWidth, drawHeight, undefined, 'FAST');
             
-            const pageCanvas = document.createElement('canvas');
-            pageCanvas.width = canvas.width;
-            pageCanvas.height = sliceHeight;
-            const ctx = pageCanvas.getContext('2d');
-            if (!ctx) continue;
-            ctx.drawImage(canvas, 0, sourceY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
-            
-            const pageImgData = pageCanvas.toDataURL('image/png');
-            const imgHeightMm = sliceHeight * scaleFactor;
-            pdf.addImage(pageImgData, 'PNG', 0, 0, pdfWidth, imgHeightMm);
+            remainingHeight -= drawHeight;
+            sourceY += drawHeight;
+            isFirstPage = false;
         }
 
-        pdf.save(`${data.personalDetails.name}-financial-report.pdf`);
+        pdf.save(`${data.personalDetails.name.replace(/\s+/g, '_')}_financial_report.pdf`);
+        toast({ title: "Success", description: "Report downloaded. Tip: Use 'Print' for absolute pixel-perfection!" });
     } catch (error) {
         console.error("Error generating PDF:", error);
-        alert("Could not generate PDF. Please try again.");
+        toast({ title: "Download Failed", description: "Could not generate PDF. Please try again.", variant: "destructive" });
+    } finally {
+        setIsGenerating(false);
     }
 };
 
@@ -708,11 +766,6 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&display=swap');
         
-        body {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
         #report-container * {
             font-family: 'Poppins', 'Roboto', sans-serif !important;
         }
@@ -720,56 +773,129 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
             font-family: 'Roboto', sans-serif !important;
         }
 
-        @page {
-          size: A4;
-          margin: 0;
-        }
-        @media print {
-          html, body {
-            width: 210mm;
-            min-height: 0;
-            height: auto;
-            margin: 0;
-            padding: 0;
-            background: white;
-          }
-          .no-print {
-            display: none !important;
-          }
-          #report-section {
-            padding: 0;
-            margin: 0;
-            background: none;
-            overflow: visible;
-            height: auto;
-          }
-          #report-container {
-            width: 100%;
-            min-height: 0;
-            margin: 0;
-            padding: 1cm;
-            box-shadow: none !important;
-            border: none !important;
-            background: linear-gradient(to bottom, #FEE7E7, #FFFFFF 60%, #FFFFFF 40%, #FFFFFF 10%) !important;
-            transform: scale(1);
-            font-size: 8px !important;
-            line-height: 1.2 !important;
-            height: auto;
-            overflow: visible;
-          }
-           #report-container h1 { font-size: 14px !important; }
-           #report-container h2 { font-size: 12px !important; }
            #report-container h3 { font-size: 10px !important; }
            #report-container h4 { font-size: 9px !important; }
-           #report-container section {
-             margin-top: 0.5rem !important;
-             padding: 0 !important;
-             page-break-inside: avoid;
-           }
-           .print-avoid-break {
-             page-break-inside: avoid;
-           }
+        /* =========================================
+           PIXEL-PERFECT PDF FIX STRATEGY
+           ========================================= */
+        
+        /* 1. Global Box Sizing */
+        #report-container, #report-container * {
+          box-sizing: border-box !important;
         }
+
+        /* 2. Body & Layout Reset */
+        @page {
+          size: A4;
+          margin: 12mm; /* User requested: 12mm */
+        }
+
+        @media print {
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+            overflow: visible !important;
+            orphans: 3;
+            widows: 3;
+          }
+
+          #report-container {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            background: white !important;
+            overflow: visible !important;
+            display: block !important;
+            position: relative !important;
+            transform: none !important;
+            height: auto !important;
+          }
+
+          /* 3. Avoid Flex/Grid Breaking - Switch to Block for PDF */
+          .grid, .flex, [class*="grid-cols-"], .flex-row, .flex-col {
+            display: block !important;
+            float: none !important;
+          }
+          
+          .grid > *, .flex > * {
+            width: 100% !important;
+            margin-bottom: 1rem !important;
+          }
+          
+          /* 4. Section & Card Pagination */
+          .pdf-section, 
+          .card, 
+          section,
+          .card-content {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+            display: block !important;
+            width: 100% !important;
+            position: relative !important;
+            margin-bottom: 1rem !important;
+            height: auto !important;
+            overflow: visible !important;
+          }
+
+          /* Ensure tables still behave like tables where possible, or blocks */
+          table {
+            display: table !important;
+            page-break-inside: auto !important;
+            width: 100% !important;
+            border-collapse: collapse !important;
+          }
+          
+          thead {
+            display: table-header-group !important;
+          }
+          
+          tr {
+            display: table-row !important;
+            page-break-inside: avoid !important;
+            page-break-after: auto !important;
+          }
+
+          /* 5. Prevent Clipping */
+          img {
+            max-width: 100% !important;
+            height: auto !important;
+          }
+
+          /* 6. Typography */
+          h1, h2, h3, h4, h5 {
+            page-break-after: avoid !important;
+          }
+          
+          /* Remove specific problematic attributes */
+          .h-full, .h-screen, .min-h-screen {
+            height: auto !important;
+            min-height: 0 !important;
+          }
+        }
+
+        /* Screen view adjustments to match print structure */
+        #report-container {
+          overflow: visible !important;
+          height: auto !important;
+          min-height: min-content !important;
+        }
+
+        .pdf-section {
+          overflow: visible !important;
+          height: auto !important;
+          width: 100% !important;
+          display: block !important;
+        }
+
+        /* Debug Trick (Uncomment if needed) */
+        /* 
+        #report-container * {
+          outline: 1px solid rgba(255, 0, 0, 0.1);
+        }
+        */
       `}</style>
       
       <div className="container mx-auto flex justify-end p-4 gap-4 no-print">
@@ -791,13 +917,12 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         background: "linear-gradient(to bottom, #FEE7E7, #FFFFFF 60%, #FFFFFF 40%, #FFFFFF 10%)"
       }}>
         {/* Header */}
-        <header className="p-4 rounded-t-lg bg-pink-100 print:bg-pink-100 print-avoid-break flex justify-between items-center">
+        <header className="p-4 pt-8 rounded-t-lg bg-pink-100 print:bg-pink-100 print-avoid-break flex justify-between items-center border-b border-pink-200">
             <div className="relative h-12 w-48">
               <Image
                 src={logoUrl}
                 alt="Financial Friend Logo"
-                width={192}
-                height={48}
+                fill
                 style={{ objectFit: 'contain' }}
                 priority
               />
@@ -810,12 +935,12 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         </header>
 
 
-        <section className="text-center py-4 bg-white print:bg-white print-avoid-break">
+        <section className="text-center py-6 bg-white pdf-section px-4 print:bg-white print-avoid-break overflow-visible pb-2">
             <h1 className="text-xl font-bold text-gray-800 tracking-wide">Financial Planning Report</h1>
         </section>
 
         {/* Investor Details */}
-        <section className="bg-white p-1 print:bg-white print-avoid-break">
+        <section className="bg-white p-1 pdf-section px-4 print:bg-white print-avoid-break overflow-visible pb-2">
           <div className="p-3 rounded-lg bg-gray-100 text-center print:bg-gray-100 mb-3">
               <h3 className="font-bold text-gray-700">Personal Details</h3>
           </div>
@@ -836,7 +961,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         </section>
 
         {sections.netWorth && (
-          <section className="mt-4 print-avoid-break">
+          <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
               <div className="p-3 rounded-lg bg-gray-100 text-center print:bg-gray-100">
                   <h3 className="font-bold text-gray-700">Your Net Worth</h3>
               </div>
@@ -865,29 +990,29 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
           </div>
         )}
         {sections.cashflow && (
-          <section className="mt-4 print-avoid-break">
-              <div className="p-3 rounded-lg bg-gray-100 text-center print:bg-gray-100">
-                  <h3 className="font-bold text-gray-700">Your Monthly Cashflow Summary</h3>
-              </div>
-              <div className="mt-3 relative h-8 bg-gray-200 rounded-full overflow-hidden print:bg-gray-200">
-                  <div className="absolute inset-0 flex">
-                      <div className="bg-red-400 h-full print:bg-red-400" style={{ width: `${((data.cashflow?.totalMonthlyExpenses || 0) / (data.cashflow?.totalMonthlyIncome || 1)) * 100}%` }}></div>
-                      <div className="bg-green-400 h-full print:bg-green-400" style={{ width: `${((data.cashflow?.investibleSurplus || 0) / (data.cashflow?.totalMonthlyIncome || 1)) * 100}%` }}></div>
-                  </div>
-                   <div className="absolute inset-0 flex justify-between items-center px-4 text-white text-xs font-bold">
-                      <span>Total expenses ({formatCurrency(data.cashflow?.totalMonthlyExpenses || 0)})</span>
-                      <span>Investible Surplus ({formatCurrency(data.cashflow?.investibleSurplus || 0)})</span>
-                  </div>
-              </div>
-               <div className="flex justify-between mt-1 text-xs">
-                  <span>Total income ({formatCurrency(data.cashflow?.totalMonthlyIncome || 0)})</span>
-                  <span>This is what you must invest!</span>
-               </div>
+          <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
+            <div className="p-3 rounded-lg bg-gray-100 text-center print:bg-gray-100">
+                <h3 className="font-bold text-gray-700">Your Monthly Cashflow Summary</h3>
+            </div>
+            <div className="mt-3 relative h-12 bg-gray-200 rounded-full overflow-visible print:bg-gray-200 mb-6">
+                <div className="absolute inset-0 flex rounded-full overflow-hidden">
+                    <div className="bg-red-400 h-full print:bg-red-400" style={{ width: `${((data.cashflow?.totalMonthlyExpenses || 0) / (data.cashflow?.totalMonthlyIncome || 1)) * 100}%` }}></div>
+                    <div className="bg-green-400 h-full print:bg-green-400" style={{ width: `${((data.cashflow?.investibleSurplus || 0) / (data.cashflow?.totalMonthlyIncome || 1)) * 100}%` }}></div>
+                </div>
+                 <div className="absolute inset-0 flex justify-between items-center px-6 text-white text-[10px] font-bold">
+                    <span className="drop-shadow-sm">Total expenses ({formatCurrency(data.cashflow?.totalMonthlyExpenses || 0)})</span>
+                    <span className="drop-shadow-sm">Investible Surplus ({formatCurrency(data.cashflow?.investibleSurplus || 0)})</span>
+                </div>
+            </div>
+             <div className="flex justify-between mt-1 text-xs">
+                <span>Total income ({formatCurrency(data.cashflow?.totalMonthlyIncome || 0)})</span>
+                <span>This is what you must invest!</span>
+             </div>
           </section>
         )}
         
         {sections.investmentStatus && data.totalInvestmentStatus && (
-        <section className="mt-4 print-avoid-break">
+        <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
             <div className="p-3 rounded-lg bg-gray-100 text-center print:bg-gray-100">
                 <h3 className="font-bold text-gray-700">Investment Status</h3>
             </div>
@@ -931,7 +1056,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         )}
 
         {sections.goalProjections && data.goalsWithCalculations && data.goalsWithCalculations.length > 0 && (
-          <section className="mt-4 print-avoid-break">
+          <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
             <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
                 <h3 className="font-bold text-gray-700">Financial Goal Details</h3>
             </div>
@@ -974,7 +1099,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         )}
         
         {sections.goalsBreakdown && (
-          <section className="mt-4 print-avoid-break">
+          <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
               <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
                   <h3 className="font-bold text-gray-700">Goals Breakdown</h3>
               </div>
@@ -1019,7 +1144,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         )}
 
         {sections.goalProjections && data.wealthCreationGoal && (
-          <section className="mt-4 print-avoid-break">
+          <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
             <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
                 <h3 className="font-bold text-gray-700">Wealth Creation</h3>
             </div>
@@ -1044,7 +1169,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         )}
 
         {sections.retirementPlanning && data.retirementCalculations && (
-          <section className="mt-4 print-avoid-break">
+          <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
             <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
                 <h3 className="font-bold text-gray-700">Retirement Planning Analysis</h3>
             </div>
@@ -1053,31 +1178,37 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         )}
         
         {sections.estatePlanning && data.willStatus && (
-        <section className="mt-4 print-avoid-break">
-            <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
+        <section className="mt-4 pdf-section px-4 overflow-visible pb-6">
+            <div className="p-3 rounded-lg bg-gray-100 text-center mb-4 print:bg-gray-100">
                 <h3 className="font-bold text-gray-700">Estate Planning</h3>
             </div>
             {data.willStatus === 'yes' ? (
-                <div className="flex items-center gap-2 p-3 rounded-lg border border-green-200 bg-green-50 text-green-800 text-sm print:bg-green-50">
-                    <CheckCircle className="h-5 w-5"/>
-                    <p className="font-semibold">Estate planning - done</p>
+                <div className="flex items-center gap-4 p-4 rounded-xl border border-green-200 bg-green-50 text-green-800 shadow-sm print:bg-green-50">
+                    <CheckCircle className="h-8 w-8 shrink-0 text-green-600"/>
+                    <div className="flex flex-col">
+                        <p className="font-bold text-lg leading-tight text-green-900">Estate Planning Completed</p>
+                        <p className="text-sm text-green-700">Your wealth transfer strategy is securely in place.</p>
+                    </div>
                 </div>
             ) : (
-                <div className="flex items-start gap-2 p-3 rounded-lg border border-orange-200 bg-orange-50 text-orange-800 text-sm print:bg-orange-50">
-                    <AlertTriangle className="h-5 w-5 mt-0.5 shrink-0"/>
-                    <p className="font-semibold">Estate planning is pending — we recommend initiating it to ensure smooth and secure wealth transfer.</p>
+                <div className="flex items-start gap-4 p-4 rounded-xl border border-orange-200 bg-orange-50 text-orange-800 shadow-sm print:bg-orange-50">
+                    <AlertTriangle className="h-8 w-8 shrink-0 text-orange-600 mt-1"/>
+                    <div className="flex flex-col">
+                        <p className="font-bold text-lg leading-tight text-orange-900">Estate Planning Pending</p>
+                        <p className="text-sm text-orange-700">We strongly recommend initiating this to ensure smooth wealth transfer for your family.</p>
+                    </div>
                 </div>
             )}
         </section>
         )}
         
         {sections.liquidAssetAllocation && (
-          <section className="mt-4 print-avoid-break">
+          <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
               <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
                   <h3 className="font-bold text-gray-700">Liquid Asset Allocation</h3>
               </div>
               <div className="flex flex-col md:flex-row gap-4 items-center">
-                  <div className="w-full md:w-1/2 h-48 flex justify-center">
+                  <div className="w-full md:w-1/2 min-h-[260px] flex justify-center items-center overflow-visible chart-container">
                       <AssetAllocationChart assets={aggregatedLiquidAssets} isReport={true} />
                   </div>
                   <div className="w-full md:w-1/2">
@@ -1131,9 +1262,9 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
               )}
           </section>
         )}
-        
-        {sections.mutualFundPortfolio && data.fundAllocations && data.fundAllocations.length > 0 && (
-            <section className="mt-4 print-avoid-break">
+             {sections.mutualFundPortfolio && data.fundAllocations && data.fundAllocations.length > 0 && (
+            <>
+            <section className="mt-4 pdf-section print-avoid-break">
                 <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
                     <h3 className="font-bold text-gray-700">Fund Allocation & Analysis</h3>
                 </div>
@@ -1148,15 +1279,15 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                     <CardContent className="overflow-x-auto text-xs">
                         <Table>
                             <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[30%]">Scheme</TableHead>
-                                    <TableHead>Goal</TableHead>
-                                    <TableHead>SIP</TableHead>
-                                    <TableHead>Lumpsum</TableHead>
-                                    <TableHead>Category</TableHead>
-                                    <TableHead className="text-center">3Y</TableHead>
-                                    <TableHead className="text-center">5Y</TableHead>
-                                    <TableHead className="text-center">10Y</TableHead>
+                                <TableRow className="text-[10px] bg-gray-50/50">
+                                    <TableHead className="w-[35%] py-2 px-1">Scheme</TableHead>
+                                    <TableHead className="py-2 px-1 text-center">Goal</TableHead>
+                                    <TableHead className="py-2 px-1 text-center">SIP</TableHead>
+                                    <TableHead className="py-2 px-1 text-center">Lump</TableHead>
+                                    <TableHead className="py-2 px-1 text-center">Category</TableHead>
+                                    <TableHead className="text-center py-2 px-1">3Y</TableHead>
+                                    <TableHead className="text-center py-2 px-1">5Y</TableHead>
+                                    <TableHead className="text-center py-2 px-1">10Y</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -1172,210 +1303,211 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                         </Table>
                     </CardContent>
                  </Card>
+            </section>
 
-                 {sections.modelPortfolioAnalysis && (
-                   <section className="mt-4 print-avoid-break">
+             {sections.modelPortfolioAnalysis && (
+               <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
+                <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
+                    <h3 className="font-bold text-gray-700">Model Portfolio Analysis</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-6 mb-6">
+                  {data.fundAllocations?.map(alloc => (
+                    <FundDetailCard 
+                      key={alloc.id}
+                      alloc={alloc}
+                      goalName={alloc.goalId === 'retirement' ? 'Retirement Goal' : (data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.otherType || data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.name || 'Unlinked')}
+                      formatCurrency={formatCurrency}
+                      cachedBenchmarkData={data.fundBenchmarkCache?.[alloc.schemeCode] ?? null}
+                    />
+                  ))}
+                </div>
+               </section>
+             )}
+
+             <div className="grid grid-cols-1 gap-4 mt-4">
+                 {sections.equityWeightAnalysis && (
+                    <section className="mt-4 pdf-section px-4 overflow-visible pb-2">
                     <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
-                        <h3 className="font-bold text-gray-700">Model Portfolio Analysis</h3>
+                        <h3 className="font-bold text-gray-700">Equity Fund Weight Analysis</h3>
                     </div>
-                    
-                    <div className="grid grid-cols-1 gap-6 mb-6">
-                      {data.fundAllocations?.map(alloc => (
-                        <FundDetailCard 
-                          key={alloc.id}
-                          alloc={alloc}
-                          goalName={alloc.goalId === 'retirement' ? 'Retirement Goal' : (data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.otherType || data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.name || 'Unlinked')}
-                          formatCurrency={formatCurrency}
-                          cachedBenchmarkData={data.fundBenchmarkCache?.[alloc.schemeCode] ?? null}
-                        />
-                      ))}
-                    </div>
-
-                     <div className="grid grid-cols-1 gap-4 mt-4">
-                         {sections.equityWeightAnalysis && (
-                           <div>
-                            <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
-                                <h3 className="font-bold text-gray-700">Equity Fund Weight Analysis</h3>
-                            </div>
-                             <Card>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Fund Name</TableHead>
-                                            <TableHead>Fund Type</TableHead>
-                                            <TableHead className="text-right">Weightage</TableHead>
+                     <Card>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Fund Name</TableHead>
+                                    <TableHead>Fund Type</TableHead>
+                                    <TableHead className="text-right">Weightage</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody className="text-xs">
+                                {equityFundWeights.length > 0 ? (
+                                    equityFundWeights.map(fund => (
+                                        <TableRow key={fund.id}>
+                                            <TableCell className="font-medium">{fund.schemeName}</TableCell>
+                                            <TableCell>{fund.fundType}</TableCell>
+                                            <TableCell className="text-right font-bold text-primary roboto">{fund.weight.toFixed(2)}%</TableCell>
                                         </TableRow>
-                                    </TableHeader>
-                                    <TableBody className="text-xs">
-                                        {equityFundWeights.length > 0 ? (
-                                            equityFundWeights.map(fund => (
-                                                <TableRow key={fund.id}>
-                                                    <TableCell className="font-medium">{fund.schemeName}</TableCell>
-                                                    <TableCell>{fund.fundType}</TableCell>
-                                                    <TableCell className="text-right font-bold text-primary roboto">{fund.weight.toFixed(2)}%</TableCell>
-                                                </TableRow>
-                                            ))
-                                        ) : (
-                                            <TableRow>
-                                                <TableCell colSpan={3} className="text-center text-gray-500">
-                                                    No equity fund allocations.
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                             </Card>
-                             <div className="mt-4">
-                                {equityChartData && equityChartData.length > 0 && (
-                                    <PortfolioNiftyChart 
-                                        data={equityChartData} 
-                                        isReport={true}
-                                        title="Equity Portfolio vs. Weighted Benchmark (Growth of Rs. 100)"
-                                    />
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={3} className="text-center text-gray-500">
+                                            No equity fund allocations.
+                                        </TableCell>
+                                    </TableRow>
                                 )}
-                             </div>
-                           </div>
-                         )}
-
-                         {sections.debtWeightAnalysis && debtFundWeights.length > 0 && (
-                            <div className="mt-4">
-                                <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
-                                    <h3 className="font-bold text-gray-700">Debt Fund Weight Analysis</h3>
-                                </div>
-                                <Card>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                              <TableHead>Fund Name</TableHead>
-                                              <TableHead>Fund Type</TableHead>
-                                              <TableHead className="text-right">Weightage</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody className="text-xs">
-                                            {debtFundWeights.map(fund => (
-                                                <TableRow key={fund.id}>
-                                                    <TableCell className="font-medium">{fund.schemeName}</TableCell>
-                                                    <TableCell>{fund.fundType}</TableCell>
-                                                    <TableCell className="text-right font-bold text-primary roboto">{fund.weight.toFixed(2)}%</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </Card>
-                                <div className="mt-4">
-                                    {debtChartData && debtChartData.length > 0 && (
-                                        <PortfolioNiftyChart data={debtChartData} isReport={true} title="Debt Portfolio vs. Weighted Benchmark (Growth of Rs. 100)"/>
-                                    )}
-                                </div>
-                            </div>
-                          )}
-
-                          {sections.hybridWeightAnalysis && hybridFundWeights.length > 0 && (
-                            <div className="mt-4">
-                                <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
-                                    <h3 className="font-bold text-gray-700">Hybrid Fund Weight Analysis</h3>
-                                </div>
-                                 <Card>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                              <TableHead>Fund Name</TableHead>
-                                              <TableHead>Fund Type</TableHead>
-                                              <TableHead className="text-right">Weightage</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody className="text-xs">
-                                            {hybridFundWeights.map(fund => (
-                                                <TableRow key={fund.id}>
-                                                    <TableCell className="font-medium">{fund.schemeName}</TableCell>
-                                                    <TableCell>{fund.fundType}</TableCell>
-                                                    <TableCell className="text-right font-bold text-primary roboto">{hybridFundWeights.length > 0 ? fund.weight.toFixed(2) : 0}%</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </Card>
-                                 <div className="mt-4">
-                                    {hybridChartData && hybridChartData.length > 0 && (
-                                        <PortfolioNiftyChart data={hybridChartData} isReport={true} title="Hybrid Portfolio vs. Weighted Benchmark (Growth of Rs. 100)"/>
-                                    )}
-                                </div>
-                            </div>
-                          )}
-
-                          {sections.solutionOrientedWeightAnalysis && solutionOrientedFundWeights.length > 0 && (
-                            <div className="mt-4">
-                                <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
-                                    <h3 className="font-bold text-gray-700">Solution Oriented Fund Weight Analysis</h3>
-                                </div>
-                                 <Card>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                              <TableHead>Fund Name</TableHead>
-                                              <TableHead>Fund Type</TableHead>
-                                              <TableHead className="text-right">Weightage</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody className="text-xs">
-                                            {solutionOrientedFundWeights.map(fund => (
-                                                <TableRow key={fund.id}>
-                                                    <TableCell className="font-medium">{fund.schemeName}</TableCell>
-                                                    <TableCell>{fund.fundType}</TableCell>
-                                                    <TableCell className="text-right font-bold text-primary roboto">{fund.weight.toFixed(2)}%</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </Card>
-                                 <div className="mt-4">
-                                    {solutionOrientedChartData && solutionOrientedChartData.length > 0 && (
-                                        <PortfolioNiftyChart data={solutionOrientedChartData} isReport={true} title="Solution Oriented Portfolio vs. Weighted Benchmark (Growth of Rs. 100)"/>
-                                    )}
-                                </div>
-                            </div>
-                          )}
-                          
-                          {sections.othersWeightAnalysis && otherFundWeights.length > 0 && (
-                            <div className="mt-4">
-                                <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
-                                    <h3 className="font-bold text-gray-700">Other Fund Weight Analysis</h3>
-                                </div>
-                                 <Card>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                              <TableHead>Fund Name</TableHead>
-                                              <TableHead>Fund Type</TableHead>
-                                              <TableHead className="text-right">Weightage</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody className="text-xs">
-                                            {otherFundWeights.map(fund => (
-                                                <TableRow key={fund.id}>
-                                                    <TableCell className="font-medium">{fund.schemeName}</TableCell>
-                                                    <TableCell>{fund.fundType}</TableCell>
-                                                    <TableCell className="text-right font-bold text-primary roboto">{fund.weight.toFixed(2)}%</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </Card>
-                                 <div className="mt-4">
-                                    {otherChartData && otherChartData.length > 0 && (
-                                        <PortfolioNiftyChart data={otherChartData} isReport={true} title="Other Portfolio vs. Weighted Benchmark (Growth of Rs. 100)"/>
-                                    )}
-                                </div>
-                            </div>
-                          )}
+                            </TableBody>
+                        </Table>
+                     </Card>
+                     <div className="mt-4">
+                        {equityChartData && equityChartData.length > 0 && (
+                            <PortfolioNiftyChart 
+                                data={equityChartData} 
+                                isReport={true}
+                                title="Equity Portfolio vs. Weighted Benchmark (Growth of Rs. 100)"
+                            />
+                        )}
                      </div>
+                   </section>
+                 )}
+
+                 {sections.debtWeightAnalysis && debtFundWeights.length > 0 && (
+                    <section className="mt-4 pdf-section">
+                        <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
+                            <h3 className="font-bold text-gray-700">Debt Fund Weight Analysis</h3>
+                        </div>
+                        <Card>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                      <TableHead>Fund Name</TableHead>
+                                      <TableHead>Fund Type</TableHead>
+                                      <TableHead className="text-right">Weightage</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody className="text-xs">
+                                    {debtFundWeights.map(fund => (
+                                        <TableRow key={fund.id}>
+                                            <TableCell className="font-medium">{fund.schemeName}</TableCell>
+                                            <TableCell>{fund.fundType}</TableCell>
+                                            <TableCell className="text-right font-bold text-primary roboto">{fund.weight.toFixed(2)}%</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Card>
+                        <div className="mt-4">
+                            {debtChartData && debtChartData.length > 0 && (
+                                <PortfolioNiftyChart data={debtChartData} isReport={true} title="Debt Portfolio vs. Weighted Benchmark (Growth of Rs. 100)"/>
+                            )}
+                        </div>
                     </section>
                   )}
-             </section>
+
+                  {sections.hybridWeightAnalysis && hybridFundWeights.length > 0 && (
+                    <section className="mt-4 pdf-section">
+                        <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
+                            <h3 className="font-bold text-gray-700">Hybrid Fund Weight Analysis</h3>
+                        </div>
+                         <Card>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                      <TableHead>Fund Name</TableHead>
+                                      <TableHead>Fund Type</TableHead>
+                                      <TableHead className="text-right">Weightage</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody className="text-xs">
+                                    {hybridFundWeights.map(fund => (
+                                        <TableRow key={fund.id}>
+                                            <TableCell className="font-medium">{fund.schemeName}</TableCell>
+                                            <TableCell>{fund.fundType}</TableCell>
+                                            <TableCell className="text-right font-bold text-primary roboto">{hybridFundWeights.length > 0 ? fund.weight.toFixed(2) : 0}%</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Card>
+                         <div className="mt-4">
+                            {hybridChartData && hybridChartData.length > 0 && (
+                                <PortfolioNiftyChart data={hybridChartData} isReport={true} title="Hybrid Portfolio vs. Weighted Benchmark (Growth of Rs. 100)"/>
+                            )}
+                        </div>
+                    </section>
+                  )}
+
+                  {sections.solutionOrientedWeightAnalysis && solutionOrientedFundWeights.length > 0 && (
+                    <section className="mt-4 pdf-section">
+                        <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
+                            <h3 className="font-bold text-gray-700">Solution Oriented Fund Weight Analysis</h3>
+                        </div>
+                         <Card>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                      <TableHead>Fund Name</TableHead>
+                                      <TableHead>Fund Type</TableHead>
+                                      <TableHead className="text-right">Weightage</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody className="text-xs">
+                                    {solutionOrientedFundWeights.map(fund => (
+                                        <TableRow key={fund.id}>
+                                            <TableCell className="font-medium">{fund.schemeName}</TableCell>
+                                            <TableCell>{fund.fundType}</TableCell>
+                                            <TableCell className="text-right font-bold text-primary roboto">{fund.weight.toFixed(2)}%</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Card>
+                         <div className="mt-4">
+                            {solutionOrientedChartData && solutionOrientedChartData.length > 0 && (
+                                <PortfolioNiftyChart data={solutionOrientedChartData} isReport={true} title="Solution Oriented Portfolio vs. Weighted Benchmark (Growth of Rs. 100)"/>
+                            )}
+                        </div>
+                    </section>
+                  )}
+                  
+                  {sections.othersWeightAnalysis && otherFundWeights.length > 0 && (
+                    <section className="mt-4 pdf-section">
+                        <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
+                            <h3 className="font-bold text-gray-700">Other Fund Weight Analysis</h3>
+                        </div>
+                         <Card>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                      <TableHead>Fund Name</TableHead>
+                                      <TableHead>Fund Type</TableHead>
+                                      <TableHead className="text-right">Weightage</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody className="text-xs">
+                                    {otherFundWeights.map(fund => (
+                                        <TableRow key={fund.id}>
+                                            <TableCell className="font-medium">{fund.schemeName}</TableCell>
+                                            <TableCell>{fund.fundType}</TableCell>
+                                            <TableCell className="text-right font-bold text-primary roboto">{fund.weight.toFixed(2)}%</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Card>
+                         <div className="mt-4">
+                            {otherChartData && otherChartData.length > 0 && (
+                                <PortfolioNiftyChart data={otherChartData} isReport={true} title="Other Portfolio vs. Weighted Benchmark (Growth of Rs. 100)"/>
+                            )}
+                        </div>
+                    </section>
+                  )}
+             </div>
+             </>
         )}
 
         {sections.insurance && data.insuranceAnalysis && (data.insuranceAnalysis.lifeInsurance.quotes.length > 0 || data.insuranceAnalysis.healthInsurance.quotes.length > 0) && (
-            <section className="mt-4 print-avoid-break">
+            <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
                 <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
                     <h3 className="font-bold text-gray-700">Insurance Quotation Analysis</h3>
                 </div>
@@ -1427,7 +1559,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
 
         </div>
 
-        <footer className="mt-auto pt-4 border-t-2 border-gray-300 print-avoid-break">
+        <footer className="mt-auto pt-8 pb-12 border-t-2 border-gray-300 pdf-section px-4 print-avoid-break overflow-visible">
             <p className="text-xs text-gray-500 text-center leading-tight">
                 <strong>Disclaimer:</strong> The calculators are based on past returns and are meant for illustration purposes only. This information is not investment advice. Mutual Fund investments are subject to market risks, read all scheme related documents carefully. Consult your financial advisor before investing.
             </p>

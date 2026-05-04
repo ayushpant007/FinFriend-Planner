@@ -30,7 +30,7 @@ interface Props {
     viewMode?: 'full' | 'allocation';
 }
 
-let nextId = 0;
+
 
 export function RecommendedFunds({ allocations, setAllocations, investibleSurplus, optimizedGoals, goals, retirementCalculations, onChartDataUpdate, onBenchmarkData, initialChartData, hideGoalAllocationFields = false, hideTypeAndMutualFund = false, viewMode = 'full' }: Props) {
   const isAllocationView = viewMode === 'allocation';
@@ -94,7 +94,7 @@ export function RecommendedFunds({ allocations, setAllocations, investibleSurplu
 
   const handleAddAllocation = () => {
     setAllocations(prev => [...prev, {
-      id: `new-${nextId++}`,
+      id: `alloc-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       goalId: '',
       sipRequired: '',
       lumpsumAmount: '',

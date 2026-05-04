@@ -18,7 +18,7 @@ interface Props {
   setHealthQuotes: React.Dispatch<React.SetStateAction<HealthInsuranceQuote[]>>;
 }
 
-let nextId = 0;
+
 
 const initialLifeQuote: Omit<LifeInsuranceQuote, 'id'> = {
     planName: '',
@@ -47,10 +47,11 @@ const initialHealthQuote: Omit<HealthInsuranceQuote, 'id'> = {
 export function InsuranceQuotesForm({ lifeQuotes, setLifeQuotes, healthQuotes, setHealthQuotes }: Props) {
   
   const handleAddQuote = (type: 'life' | 'health') => {
+    const uniqueId = `${type}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     if (type === 'life') {
-      setLifeQuotes(prev => [...prev, { id: `life-${nextId++}`, ...initialLifeQuote }]);
+      setLifeQuotes(prev => [...prev, { id: uniqueId, ...initialLifeQuote }]);
     } else {
-      setHealthQuotes(prev => [...prev, { id: `health-${nextId++}`, ...initialHealthQuote }]);
+      setHealthQuotes(prev => [...prev, { id: uniqueId, ...initialHealthQuote }]);
     }
   };
 

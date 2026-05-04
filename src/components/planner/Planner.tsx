@@ -100,6 +100,9 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
       csvMetrics?: import('@/lib/funds-csv').FundMetricsView;
     };
   }>({});
+
+  // TRACK SAVED PERSONS TO AVOID REDUNDANT DRIVE BACKUPS
+  const savedPersonsRef = useRef<Set<string>>(new Set());
   
   const [optimizedGoals, setOptimizedGoals] = useState<SipOptimizerGoal[]>([]);
   const [showSectionSelector, setShowSectionSelector] = useState(false);
@@ -421,13 +424,54 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
     }
   };
 
+  const validateData = () => {
+    if (!personalDetails.name || !personalDetails.email) {
+      toast({
+        title: "Personal Details Required",
+        description: "Please provide your name and email to generate a report and secure your backup.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    const hasFinancialData = 
+      assets.length > 0 || 
+      liabilities.length > 0 || 
+      incomes.length > 0 || 
+      expenses.length > 0 || 
+      goals.some(g => g.name && g.corpus) || 
+      fundAllocations.length > 0;
+
+    if (!hasFinancialData) {
+      toast({
+        title: "Information Needed",
+        description: "Please provide some details (Assets, Income, or Goals) to generate a meaningful report.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const saveCsvToDrive = async () => {
+    // 1. Validate first
+    if (!validateData()) return;
+
+    const personKey = `${personalDetails.name.trim()}-${personalDetails.email.trim()}`.toLowerCase();
+
+    // 2. Avoid duplicates - only save once per person per session
+    if (savedPersonsRef.current.has(personKey)) {
+      console.log("Already backed up for this user in this session.");
+      return;
+    }
+
     const dataForCsv = { ...allPlannerData, netWorth, yearlyCashflow };
     const { csv, fileName } = getCsvString(dataForCsv);
     
     toast({ 
-      title: "Saving to Google Drive", 
-      description: "Uploading your data to Google Drive for backup..." 
+      title: "Securing Backup", 
+      description: "Saving a copy of your details to Google Drive..." 
     });
 
     try {
@@ -439,17 +483,15 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
 
       if (!response.ok) throw new Error('Failed to save CSV to Google Drive');
 
+      // Mark as saved
+      savedPersonsRef.current.add(personKey);
+
       toast({ 
-        title: "Backup Successful", 
+        title: "Backup Secured", 
         description: "Your data has been successfully saved to Google Drive." 
       });
     } catch (error) {
       console.error("Error saving CSV to Drive:", error);
-      toast({ 
-        title: "Backup Failed", 
-        description: "Failed to save data to Google Drive. Please try downloading as CSV locally.", 
-        variant: "destructive" 
-      });
     }
   };
 
@@ -608,7 +650,10 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
   };
 
   const handleGenerateReportClick = async () => {
-    // 1. Always back up to Google Drive first
+    // Validate data first
+    if (!validateData()) return;
+
+    // 1. Back up to Google Drive (with duplicate check inside)
     await saveCsvToDrive();
 
     // 2. On /allocation page — generate allocation-only report directly
@@ -1105,14 +1150,14 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
                 onInsuranceDataChange={setInsuranceAnalysisData}
               />
             </div>
-            <div>
+            <div className="xl:col-span-2">
               <GoalsForm
                 goals={goals}
                 setGoals={setGoals}
                 goalsWithCalculations={goalsWithCalculations}
               />
             </div>
-            <div>
+            <div className="xl:col-span-2">
               <RetirementPlannerForm
                 inputs={retirementInputs}
                 setInputs={setRetirementInputs}
@@ -1142,6 +1187,7 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
                     onChartDataUpdate={handleChartDataUpdate}
                     initialChartData={chartDataCache}
                     onBenchmarkData={handleBenchmarkData}
+                    hideTypeAndMutualFund
                    />
               </div>
             </div>
