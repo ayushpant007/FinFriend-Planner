@@ -264,7 +264,7 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
           <div className="h-[400px] w-full">
             {isReport ? (
               <ComposedChart
-                width={750}
+                width={700}
                 height={400}
                 data={chartData}
                 margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
@@ -438,7 +438,7 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
             <div className="h-[100px] w-full">
               {isReport ? (
                 <BarChart
-                  width={750}
+                  width={700}
                   height={100}
                   data={chartData}
                   margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
@@ -556,7 +556,7 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
       <CardContent className="h-96 w-full">
         {isReport ? (
           <LineChart
-            width={750}
+            width={700}
             height={384}
             data={data}
             margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
