@@ -36,8 +36,16 @@ function parseBenchmarkDate(dateStr: string): Date | null {
     let date = parse(trimmed, 'dd MMM yyyy', new Date());
     if (!isNaN(date.getTime())) return date;
     
-    // Try format "dd-MM-yyyy" as fallback
+    // Try format "dd-MM-yyyy" (e.g., "08-12-2025")
     date = parse(trimmed, 'dd-MM-yyyy', new Date());
+    if (!isNaN(date.getTime())) return date;
+    
+    // Try format "dd-MMM-yy" (e.g., "08-Dec-15")
+    date = parse(trimmed, 'dd-MMM-yy', new Date());
+    if (!isNaN(date.getTime())) return date;
+
+    // Try format "MMM dd, yyyy" (e.g., "Dec 08, 2025")
+    date = parse(trimmed, 'MMM dd, yyyy', new Date());
     if (!isNaN(date.getTime())) return date;
     
     return null;
@@ -59,9 +67,15 @@ async function loadBenchmarkData(benchmarkFile: string): Promise<RawDataPoint[]>
   
   const data: RawDataPoint[] = [];
   for (const row of parsed.data as any[]) {
-    if (!row.Date || !row.Price) continue;
-    const date = parseBenchmarkDate(row.Date);
-    const value = parsePrice(row.Price);
+    const values = Object.values(row) as string[];
+    // Handle CSVs where Date column header is missing (key is empty string)
+    const dateStr = (row.Date || row[''] || values[0] || '').toString().trim();
+    // Handle CSVs where Price is in a non-standard position (e.g. "Date,,,,Price" format)
+    const priceStr = (row.Price || values.slice(1).find((v: string) => v && parseFloat(v.replace(/[",]/g, '')) > 0) || '').toString().trim();
+
+    if (!dateStr || !priceStr) continue;
+    const date = parseBenchmarkDate(dateStr);
+    const value = parsePrice(priceStr);
     if (date && value > 0) {
       data.push({ date, value });
     }
