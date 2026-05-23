@@ -1,0 +1,57 @@
+
+> nextn@0.1.0 dev
+> next dev --turbopack -p 5000 -H 0.0.0.0
+
+[1G[0K   [1m[38;2;173;127;168m▲ Next.js 15.5.10[39m[22m (Turbopack)
+   - Local:        http://localhost:5000
+   - Network:      http://0.0.0.0:5000
+
+ [32m[1m✓[22m[39m Starting...
+ [32m[1m✓[22m[39m Ready in 2.5s
+ [37m[1m○[22m[39m Compiling / ...
+ [32m[1m✓[22m[39m Compiled / in 9.6s
+ GET / [32m200[39m in 10328ms
+ GET / [32m200[39m in 6740ms
+ [37m[1m○[22m[39m Compiling /favicon.ico ...
+ [32m[1m✓[22m[39m Compiled /favicon.ico in 1482ms
+ GET /favicon.ico?favicon.7ed73651.ico [32m200[39m in 2040ms
+ [37m[1m○[22m[39m Compiling /allocation ...
+ [32m[1m✓[22m[39m Compiled /allocation in 2.3s
+ GET /allocation [32m200[39m in 2439ms
+ GET /favicon.ico?favicon.7ed73651.ico [32m200[39m in 371ms
+ [32m[1m✓[22m[39m Compiled /api/calculate-optimized-goals in 243ms
+ POST /api/calculate-optimized-goals [32m200[39m in 535ms
+ [32m[1m✓[22m[39m Compiled /api/allocation/fund-data in 149ms
+[funds-csv] Loaded 4845 fund rows across 5 CSVs
+ POST /api/allocation/fund-data [32m200[39m in 907ms
+ POST /api/allocation/fund-data [32m200[39m in 246ms
+ [32m[1m✓[22m[39m Compiled /api/allocation/portfolio-growth in 152ms
+ POST /api/allocation/portfolio-growth [32m200[39m in 411ms
+ [37m[1m○[22m[39m Compiling /planner ...
+ [32m[1m✓[22m[39m Compiled /planner in 979ms
+ GET /planner [32m200[39m in 1130ms
+ GET /favicon.ico?favicon.7ed73651.ico [32m200[39m in 380ms
+ POST /api/calculate-optimized-goals [32m200[39m in 250ms
+ POST /planner [32m200[39m in 883ms
+ GET /planner [32m200[39m in 110ms
+ GET /planner [32m200[39m in 101ms
+ GET /favicon.ico?favicon.7ed73651.ico [32m200[39m in 257ms
+ POST /planner [32m200[39m in 297ms
+ POST /planner [32m200[39m in 431ms
+ POST /api/calculate-optimized-goals [32m200[39m in 374ms
+ GET / [32m200[39m in 136ms
+ GET / [32m200[39m in 106ms
+ GET /favicon.ico?favicon.7ed73651.ico [32m200[39m in 265ms
+ GET /planner [32m200[39m in 71ms
+ POST /planner [32m200[39m in 277ms
+ POST /planner [32m200[39m in 209ms
+ POST /api/calculate-optimized-goals [32m200[39m in 255ms
+ GET /allocation [32m200[39m in 83ms
+ POST /api/calculate-optimized-goals [32m200[39m in 248ms
+ POST /api/allocation/fund-data [32m200[39m in 250ms
+ POST /api/allocation/fund-data [32m200[39m in 266ms
+ POST /api/allocation/fund-data [32m200[39m in 269ms
+ POST /api/allocation/fund-data [32m200[39m in 267ms
+ [32m[1m✓[22m[39m Compiled in 1547ms
+ [32m[1m✓[22m[39m Compiled in 163ms
+ [32m[1m✓[22m[39m Compiled in 364ms

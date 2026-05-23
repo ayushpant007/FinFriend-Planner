@@ -25,7 +25,7 @@ function ReportPageContent() {
       }
 
       try {
-        const response = await fetch(`/api/get-report?id=${reportId}&type=detailed`);
+        const response = await fetch(`/api/get-report?id=${reportId}&type=detailed&t=${Date.now()}`);
         if (response.ok) {
           const result = await response.json();
           setReportData(result.data);

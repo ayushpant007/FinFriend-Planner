@@ -289,6 +289,7 @@ export interface SipOptimizerReportData {
       yearlyComparison: { year: string; fundReturn: number; benchmarkReturn: number }[];
       benchmarkName: string;
       riskMetrics: any;
+      csvMetrics?: any;
     };
   };
 }

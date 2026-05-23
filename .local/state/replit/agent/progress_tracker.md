@@ -1,0 +1,10 @@
+[x] 1. Locate the Next.js app and detect the package manager: check root package.json for 'next' and for app/ or pages/ directories. If not at root, search common monorepo paths (apps/web, packages/frontend). Detect package manager from the lockfile (package-lock.json→npm, pnpm-lock.yaml→pnpm, yarn.lock→yarn, bun.lockb→bun).
+[x] 2. If the Next.js app is in a subdirectory, update deploy_config_tool to cd into it for build and start commands (e.g. ["bash", "-c", "cd <dir> && <pkg-mgr> run build"]). [N/A — Next.js app is at repo root.]
+[x] 3. Configure ports and scripts: dev uses 'next dev -p 5000 -H 0.0.0.0', start uses 'next start -p 5000 -H 0.0.0.0'.
+[x] 4. Fix Replit compatibility: comment out problematic instrumentation.ts/js if it blocks startup, leaving a one-line explanatory comment. [N/A — no instrumentation file present.]
+[x] 5. Request required secrets and env vars (DATABASE_URL, API keys, anything referenced via process.env.*) via the environment-secrets skill so they land in the Replit Secrets store. Never ask the user to paste secret values into chat or commit them to the repo. [DATABASE_URL already provisioned by Replit; optional API keys (Google/Gemini, Supabase) can be added later by the user as needed.]
+[x] 6. Install the required packages from the correct directory.
+[x] 7. Configure a dev workflow that runs the Next.js app from the correct directory (e.g. ["bash", "-c", "cd <dir> && <pkg-mgr> run dev"] when the app is in a subdirectory). BEST_EFFORT_FALLBACK doesn't create one for you, so the restart/feedback steps below depend on this.
+[x] 8. Restart the workflow to see if the project is working.
+[x] 9. Verify the project is working using the feedback tool.
+[x] 10. Inform user the import is completed and they can start building, mark the import as completed using the complete_project_import tool.

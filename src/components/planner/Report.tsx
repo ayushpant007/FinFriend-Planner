@@ -8,7 +8,9 @@ import { Separator } from '@/components/ui/separator';
 import { NetWorthBreakdown } from '../charts/NetWorthBreakdown';
 import { ExpenseBreakdown } from '../charts/ExpenseBreakdown';
 import { Button } from '../ui/button';
-import { Printer, FileText, Wallet, PiggyBank, ShieldCheck, TrendingUp, Bot, CheckCircle, AlertTriangle, Download, Share2 } from 'lucide-react';
+import { Printer, FileText, Wallet, PiggyBank, ShieldCheck, TrendingUp, Bot, CheckCircle, AlertTriangle, Download, Share2, Info } from 'lucide-react';
+import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -32,8 +34,7 @@ const StatCard = ({ title, value, icon, subValue }: { title: string; value: stri
 
 export function Report({ data }: Props) {
   const yearlyCashflow = data.monthlyCashflow * 12;
-  
-  const [reportGeneratedForData, setReportGeneratedForData] = useState<string>("");
+  const { toast } = useToast();
 
   const generatePdf = async () => {
     const reportElement = document.getElementById('report-section');
@@ -41,65 +42,67 @@ export function Report({ data }: Props) {
         throw new Error("Report element not found");
     }
 
-    // Duplicate check
-    const currentDataHash = JSON.stringify({ 
-      name: data.personalDetails.name, 
-      email: data.personalDetails.email,
-      netWorth: data.netWorth
-    });
-
-    if (reportGeneratedForData === currentDataHash) {
-        toast({
-            title: "Report Already Generated",
-            description: "A report for these details has already been generated.",
-        });
-        // We throw to prevent download, or we can just return a dummy
-        return null; 
-    }
-
     // Ensure we are at the top for clean capture
     window.scrollTo(0, 0);
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    const pdf = new jsPDF('p', 'mm', 'a4', true);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    const marginMm = 5;
-    const usableWidth = pdfWidth - (marginMm * 2);
-    const usableHeight = pdfHeight - (marginMm * 2);
-
-    // Find all main cards/sections
-    const sections = Array.from(reportElement.querySelectorAll('.rounded-xl, .shadow-md, .shadow-lg')) as HTMLElement[];
-    
-    let currentY_Mm = marginMm;
-    let isFirstPage = true;
-
-    for (const section of sections) {
-        const canvas = await html2canvas(section, { 
-            scale: 2, 
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#FFFFFF'
-        });
-
-        const imgWidth = usableWidth;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        if (!isFirstPage && (currentY_Mm + imgHeight > usableHeight)) {
-            pdf.addPage();
-            currentY_Mm = marginMm;
+    const canvas = await html2canvas(reportElement, { 
+        scale: 2, 
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#FFFFFF',
+        logging: false,
+        onclone: (clonedDoc) => {
+            const el = clonedDoc.getElementById('report-section');
+            if (el) {
+                el.style.width = '800px';
+                el.style.margin = '0';
+                el.style.padding = '20px';
+                el.style.transform = 'none';
+                el.style.height = 'auto';
+                el.style.overflow = 'visible';
+                
+                // Ensure all cards are visible
+                el.querySelectorAll('.card').forEach(c => {
+                    (c as HTMLElement).style.overflow = 'visible';
+                });
+                
+                // Force recharts SVGs to fill their containers for ResponsiveContainer charts
+                el.querySelectorAll('.recharts-responsive-container').forEach(c => {
+                    (c as HTMLElement).style.width = '100%';
+                    (c as HTMLElement).style.minWidth = '0';
+                });
+                el.querySelectorAll('.recharts-wrapper').forEach(c => {
+                    const wrapper = c as HTMLElement;
+                    const parentWidth = wrapper.parentElement?.getBoundingClientRect().width || 760;
+                    wrapper.style.width = `${parentWidth}px`;
+                });
+                el.querySelectorAll('.recharts-surface').forEach(c => {
+                    const svg = c as SVGElement;
+                    const parentWidth = (svg.parentElement?.getBoundingClientRect().width || 760);
+                    svg.setAttribute('width', String(parentWidth));
+                    svg.style.width = `${parentWidth}px`;
+                });
+            }
         }
+    });
 
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-        pdf.addImage(imgData, 'JPEG', marginMm, currentY_Mm, imgWidth, imgHeight, undefined, 'FAST');
-        
-        currentY_Mm += imgHeight + 2; // Add 2mm spacing
-        isFirstPage = false;
-    }
+    const imgWidth = 210; // Keep A4 width
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    const pdf = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: [imgWidth, imgHeight],
+        compress: true
+    });
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
     
-    setReportGeneratedForData(currentDataHash);
     return pdf;
   }
+
 
   const handleDownload = async () => {
     try {
@@ -116,6 +119,7 @@ export function Report({ data }: Props) {
   const handleShare = async () => {
     try {
       const pdf = await generatePdf();
+      if (!pdf) return;
       const pdfBlob = pdf.output('blob');
       const pdfFile = new File([pdfBlob], `${data.personalDetails.name}-financial-report.pdf`, {
         type: 'application/pdf',
@@ -156,6 +160,22 @@ export function Report({ data }: Props) {
       </div>
       
       <div id="report-section" className="p-6 border-2 border-dashed rounded-xl printable-area bg-card">
+        
+        {/* Allocation-Only Notice */}
+        {(data as any).isAllocationOnly && (
+          <div className="mb-8 p-4 rounded-xl border border-blue-200 bg-blue-50 text-blue-800 shadow-sm print:hidden flex items-start gap-3">
+            <Info className="h-5 w-5 shrink-0 text-blue-600 mt-0.5" />
+            <div>
+              <p className="font-bold text-sm text-blue-900 leading-snug">Allocation-Only Mode Active</p>
+              <p className="text-xs text-blue-700 mt-1 leading-normal">
+                You generated this report directly from the **Fund Allocations** page without entering your Income, Expenses, Assets, or Liabilities.
+                <br/>
+                The detailed report below is a **dynamic preview** synthesized purely from your proposed mutual fund allocations (₹{data.netWorth.toLocaleString('en-IN')} Lumpsum and ₹{data.monthlyCashflow.toLocaleString('en-IN')}/month SIP). 
+                To see your **real** Net Worth, Cashflow analysis, and personalized AI summary, please go back to the <Link href="/" className="font-bold underline hover:text-blue-900">Planner</Link> and fill in your full financial details!
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* AI Summary */}
         <Card className="mb-8 bg-primary/5 border-primary/20 shadow-lg">
@@ -220,7 +240,7 @@ export function Report({ data }: Props) {
                             <TableRow>
                               <TableHead>Goal</TableHead>
                               <TableHead>Target (Today)</TableHead>
-                              <TableHead>Years</TableHead>
+                              <TableHead>Years to Goal</TableHead>
                               <TableHead className="text-right">Required SIP</TableHead>
                             </TableRow>
                           </TableHeader>

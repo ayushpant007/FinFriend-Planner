@@ -2,7 +2,7 @@
 
 "use client";
 
-import type { SipOptimizerReportData, SipOptimizerGoal, Asset, RetirementCalculations, LifeInsuranceQuote, HealthInsuranceQuote, FundAllocation, ChartDataPoint, GoalWithCalculations, RetirementInputs, FundReturnsOutput } from '@/lib/types';
+import type { SipOptimizerReportData, SipOptimizerGoal, Asset, RetirementCalculations, LifeInsuranceQuote, HealthInsuranceQuote, FundAllocation, ChartDataPoint, GoalWithCalculations, RetirementInputs, FundReturnsOutput, ReportSections } from '@/lib/types';
 import type { RiskMetrics } from '@/lib/risk-metrics';
 import { Button } from '../ui/button';
 import { Printer, Phone, Mail, User, Calendar, Users, Target, ArrowRight, AlertTriangle, Info, Goal as GoalIcon, ShieldCheck, Wallet, PiggyBank, Briefcase, FileText, CheckCircle, TrendingUp, Banknote, CandlestickChart, Gem, Building, Calculator, BarChart3, Check, X, Download, LineChart, Loader2, Percent } from 'lucide-react';
@@ -14,7 +14,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { AssetAllocationChart } from '../charts/AssetAllocationChart';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-import { getAssetAllocation } from '@/lib/calculations';
+import { getAssetAllocation, calculateAge } from '@/lib/calculations';
 import { getFundReturns } from '@/ai/flows/fund-returns-flow';
 import { getModelPortfolioData } from '@/ai/flows/model-portfolio-flow';
 import { PortfolioNiftyChart } from '../charts/PortfolioNiftyChart';
@@ -538,7 +538,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
   const [isGenerating, setIsGenerating] = useState(false);
   const [reportGeneratedForData, setReportGeneratedForData] = useState<string>("");
 
-  const sections = data.sections || {
+  const sections: ReportSections = data.sections || {
     netWorth: true,
     cashflow: true,
     investmentStatus: true,
@@ -553,6 +553,8 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
     equityWeightAnalysis: true,
     debtWeightAnalysis: true,
     hybridWeightAnalysis: true,
+    solutionOrientedWeightAnalysis: true,
+    othersWeightAnalysis: true,
     liquidAssetAllocation: true,
   };
 
@@ -573,7 +575,6 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
     const reportElement = document.getElementById('report-container');
     if (!reportElement) return;
 
-    // Scroll to top
     window.scrollTo(0, 0);
 
     try {
@@ -624,70 +625,28 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
             }
         });
 
+        const imgWidth = 210; // Use standard A4 width in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
         const pdf = new jsPDF({
             orientation: 'p',
             unit: 'mm',
-            format: 'a4',
+            format: [imgWidth, imgHeight],
             compress: true
         });
 
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        
-        // User requested: 12mm margins
-        const marginY = 12; 
-        const marginX = 10; 
-        const usableWidth = pdfWidth - (marginX * 2);
-        const usableHeight = pdfHeight - (marginY * 2);
-
-        // Calculate scaling
-        const imgWidth = usableWidth;
-        const totalImgHeight = (canvas.height * imgWidth) / canvas.width;
-        
-        let remainingHeight = totalImgHeight;
-        let sourceY = 0;
-        let isFirstPage = true;
-
-        // Slice the giant canvas into A4 pages
-        while (remainingHeight > 0) {
-            if (!isFirstPage) {
-                pdf.addPage();
-            }
-
-            const drawHeight = Math.min(remainingHeight, usableHeight);
-            
-            // Slice canvas
-            const sliceCanvas = document.createElement('canvas');
-            sliceCanvas.width = canvas.width;
-            sliceCanvas.height = (drawHeight * canvas.width) / imgWidth;
-            const ctx = sliceCanvas.getContext('2d');
-            if (ctx) {
-                ctx.drawImage(
-                    canvas, 
-                    0, sourceY * (canvas.width / imgWidth), 
-                    canvas.width, sliceCanvas.height, 
-                    0, 0, 
-                    sliceCanvas.width, sliceCanvas.height
-                );
-            }
-
-            const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95);
-            pdf.addImage(imgData, 'JPEG', marginX, marginY, imgWidth, drawHeight, undefined, 'FAST');
-            
-            remainingHeight -= drawHeight;
-            sourceY += drawHeight;
-            isFirstPage = false;
-        }
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
 
         pdf.save(`${data.personalDetails.name.replace(/\s+/g, '_')}_financial_report.pdf`);
-        toast({ title: "Success", description: "Report downloaded. Tip: Use 'Print' for absolute pixel-perfection!" });
+        toast({ title: "Success", description: "Report downloaded successfully!" });
     } catch (error) {
         console.error("Error generating PDF:", error);
         toast({ title: "Download Failed", description: "Could not generate PDF. Please try again.", variant: "destructive" });
     } finally {
         setIsGenerating(false);
     }
-};
+  };
 
   
   const additionalSipRequired = data.totalInvestmentStatus
@@ -829,31 +788,45 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
             transform: none !important;
             height: auto !important;
           }
-
-          /* 3. Avoid Flex/Grid Breaking - Switch to Block for PDF */
-          .grid, .flex, [class*="grid-cols-"], .flex-row, .flex-col {
-            display: block !important;
-            float: none !important;
-          }
-          
-          .grid > *, .flex > * {
-            width: 100% !important;
-            margin-bottom: 1rem !important;
+           /* 3. Hide print-irrelevant elements */
+          .no-print {
+            display: none !important;
           }
           
           /* 4. Section & Card Pagination */
-          .pdf-section, 
-          .card, 
-          section,
-          .card-content {
+          section, .pdf-section {
+            break-inside: auto !important;
+            page-break-inside: auto !important;
+          }
+
+          .glass-card,
+          .card,
+          .print-avoid-break,
+          #report-container div.glass-card,
+          #report-container div.border,
+          #report-container .rounded-xl,
+          #report-container .rounded-lg {
             break-inside: avoid !important;
             page-break-inside: avoid !important;
+            margin-bottom: 20px !important;
             display: block !important;
+          }
+
+          .recharts-responsive-container {
             width: 100% !important;
-            position: relative !important;
-            margin-bottom: 1rem !important;
-            height: auto !important;
-            overflow: visible !important;
+            height: 250px !important;
+            min-height: 250px !important;
+          }
+
+          header div.relative {
+            width: 192px !important;
+            height: 48px !important;
+          }
+
+          header img {
+            width: 192px !important;
+            height: 48px !important;
+            object-fit: contain !important;
           }
 
           /* Ensure tables still behave like tables where possible, or blocks */
@@ -965,10 +938,12 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
               <div className="bg-pink-50 p-4 space-y-4 print:bg-pink-50">
                 <DetailItem icon={User} label="Name" value={data.personalDetails?.name || 'N/A'} />
                 <DetailItem icon={Calendar} label="Date of Birth" value={formatDate(data.personalDetails?.dob || '')} />
+                <DetailItem icon={User} label="Current Age" value={data.personalDetails?.dob ? `${calculateAge(data.personalDetails.dob)} Years` : 'N/A'} />
                 <DetailItem icon={Users} label="Dependents" value={data.personalDetails?.dependents || 0} />
               </div>
               <div className="bg-white p-4 space-y-4 print:bg-white">
-                <DetailItemWhite icon={Target} label="Retirement Age" value={data.personalDetails?.retirementAge || 'N/A'} />
+                <DetailItemWhite icon={Target} label="Retirement Age" value={data.personalDetails?.retirementAge ? `${data.personalDetails.retirementAge} Years` : 'N/A'} />
+                <DetailItemWhite icon={Calculator} label="Years to Retirement" value={(data.personalDetails?.retirementAge && data.personalDetails?.dob) ? `${Number(data.personalDetails.retirementAge) - Number(calculateAge(data.personalDetails.dob))} Years` : 'N/A'} />
                 <DetailItemWhite icon={Phone} label="Mobile No." value={data.personalDetails?.mobile || 'N/A'} />
                 <DetailItemWhite icon={Mail} label="Email ID" value={data.personalDetails?.email || 'N/A'} />
               </div>
@@ -1098,7 +1073,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                                     <TableCell>{formatCurrency(goal.currentSip)}</TableCell>
                                 </TableRow>
                             ))}
-                            {data.retirementCalculations && data.retirementInputs && (data.retirementCalculations.yearsToRetirement > 0 || data.retirementCalculations.requiredRetirementCorpus > 0 || data.retirementInputs.currentSavings > 0 || data.retirementInputs.currentSip > 0) && (
+                            {data.retirementCalculations && data.retirementInputs && (data.retirementCalculations.yearsToRetirement > 0 || data.retirementCalculations.requiredRetirementCorpus > 0 || Number(data.retirementInputs.currentSavings) > 0 || Number(data.retirementInputs.currentSip) > 0) && (
                                 <TableRow>
                                     <TableCell className="font-medium">Retirement</TableCell>
                                     <TableCell>{formatCurrency(data.retirementCalculations.requiredRetirementCorpus)}</TableCell>

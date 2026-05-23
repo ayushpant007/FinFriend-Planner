@@ -468,11 +468,6 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
 
     const dataForCsv = { ...allPlannerData, netWorth, yearlyCashflow };
     const { csv, fileName } = getCsvString(dataForCsv);
-    
-    toast({ 
-      title: "Securing Backup", 
-      description: "Saving a copy of your details to Google Drive..." 
-    });
 
     try {
       const response = await fetch('/api/save-csv-to-drive', {
@@ -481,17 +476,20 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
         body: JSON.stringify({ csvContent: csv, fileName }),
       });
 
-      if (!response.ok) throw new Error('Failed to save CSV to Google Drive');
+      if (!response.ok) {
+        console.warn('Google Drive integration skipped or failed:', response.status);
+        return;
+      }
 
       // Mark as saved
       savedPersonsRef.current.add(personKey);
-
+      console.log('Google Drive backup saved successfully.');
       toast({ 
         title: "Backup Secured", 
         description: "Your data has been successfully saved to Google Drive." 
       });
     } catch (error) {
-      console.error("Error saving CSV to Drive:", error);
+      console.warn("Error saving CSV to Drive:", error);
     }
   };
 

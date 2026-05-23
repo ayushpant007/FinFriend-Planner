@@ -1,0 +1,34 @@
+
+> nextn@0.1.0 build
+> next build
+
+[1G[0K   [1m[38;2;173;127;168m▲ Next.js 15.5.10[39m[22m
+   - Environments: .env.production, .env
+
+ [37m[1m [22m[39m Creating an optimized production build ...
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/home/runner/workspace/.next/cache/webpack/server-production/0.pack_' -> '/home/runner/workspace/.next/cache/webpack/server-production/0.pack'
+ ⚠ Compiled with warnings in 36.7s
+
+./node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@opentelemetry/sdk-node/build/src/sdk.js
+./node_modules/@opentelemetry/sdk-node/build/src/index.js
+./node_modules/@genkit-ai/core/lib/tracing/node-telemetry-provider.js
+./node_modules/@genkit-ai/core/lib/node.js
+./node_modules/genkit/lib/common.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/analyze-factsheet-flow.ts
+./src/app/api/analyze-factsheet/route.ts
+
+ [32m[1m✓[22m[39m Compiled successfully in 48s
+
+> Build error occurred
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+[1G[0K⠙[1G[0K
