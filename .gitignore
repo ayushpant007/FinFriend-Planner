@@ -9,3 +9,15 @@ build/
 .DS_Store
 dist/
 .local-db.json
+
+# Replit / local state (never commit these)
+.local/
+.local/state/
+*.bin
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+
+# Local DB / private keys
+*.json.key
+fin-friend-planner-*.json
