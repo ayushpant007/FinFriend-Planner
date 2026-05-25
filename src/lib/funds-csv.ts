@@ -226,8 +226,8 @@ const FUND_RETURN_KEYS: Record<FundCsvCategory, { label: string; fund: string[];
   ],
   Commodities: [
     { label: '1Y', fund: ['Fund_Ret_1Y'], bench: ['BM_Ret_1Y'] },
-    { label: '2Y', fund: ['Fund_Ret_2Y'], bench: ['BM_Ret_2Y'] },
     { label: '3Y', fund: ['Fund_Ret_3Y'], bench: ['BM_Ret_3Y'] },
+    { label: '5Y', fund: ['Fund_Ret_5Y'], bench: ['BM_Ret_5Y'] },
   ],
 };
 
@@ -250,9 +250,9 @@ export function buildAllocationFundData(record: FundCsvRecord): AllocationFundDa
     sortino: toNum(pickFirst(r, ['Sortino'])),
     stdDev: toNum(pickFirst(r, ['Std Dev', 'Standard Deviation', 'Std Dev\n(%)'])),
     meanReturn: toNum(pickFirst(r, ['Mean Return', 'Mean Return\n(%)'])),
-    ytm: toNum(pickFirst(r, ['YTM (%)', 'YTM\n(%)', 'Yield to Maturity (%)'])),
-    macaulayDuration: toNum(pickFirst(r, ['Macaulay Dur (yrs)', 'Mac Dur\n(yrs)', 'Macaulay Duration (yrs)'])),
-    avgMaturity: toNum(pickFirst(r, ['Avg Maturity (yrs)', 'Avg Mat\n(yrs)', 'Average Maturity (yrs)'])),
+    ytm: toNum(pickFirst(r, ['YTM (%)', 'YTM\n(%)', 'Yield to Maturity (%)', 'YTM'])),
+    macaulayDuration: toNum(pickFirst(r, ['Macaulay Dur (yrs)', 'Mac Dur\n(yrs)', 'Macaulay Duration (yrs)', 'Macaulay Duration'])),
+    avgMaturity: toNum(pickFirst(r, ['Avg Maturity (yrs)', 'Avg Mat\n(yrs)', 'Average Maturity (yrs)', 'Avg Maturity'])),
     avgCreditRating: pickFirst(r, ['Avg Credit Rating', 'Avg Credit\nRating']) ?? null,
     noOfStocks: toNum(pickFirst(r, ['No. of Stocks', 'No. of\nStocks'])),
     top10Holdings: toNum(pickFirst(r, ['Top 10 Stocks (%)', 'Top 10\nHoldings %'])),
@@ -364,8 +364,8 @@ export function buildPortfolioGrowth(
       : csvCategory === 'Commodities'
       ? [
           { label: '1Y', years: 1 },
-          { label: '2Y', years: 2 },
           { label: '3Y', years: 3 },
+          { label: '5Y', years: 5 },
         ]
       : [
           { label: '1Y', years: 1 },

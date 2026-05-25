@@ -1,284 +1,132 @@
-Fund Name,Plan,Category,VR ID,Scheme Code,ISIN,Alpha,Beta,Sharpe,Standard Deviation,Mean Return,Sortino,No. of Stocks,Top 10 Stocks (%),Top 5 Stocks (%),Top 3 Sectors (%),P/B Ratio,P/E Ratio,Sharpe Score(/12),Alpha Score(/10),Std Dev Score(/8),Beta Score(/6),Sortino Score(/4),Total Score(/40),Risk Category,Yield to Maturity (%),Macaulay Duration (yrs),Average Maturity (yrs),Avg Credit Rating,Fund_Ret_1Y ,Fund_Ret_2Y ,Fund_Ret_3Y ,BM_Ret_1Y ,BM_Ret_2Y ,BM_Ret_3Y 
-ABSL Long Duration Dir,Direct,Commodities: Gold,42338,150484,INF209KB17J2,--,--,0.14,3.82,6.56,0.18,N/A,N/A,N/A,N/A,N/A,N/A,2,1,8,1,1,13,Moderately High Risk,N/A,N/A,N/A,N/A,-0.52,6.79,N/A,-1.75,6.32,N/A
-Axis Long Duration Dir,Direct,Commodities: Gold,42912,151179,INF846K014L3,--,--,-0.10,4.92,5.55,-0.13,N/A,N/A,N/A,N/A,N/A,N/A,1,1,8,1,1,12,High Risk,N/A,N/A,N/A,N/A,-2.57,6.03,N/A,-1.75,6.32,N/A
-Bandhan Long Duration Dir,Direct,Commodities: Gold,44184,152520,INF194KB1HY2,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-1.31,N/A,N/A,-1.75,N/A,N/A
-Franklin India Long Duration Fund Dir,Direct,Commodities: Gold,44764,153102,INF090I01XY7,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,0.08,N/A,N/A,-1.75,N/A,N/A
-HDFC Long Duration Debt Dir,Direct,Commodities: Gold,43050,151313,INF179KC1ET7,--,--,-0.07,5.15,5.64,-0.10,N/A,N/A,N/A,N/A,N/A,N/A,1,1,8,1,1,12,High Risk,N/A,N/A,N/A,N/A,-2.53,6.1,N/A,-1.75,6.32,N/A
-ICICI Pru Long Term Bond Dir,Direct,Commodities: Gold,15957,120743,INF109K017L8,--,--,0.07,3.76,6.29,0.08,N/A,N/A,N/A,N/A,N/A,N/A,2,1,8,1,1,13,Moderately High Risk,N/A,N/A,N/A,N/A,-0.37,6.68,5.37,-1.75,6.32,5.42
-Kotak Long Duration Dir,Direct,Commodities: Gold,44192,152491,INF174KA1RF5,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-3.13,N/A,N/A,-1.75,N/A,N/A
-Mirae Asset Long Duration Dir,Direct,Commodities: Gold,44752,153105,INF769K01NC9,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-2.49,N/A,N/A,-1.75,N/A,N/A
-Nippon India Nivesh Lakshya Long Duration Dir,Direct,Commodities: Gold,36522,143704,INF204KB1YQ1,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-1.74,6.34,5.47,-1.75,6.32,5.42
-SBI Long Duration Dir,Direct,Commodities: Gold,42950,151214,INF200KA16T4,--,--,0.01,4.79,6.08,0.01,N/A,N/A,N/A,N/A,N/A,N/A,2,1,8,1,1,13,Moderately High Risk,N/A,N/A,N/A,N/A,-1.69,6.45,N/A,-1.75,6.32,N/A
-UTI Long Duration Dir,Direct,Commodities: Gold,43279,151523,INF789F1AYB5,--,--,-0.11,4.82,5.49,-0.14,N/A,N/A,N/A,N/A,N/A,N/A,1,1,8,1,1,12,High Risk,N/A,N/A,N/A,N/A,-2.96,5.87,N/A,-1.75,6.32,N/A
-360 ONE Flexicap Dir,Direct,Commodities: Silver,43547,151796,INF579M01AS1,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.74,N/A,N/A,4.81,N/A,N/A
-360 ONE Focused Dir,Direct,Commodities: Silver,28458,131580,INF579M01902,0.06,0.92,0.48,13.95,12.74,0.60,30,50.36%,30.45%,72.14%,4.14,25.07,2,4,8,1,3,18,Moderately High Risk,N/A,N/A,N/A,N/A,1.08,15.46,15.6,4.81,16.41,14.62
-Abakkus Flexi Cap Dir,Direct,Commodities: Silver,45683,154043,INF2JJD01136,--,--,--,--,--,--,44,32.03%,19.27%,55.63%,2.96,22.32,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-ABSL Bal Bhavishya Yojna Dir,Direct,Commodities: Silver,38821,146407,INF209KB1E84,0.16,0.94,0.49,14.22,12.99,0.61,N/A,N/A,N/A,N/A,N/A,N/A,2,4,8,1,3,18,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-ABSL BSE 500 Momentum 50 Index Fund Dir,Direct,Commodities: Silver,45377,153736,INF209KC1589,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,8.25,16.69,11.9,4.81,16.41,14.62
-ABSL BSE 500 Quality 50 Index Dir,Direct,Commodities: Silver,45381,153740,INF209KC1613,--,--,--,--,--,--,50,40.98%,20.96%,59.55%,7.65,22.31,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,8.06,19.57,15.5,4.81,16.41,14.62
-ABSL Flexi Cap Dir,Direct,Commodities: Silver,15741,120564,INF209K01XX1,3.02,0.95,0.70,14.03,15.91,0.89,78,31.98%,20.25%,59.33%,3.50,25.24,2,10,8,1,3,24,Moderate Risk,N/A,N/A,N/A,N/A,5.89,18.11,15.09,4.81,16.41,14.62
-ABSL Focused Dir,Direct,Commodities: Silver,15883,119564,INF209K01WE3,2.26,0.91,0.65,13.62,14.86,0.87,31,46.80%,27.33%,61.97%,3.27,24.27,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,13.53,19.21,13.46,4.81,16.41,14.62
-ABSL Retirement 30s Dir,Direct,Commodities: Silver,39181,146575,INF209KB1I23,1.84,0.94,0.60,14.35,14.66,0.77,74,24.36%,13.75%,53.10%,3.48,24.63,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Angel One Nifty Total Market ETF,Direct,Commodities: Silver,44964,153332,INF1J2R01015,--,--,--,--,--,--,751,30.57%,21.28%,53.25%,2.97,20.44,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.34,N/A,N/A,4.81,N/A,N/A
-Angel One Nifty Total Market Index Dir,Direct,Commodities: Silver,44963,153330,INF1J2R01023,--,--,--,--,--,--,751,30.50%,21.23%,53.12%,3.14,21.34,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.27,N/A,N/A,4.81,N/A,N/A
-Angel One Nifty Total Market Momentum Quality 50 ETF,Direct,Commodities: Silver,45605,153957,INF1J2R01148,--,--,--,--,--,--,50,48.57%,26.19%,69.61%,5.95,28.19,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Angel One Nifty Total Market Momentum Quality 50 Index Dir,Direct,Commodities: Silver,45607,153956,INF1J2R01122,--,--,--,--,--,--,50,48.71%,26.24%,69.86%,5.54,27.38,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Axis Flexi Cap Dir,Direct,Commodities: Silver,34711,141925,INF846K01B28,0.31,0.97,0.50,14.73,13.33,0.58,60,40.48%,24.27%,56.98%,4.35,30.28,2,4,8,1,2,17,Moderately High Risk,N/A,N/A,N/A,N/A,3.99,16.58,12.85,4.81,16.41,14.62
-Axis Focused Dir,Direct,Commodities: Silver,15684,120468,INF846K01CQ8,-2.30,0.92,0.30,14.49,10.41,0.42,28,48.57%,28.44%,55.78%,4.51,29.48,2,2,8,1,3,16,Moderately High Risk,N/A,N/A,N/A,N/A,-1.76,12.54,8.08,4.81,16.41,14.62
-Axis Nifty 500 Index Dir,Direct,Commodities: Silver,44413,152731,INF846K019W9,--,--,--,--,--,--,501,31.59%,21.98%,53.95%,3.15,21.12,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.3,N/A,N/A,4.81,N/A,N/A
-Axis Nifty500 Momentum 50 Index Dir,Direct,Commodities: Silver,44905,153244,INF846KA1044,--,--,--,--,--,--,50,44.54%,24.34%,75.37%,4.37,26.75,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.77,N/A,N/A,4.81,N/A,N/A
-Axis Nifty500 Quality 50 Index Dir,Direct,Commodities: Silver,45468,153829,INF846KA1200,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Bajaj Finserv Flexi Cap Dir,Direct,Commodities: Silver,43653,151895,INF0QA701342,--,--,--,--,--,--,58,35.54%,20.15%,57.08%,3.87,27.71,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,10.13,N/A,N/A,4.81,N/A,N/A
-Bandhan Flexi Cap Dir,Direct,Commodities: Silver,16501,118424,INF194K01W62,1.28,0.87,0.58,13.12,13.61,0.70,N/A,N/A,N/A,N/A,N/A,N/A,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,4.26,16.74,14.2,4.81,16.41,14.62
-Bandhan Focused Dir,Direct,Commodities: Silver,16507,118421,INF194K01W21,3.67,0.94,0.68,15.48,16.49,0.87,29,54.05%,32.31%,66.71%,2.25,15.97,2,10,8,1,3,24,Moderate Risk,N/A,N/A,N/A,N/A,7.54,20.86,16.15,4.81,16.41,14.62
-Bandhan Nifty 500 Momentum 50 Index Dir,Direct,Commodities: Silver,44630,153003,INF194KB1IY0,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.44,N/A,N/A,4.81,N/A,N/A
-Bandhan Nifty Alpha 50 Index Dir,Direct,Commodities: Silver,43864,152177,INF194KB1HA2,--,--,--,--,--,--,50,32.42%,18.42%,78.06%,3.15,20.00,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,4.18,N/A,N/A,4.81,N/A,N/A
-Bandhan Nifty Total Mkt Index Dir,Direct,Commodities: Silver,44403,152716,INF194KB1IK9,--,--,--,--,--,--,750,30.50%,21.22%,53.17%,3.14,21.34,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.11,N/A,N/A,4.81,N/A,N/A
-Bank of India Flexi Cap Dir,Direct,Commodities: Silver,41018,148404,INF761K01FF5,6.56,1.08,0.81,17.80,20.41,1.14,58,31.88%,18.45%,56.27%,3.13,20.69,4,10,7,2,1,24,Moderate Risk,N/A,N/A,N/A,N/A,13.15,24.75,21.03,4.81,16.41,14.62
-Baroda BNP Paribas Children's Dir,Direct,Commodities: Silver,44780,153171,INF251K01UE9,--,--,--,--,--,--,52,31.04%,19.39%,56.91%,3.74,26.79,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,10.57,N/A,N/A,4.81,N/A,N/A
-Baroda BNP Paribas Flexi Cap Dir,Direct,Commodities: Silver,42312,150387,INF251K01QZ2,1.16,1.00,0.55,15.10,14.39,0.65,43,32.58%,18.56%,58.45%,3.06,24.80,2,6,8,1,2,19,Moderately High Risk,N/A,N/A,N/A,N/A,4.09,17.27,N/A,4.81,16.41,N/A
-Baroda BNP Paribas Focused Dir,Direct,Commodities: Silver,34653,150264,INF251K01PN0,-1.31,1.09,0.39,16.62,12.56,0.47,27,51.98%,30.49%,62.71%,3.20,25.76,2,3,7,1,1,14,Moderately High Risk,N/A,N/A,N/A,N/A,-1.3,14.16,13.47,4.81,16.41,14.62
-Canara Robeco Flexi Cap Dir,Direct,Commodities: Silver,16588,118275,INF760K01EF0,0.35,0.93,0.51,13.86,13.12,0.61,72,38.76%,24.99%,56.71%,4.12,27.55,2,4,8,1,3,18,Moderately High Risk,N/A,N/A,N/A,N/A,4.31,16.09,14.44,4.81,16.41,14.62
-Canara Robeco Focused Dir,Direct,Commodities: Silver,41458,148883,INF760K01JQ6,2.01,0.93,0.62,14.06,14.76,0.74,30,48.41%,29.07%,58.14%,4.05,28.55,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,3.94,17.99,N/A,4.81,16.41,N/A
-Capitalmind Flexi Cap Dir,Direct,Commodities: Silver,45313,153738,INF226401018,--,--,--,--,--,--,35,27.64%,15.15%,42.53%,2.72,16.92,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-DSP Flexi Cap Dir,Direct,Commodities: Silver,16386,119076,INF740K01PI2,1.50,0.99,0.58,14.97,14.69,0.73,65,40.89%,27.76%,63.70%,3.13,20.69,2,8,8,1,2,21,Moderate Risk,N/A,N/A,N/A,N/A,1.21,17.43,14.37,4.81,16.41,14.62
-DSP Focused Dir,Direct,Commodities: Silver,16388,119096,INF740K01OB0,3.26,0.98,0.68,15.19,16.38,0.90,28,48.30%,29.99%,61.00%,3.12,19.82,2,10,8,1,2,23,Moderate Risk,N/A,N/A,N/A,N/A,0.49,19.38,14,4.81,16.41,14.62
-DSP Nifty500 Flexicap Quality 30 ETF,Direct,Commodities: Silver,45521,153874,INF740KA1WU9,--,--,--,--,--,--,30,66.55%,33.53%,68.14%,5.68,25.82,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-DSP Nifty500 Flexicap Quality 30 Index Dir,Direct,Commodities: Silver,45446,153801,INF740KA1WR5,--,--,--,--,--,--,30,66.36%,33.43%,67.95%,6.74,23.40,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-DSP Nifty 500 Index Dir,Direct,Commodities: Silver,45719,154088,INF740KA1XY9,--,--,--,--,--,--,500,30.69%,21.31%,52.73%,3.16,21.19,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Edelweiss Flexi Cap Dir,Direct,Commodities: Silver,29263,140353,INF843K01KK1,3.48,1.00,0.72,14.90,16.71,0.85,85,32.77%,20.96%,54.63%,3.18,23.21,2,10,8,1,2,23,Moderate Risk,N/A,N/A,N/A,N/A,6.2,20.33,17.78,4.81,16.41,14.62
-Edelweiss Focused Dir,Direct,Commodities: Silver,42298,150376,INF754K01OP1,2.05,1.00,0.62,15.02,15.27,0.69,30,51.15%,29.12%,60.35%,3.39,25.36,2,8,8,1,2,21,Moderate Risk,N/A,N/A,N/A,N/A,4.3,18.83,N/A,4.81,16.41,N/A
-Franklin India Flexi Cap Dir,Direct,Commodities: Silver,16008,118535,INF090I01FK3,2.48,0.94,0.66,14.00,15.30,0.80,54,43.51%,27.13%,55.92%,3.09,23.36,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,0.45,18.39,17.07,4.81,16.41,14.62
-Franklin India Focused Equity Dir,Direct,Commodities: Silver,15990,118564,INF090I01IW2,0.40,0.90,0.50,13.70,12.92,0.58,28,59.16%,35.71%,64.20%,3.20,23.37,2,4,8,1,3,18,Moderately High Risk,N/A,N/A,N/A,N/A,-0.48,15.47,15.68,4.81,16.41,14.62
-Groww Nifty 500 Low Volatility 50 ETF,Direct,Commodities: Silver,45217,153583,INF666M01LB9,--,--,--,--,--,--,50,43.84%,24.38%,48.37%,3.76,23.00,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Groww Nifty 500 Momentum 50 ETF,Direct,Commodities: Silver,45094,153452,INF666M01KJ4,--,--,--,--,--,--,50,44.63%,24.40%,75.65%,3.74,25.59,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.48,N/A,N/A,4.81,N/A,N/A
-Groww Nifty 500 Momentum 50 ETF FoF Dir,Direct,Commodities: Silver,45097,153453,INF666M01JX7,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Groww Nifty Total Market Index Dir,Direct,Commodities: Silver,43806,152092,INF666M01HM4,--,--,--,--,--,--,752,30.66%,21.34%,53.44%,3.13,21.27,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.14,N/A,N/A,4.81,N/A,N/A
-HDFC BSE 500 ETF,Direct,Commodities: Silver,43117,151376,INF179KC1EZ4,-0.32,1.00,0.47,14.62,12.92,0.57,500,32.26%,22.38%,53.79%,2.98,20.32,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,2.98,15.72,N/A,4.81,16.41,N/A
-HDFC BSE 500 Index Dir,Direct,Commodities: Silver,43477,151728,INF179KC1GG9,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.9,15.42,N/A,4.81,16.41,N/A
-HDFC Diversified Equity All Cap Active FoF Dir,Direct,Commodities: Silver,45485,153860,INF179KC1JU4,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-HDFC Flexi Cap Dir,Direct,Commodities: Silver,16026,118955,INF179K01UT0,5.55,0.84,0.91,12.75,17.67,1.05,59,47.24%,31.37%,64.22%,2.96,21.27,4,10,8,2,4,28,Low Risk,N/A,N/A,N/A,N/A,3.25,21.16,21.27,4.81,16.41,14.62
-HDFC Focused Dir,Direct,Commodities: Silver,16021,118950,INF179K01VK7,5.49,0.82,0.91,12.45,17.40,0.96,29,55.48%,36.41%,75.10%,3.04,21.15,4,10,8,1,4,27,Low Risk,N/A,N/A,N/A,N/A,2.74,20.73,22.71,4.81,16.41,14.62
-HDFC Retirement Savings Equity Dir,Direct,Commodities: Silver,31780,136094,INF179KB1MF0,1.40,0.89,0.59,13.23,13.86,0.71,74,41.13%,26.14%,55.48%,2.84,20.14,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,-0.01,16.02,18.2,4.81,16.41,14.62
-Helios Flexi Cap Dir,Direct,Commodities: Silver,43839,152135,INF0R8701046,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,7.34,20.03,16.85,4.81,16.41,14.62
-HSBC Flexi Cap Dir,Direct,Commodities: Silver,16320,120046,INF336L01DH5,2.23,1.04,0.62,15.74,15.74,0.74,78,27.61%,16.88%,56.88%,2.92,23.52,2,8,8,1,2,21,Moderate Risk,N/A,N/A,N/A,N/A,9.19,18.62,14.32,4.81,16.41,14.62
-HSBC Focused Dir,Direct,Commodities: Silver,41022,148411,INF336L01PB2,1.80,1.01,0.57,15.82,15.09,0.64,28,52.61%,30.64%,64.47%,3.71,27.10,2,8,8,1,2,21,Moderate Risk,N/A,N/A,N/A,N/A,8.11,N/A,N/A,4.81,N/A,N/A
-ICICI Pru BSE 500 ETF,Direct,Commodities: Silver,36037,143247,INF109KC1V59,-0.33,1.00,0.47,14.62,12.91,0.57,500,32.26%,22.38%,53.75%,2.97,20.31,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,2.96,15.7,14.13,4.81,16.41,14.62
-ICICI Pru BSE 500 ETF FOF Dir,Direct,Commodities: Silver,41852,149331,INF109KC1V91,-0.58,0.98,0.45,14.44,12.56,0.54,N/A,N/A,N/A,N/A,N/A,N/A,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,3.15,15.32,N/A,4.81,16.41,N/A
-ICICI Pru Diversified Equity All Cap Active FoF Dir,Direct,Commodities: Silver,45888,154266,INF109K1A468,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-ICICI Pru Diversified Equity All Cap Omni FoF Dir,Direct,Commodities: Silver,40662,148035,INF109KC1I49,4.38,0.91,0.81,13.63,17.00,1.00,N/A,N/A,N/A,N/A,N/A,N/A,4,10,8,2,3,27,Low Risk,N/A,N/A,N/A,N/A,5.72,21.24,19.88,4.81,16.41,14.62
-ICICI Pru Flexicap Dir,Direct,Commodities: Silver,41525,148990,INF109KC1R14,3.39,0.95,0.70,14.62,16.31,0.77,N/A,N/A,N/A,N/A,N/A,N/A,2,10,8,1,3,24,Moderate Risk,N/A,N/A,N/A,N/A,8,20.19,N/A,4.81,16.41,N/A
-ICICI Pru Focused Equity Dir,Direct,Commodities: Silver,17412,120722,INF109K018N2,5.80,0.97,0.87,14.71,18.82,1.07,30,43.97%,27.45%,63.27%,3.76,18.58,4,10,8,2,2,26,Moderate Risk,N/A,N/A,N/A,N/A,6.44,23.07,20.32,4.81,16.41,14.62
-ICICI Pru Nifty 500 Index Dir,Direct,Commodities: Silver,44820,153161,INF109KC16Y3,--,--,--,--,--,--,500,30.53%,21.25%,52.18%,3.16,21.19,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.95,N/A,N/A,4.81,N/A,N/A
-ICICI Pru Retirement Pure Equity Dir,Direct,Commodities: Silver,39055,146349,INF109KC1TS2,9.51,1.02,1.08,15.55,22.89,1.45,98,28.82%,17.75%,48.34%,3.78,29.85,6,10,8,2,2,28,Low Risk,N/A,N/A,N/A,N/A,17.29,27.74,24.58,4.81,16.41,14.62
-Invesco India Flexi Cap Dir,Direct,Commodities: Silver,42014,149763,INF205KA1494,3.81,1.02,0.69,16.12,17.22,0.76,63,34.18%,20.37%,64.64%,5.18,34.72,2,10,7,1,2,22,Moderate Risk,N/A,N/A,N/A,N/A,8.59,22.55,N/A,4.81,16.41,N/A
-Invesco India Focused Dir,Direct,Commodities: Silver,41096,148481,INF205KA1213,5.99,0.98,0.81,16.25,19.11,1.14,20,61.15%,36.90%,74.10%,5.11,32.42,4,10,7,2,2,25,Moderate Risk,N/A,N/A,N/A,N/A,12.29,N/A,N/A,4.81,N/A,N/A
-ITI Flexi Cap Dir,Direct,Commodities: Silver,43120,151379,INF00XX01CO7,5.37,1.06,0.80,16.40,19.07,0.96,74,30.17%,19.88%,53.44%,3.42,23.84,4,10,7,1,1,23,Moderate Risk,N/A,N/A,N/A,N/A,2.63,21.97,N/A,4.81,16.41,N/A
-ITI Focused Dir,Direct,Commodities: Silver,43534,151777,INF00XX01CS8,--,--,--,--,--,--,31,46.22%,26.62%,53.83%,3.52,25.15,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-2.38,24.34,18.33,4.81,16.41,14.62
-JioBlackRock Flexi Cap Dir,Direct,Commodities: Silver,45482,153859,INF22M001093,--,--,--,--,--,--,107,39.79%,25.66%,55.06%,2.93,18.66,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-1.47,20.94,19.02,4.81,16.41,14.62
-JM Flexicap Dir,Direct,Commodities: Silver,16547,120492,INF192K01CC7,N/A,N/A,N/A,N/A,N/A,N/A,77,29.98%,17.36%,54.47%,2.72,20.23,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.7,18.78,15.87,4.81,16.41,14.62
-JM Focused Dir,Direct,Commodities: Silver,16539,120488,INF192K01BW7,1.41,1.02,0.55,16.06,14.79,0.68,28,47.01%,25.74%,59.67%,3.96,30.19,2,6,7,1,2,18,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Kotak Flexicap Dir,Direct,Commodities: Silver,17140,120166,INF174K01LS2,1.32,0.95,0.57,14.37,14.23,0.67,59,42.60%,25.95%,62.03%,3.04,22.76,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,6.75,17.5,15.09,4.81,16.41,14.62
-Kotak Focused Dir,Direct,Commodities: Silver,40098,147473,INF174KA1EN7,2.79,0.93,0.69,13.86,15.53,0.76,29,47.15%,27.04%,65.27%,3.70,25.96,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,12.32,19.29,16.58,4.81,16.41,14.62
-Kotak Nifty500 Momentum 50 Index Dir,Direct,Commodities: Silver,45646,154032,INF174KA1YC8,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,4.39,23.78,N/A,4.81,16.41,N/A
-Kotak Nifty Alpha 50 ETF,Direct,Commodities: Silver,41896,149397,INF174KA1IA5,4.37,1.35,0.63,22.29,20.16,0.81,N/A,N/A,N/A,N/A,N/A,N/A,2,10,4,1,1,18,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Kotak Nifty Alpha 50 Index Dir,Direct,Commodities: Silver,45402,153781,INF174KA1XG1,--,--,--,--,--,--,50,32.29%,18.36%,77.73%,3.15,20.00,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-LIC MF Children's Dir,Direct,Commodities: Silver,17648,120285,INF767K01FB1,-2.95,0.89,0.24,14.12,9.47,0.26,58,24.89%,14.66%,47.95%,3.74,25.80,2,2,8,1,3,16,Moderately High Risk,N/A,N/A,N/A,N/A,1.93,12.08,9.9,4.81,16.41,14.62
-LIC MF Flexi Cap Dir,Direct,Commodities: Silver,16756,120264,INF767K01EG3,-1.30,1.00,0.38,15.53,11.93,0.44,69,29.58%,18.17%,52.13%,3.36,24.68,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,5.99,14.32,13.01,4.81,16.41,14.62
-LIC MF Focused Dir,Direct,Commodities: Silver,34738,152010,INF397L01KA7,-4.04,0.97,0.20,15.03,8.98,0.24,30,50.58%,29.59%,51.18%,3.38,21.06,2,1,8,1,2,14,Moderately High Risk,N/A,N/A,N/A,N/A,-2.99,10.68,11.54,4.81,16.41,14.62
-Mahindra Manulife Flexi Cap Dir,Direct,Commodities: Silver,41633,149104,INF174V01AS2,1.08,0.95,0.56,14.07,13.95,0.69,N/A,N/A,N/A,N/A,N/A,N/A,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,1.57,16.6,N/A,4.81,16.41,N/A
-Mahindra Manulife Focused Dir,Direct,Commodities: Silver,41169,148567,INF174V01AG7,4.78,0.92,0.81,14.09,17.43,1.02,30,47.89%,28.61%,56.88%,2.37,18.37,4,10,8,2,3,27,Low Risk,N/A,N/A,N/A,N/A,4.04,20.47,19.45,4.81,16.41,14.62
-Mirae Asset Flexi Cap Dir,Direct,Commodities: Silver,43134,151412,INF769K01JJ2,1.90,0.94,0.62,13.93,14.72,0.75,85,31.26%,21.24%,56.63%,3.41,22.61,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,8.04,17.76,N/A,4.81,16.41,N/A
-Mirae Asset Focused Dir,Direct,Commodities: Silver,39823,147206,INF769K01EU0,-5.19,0.92,0.10,14.48,7.48,0.12,28,52.33%,33.35%,60.03%,3.50,24.87,2,1,8,1,3,15,Moderately High Risk,N/A,N/A,N/A,N/A,-3.57,10.43,9.93,4.81,16.41,14.62
-Mirae Asset Nifty Total Market Index Dir,Direct,Commodities: Silver,44601,152968,INF769K01MD9,--,--,--,--,--,--,750,30.54%,21.25%,53.20%,3.14,21.34,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.28,N/A,N/A,4.81,N/A,N/A
-Motilal Oswal BSE 1000 Index Dir,Direct,Commodities: Silver,45219,153596,INF247L01FM9,--,--,--,--,--,--,1,30.48%,21.15%,51.96%,3.05,20.99,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Motilal Oswal Diversified Equity Flexicap Passive FoF Dir,Direct,Commodities: Silver,45729,154112,INF247L01GL9,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Motilal Oswal Flexi Cap Dir,Direct,Commodities: Silver,26125,129046,INF247L01502,5.71,0.98,0.75,17.05,18.83,0.99,26,53.09%,31.48%,71.58%,4.12,31.58,2,10,7,1,2,22,Moderate Risk,N/A,N/A,N/A,N/A,-1.92,22.25,13.95,4.81,16.41,14.62
-Motilal Oswal Focused Dir,Direct,Commodities: Silver,19514,122389,INF247L01189,-3.13,1.03,0.24,17.93,10.35,0.30,N/A,N/A,N/A,N/A,N/A,N/A,2,1,7,1,2,13,Moderately High Risk,N/A,N/A,N/A,N/A,13.48,13.06,10.2,4.81,16.41,14.62
-Motilal Oswal Nifty 500 ETF,Direct,Commodities: Silver,43812,152106,INF247L01BU1,--,--,--,--,--,--,501,31.75%,22.10%,54.26%,3.00,20.29,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.39,N/A,N/A,4.81,N/A,N/A
-Motilal Oswal Nifty 500 Index Dir,Direct,Commodities: Silver,40240,147625,INF247L01957,0.01,1.00,0.49,14.63,13.25,0.60,501,31.74%,22.09%,54.26%,3.15,21.12,2,4,8,1,2,17,Moderately High Risk,N/A,N/A,N/A,N/A,3.43,16.13,14.23,4.81,16.41,14.62
-Motilal Oswal Nifty 500 Momentum 50 ETF,Direct,Commodities: Silver,44555,152874,INF247L01DK8,--,--,--,--,--,--,50,44.68%,24.41%,75.68%,3.74,25.59,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.26,N/A,N/A,4.81,N/A,N/A
-Motilal Oswal Nifty 500 Momentum 50 Index Dir,Direct,Commodities: Silver,44554,152875,INF247L01DL6,--,--,--,--,--,--,50,44.67%,24.41%,75.65%,4.37,26.75,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.51,N/A,N/A,4.81,N/A,N/A
-Motilal Oswal Nifty Alpha 50 ETF,Direct,Commodities: Silver,45363,153724,INF247L01FR8,--,--,--,--,--,--,50,32.36%,18.40%,77.86%,3.38,24.17,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Navi Flexi Cap Dir,Direct,Commodities: Silver,36686,143793,INF959L01DT9,-0.61,0.96,0.43,14.67,12.37,0.54,65,31.57%,19.04%,60.91%,3.24,20.99,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,-1.43,N/A,N/A,4.81,N/A,N/A
-Nippon India Diversified Equity Flexicap Passive FoF Dir,Direct,Commodities: Silver,41241,148642,INF204KB16X6,-0.22,1.00,0.48,14.71,13.03,0.61,N/A,N/A,N/A,N/A,N/A,N/A,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,10.22,15.96,15.04,4.81,16.41,14.62
-Nippon India Flexi Cap Dir,Direct,Commodities: Silver,41616,149094,INF204KC1121,0.73,0.98,0.53,14.77,13.87,0.63,N/A,N/A,N/A,N/A,N/A,N/A,2,6,8,1,2,19,Moderately High Risk,N/A,N/A,N/A,N/A,2.74,15.59,14.05,4.81,16.41,14.62
-Nippon India Focused Dir,Direct,Commodities: Silver,16129,118692,INF204K01F95,0.10,0.92,0.48,14.09,12.78,0.64,N/A,N/A,N/A,N/A,N/A,N/A,2,4,8,1,3,18,Moderately High Risk,N/A,N/A,N/A,N/A,3.8,17.25,N/A,4.81,16.41,N/A
-Nippon India Nifty 500 Low Volatility 50 Index Dir,Direct,Commodities: Silver,45109,153474,INF204KC1EQ2,--,--,--,--,--,--,50,44.01%,24.45%,48.74%,3.91,20.36,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,4.98,16.43,14.99,4.81,16.41,14.62
-Nippon India Nifty 500 Momentum 50 Index Dir,Direct,Commodities: Silver,44558,152881,INF204KC1DG5,--,--,--,--,--,--,50,44.39%,24.24%,75.18%,4.37,26.75,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Nippon India Nifty 500 Quality 50 Index Dir,Direct,Commodities: Silver,45105,153470,INF204KC1EW0,--,--,--,--,--,--,49,39.07%,22.72%,60.51%,7.25,23.20,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.64,N/A,N/A,4.81,N/A,N/A
-Nippon India Retirement Wealth Creation Dir,Direct,Commodities: Silver,29291,133568,INF204KA1B72,2.06,0.97,0.62,14.54,15.10,0.74,74,41.79%,26.68%,60.02%,3.25,22.73,2,8,8,1,2,21,Moderate Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-NJ Flexi Cap Dir,Direct,Commodities: Silver,43714,151917,INF0J8L01156,--,--,--,--,--,--,51,40.90%,23.86%,60.11%,4.27,24.16,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.96,18.61,16.04,4.81,16.41,14.62
-Old Bridge Flexi Cap Dir,Direct,Commodities: Silver,45846,154225,INF0S5R01133,--,--,--,--,--,--,19,25.60%,14.79%,26.35%,2.66,14.25,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Old Bridge Focused Dir,Direct,Commodities: Silver,44038,152358,INF0S5R01042,--,--,--,--,--,--,23,47.86%,27.65%,48.99%,2.58,13.80,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,8.73,N/A,N/A,4.81,N/A,N/A
-Parag Parikh Flexi Cap Dir,Direct,Commodities: Silver,19701,122639,INF879O01027,6.06,0.62,1.08,9.76,16.55,1.41,43,48.82%,31.26%,53.24%,2.92,16.06,6,10,8,2,4,30,Low Risk,N/A,N/A,N/A,N/A,3.42,14.48,13.3,4.81,16.41,14.62
-PGIM India Flexi Cap Dir,Direct,Commodities: Silver,29473,133839,INF663L01FF1,-1.45,0.90,0.37,13.88,11.11,0.48,78,34.67%,23.78%,56.11%,4.25,27.12,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,5.01,18.7,17.41,4.81,16.41,14.62
-Quant Flexi Cap Dir,Direct,Commodities: Silver,17377,120843,INF966L01911,1.91,1.10,0.56,17.50,15.86,0.89,31,56.17%,35.36%,68.33%,3.19,23.94,2,8,7,1,1,19,Moderately High Risk,N/A,N/A,N/A,N/A,7.99,20.56,20.42,4.81,16.41,14.62
-Quantum Diversified Equity All Cap Active FoF Dir,Direct,Commodities: Silver,10550,112039,INF082J01093,0.60,0.93,0.53,13.77,13.36,0.61,N/A,N/A,N/A,N/A,N/A,N/A,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,2.67,16.28,13.76,4.81,16.41,14.62
-Samco Flexi Cap Dir,Direct,Commodities: Silver,41935,149450,INF0K1H01024,-10.75,1.08,-0.16,18.89,3.09,-0.17,25,48.86%,26.19%,67.24%,5.07,24.39,1,1,6,1,1,10,High Risk,N/A,N/A,N/A,N/A,2.53,13.04,12.58,4.81,16.41,14.62
-SBI Flexicap Dir,Direct,Commodities: Silver,17514,119718,INF200K01UG1,-1.48,0.89,0.37,13.24,10.95,0.42,69,38.33%,22.00%,64.16%,2.74,20.69,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,15.37,20.39,16.53,4.81,16.41,14.62
-SBI Focused Dir,Direct,Commodities: Silver,16324,119727,INF200K01RJ1,4.70,0.75,0.84,12.02,16.15,1.06,26,47.28%,27.72%,62.08%,3.93,23.00,4,10,8,2,4,28,Low Risk,N/A,N/A,N/A,N/A,3.2,N/A,N/A,4.81,N/A,N/A
-SBI Nifty 500 Index Dir,Direct,Commodities: Silver,44567,152908,INF200KB1381,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.82,13.64,15.59,4.81,16.41,14.62
-SBI Retirement Benefit Aggressive Dir,Direct,Commodities: Silver,41271,148683,INF200KA1S55,-2.16,0.93,0.33,13.95,10.58,0.38,53,42.44%,27.21%,60.46%,3.51,26.19,2,2,8,1,3,16,Moderately High Risk,N/A,N/A,N/A,N/A,0,4.14,N/A,4.81,16.41,N/A
-Shriram Flexi Cap Dir,Direct,Commodities: Silver,37581,144905,INF680P01109,-3.14,1.02,0.26,16.49,10.24,0.29,71,37.44%,23.50%,56.11%,3.06,17.87,2,1,7,1,2,13,Moderately High Risk,N/A,N/A,N/A,N/A,-0.54,12.2,11.61,4.81,16.41,14.62
-Sundaram Flexi Cap Dir,Direct,Commodities: Silver,42504,150571,INF903JA1LE2,0.18,0.91,0.49,13.71,12.78,0.59,56,41.51%,25.52%,61.96%,2.81,20.40,2,4,8,1,3,18,Moderately High Risk,N/A,N/A,N/A,N/A,3.88,15.85,N/A,4.81,16.41,N/A
-Sundaram Focused Dir,Direct,Commodities: Silver,16614,149533,INF173K01EK6,-0.07,0.84,0.47,12.77,12.00,0.57,29,54.01%,32.94%,64.30%,3.94,28.14,2,3,8,1,4,18,Moderately High Risk,N/A,N/A,N/A,N/A,1.41,14.36,13.05,4.81,16.41,14.62
-Tata Children's Dir,Direct,Commodities: Silver,16957,119312,INF277K01QW4,-4.38,0.97,0.18,14.64,8.68,0.23,52,38.98%,23.15%,57.46%,2.51,16.83,2,1,8,1,2,14,Moderately High Risk,N/A,N/A,N/A,N/A,3.22,N/A,N/A,4.81,N/A,N/A
-Tata Flexi Cap Dir,Direct,Commodities: Silver,37437,144546,INF277K015K0,2.11,0.87,0.63,13.21,14.39,0.81,56,36.81%,23.58%,54.47%,2.76,21.48,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,-4.85,11.37,11.76,4.81,16.41,14.62
-Tata Focused Dir,Direct,Commodities: Silver,40405,147757,INF277K017X9,0.64,0.93,0.52,14.10,13.35,0.60,27,49.61%,30.16%,55.85%,2.91,22.16,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,1.78,17.45,13.92,4.81,16.41,14.62
-Tata Retirement Savings Progressive Dir,Direct,Commodities: Silver,17020,119251,INF277K01QO1,0.89,0.94,0.53,14.62,13.73,0.66,45,38.62%,22.88%,58.41%,3.75,25.31,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,2.88,16.45,15.31,4.81,16.41,14.62
-Taurus Flexi Cap Dir,Direct,Commodities: Silver,16705,118883,INF044D01BU9,-1.35,0.99,0.38,15.03,11.79,0.49,43,49.01%,31.01%,57.22%,2.51,16.67,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,5.05,17.99,13.94,4.81,16.41,14.62
-The Wealth Company Flexi Cap Dir,Direct,Commodities: Silver,45499,153872,INF2F0001040,--,--,--,--,--,--,40,33.49%,19.25%,64.09%,3.52,21.88,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,0.27,14.03,12.11,4.81,16.41,14.62
-TRUST MF Flexi Cap Dir,Direct,Commodities: Silver,44271,152584,INF0GCD01743,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Unifi Flexi Cap Dir,Direct,Commodities: Silver,45189,153543,INF1MIY01031,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-0.62,13.65,11.92,4.81,16.41,14.62
-Union Children's Dir,Direct,Commodities: Silver,43924,152219,INF582M01JK3,--,--,--,--,--,--,63,28.40%,17.20%,61.79%,3.61,27.88,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-5.61,10.75,7.94,4.81,16.41,14.62
-Union Diversified Equity All Cap Active FoF Dir,Direct,Commodities: Silver,45473,153824,INF582M01LZ7,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,1.14,15.76,N/A,4.81,16.41,N/A
-Union Flexi Cap Dir,Direct,Commodities: Silver,16412,119292,INF582M01633,0.59,0.94,0.52,14.23,13.43,0.57,72,31.47%,19.76%,59.08%,3.48,24.81,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Union Focused Dir,Direct,Commodities: Silver,40108,147492,INF582M01FS4,-0.03,0.85,0.45,13.47,12.15,0.52,N/A,N/A,N/A,N/A,N/A,N/A,2,3,8,1,4,18,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Union Retirement Dir,Direct,Commodities: Silver,42492,150554,INF582M01IK5,3.38,0.91,0.73,13.70,16.00,0.85,73,31.29%,19.89%,60.16%,3.86,26.35,2,10,8,1,3,24,Moderate Risk,N/A,N/A,N/A,N/A,5.97,N/A,N/A,4.81,N/A,N/A
-UTI Children's Equity Dir,Direct,Commodities: Silver,15867,120724,,-1.62,0.96,0.37,14.41,11.33,0.46,64,44.57%,28.84%,60.21%,3.55,24.67,2,2,8,1,2,15,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-UTI Flexi Cap Dir,Direct,Commodities: Silver,15714,120662,INF789F01TC4,-4.07,0.87,0.16,13.85,8.25,0.22,59,44.52%,27.49%,63.56%,4.68,34.39,2,1,8,1,3,15,Moderately High Risk,N/A,N/A,N/A,N/A,3.47,16.43,15,4.81,16.41,14.62
-UTI Focused Dir,Direct,Commodities: Silver,41629,149091,INF789F1AVA3,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,8.99,15.46,13.66,4.81,16.41,14.62
-UTI Nifty500 Shariah Index Dir,Direct,Commodities: Silver,45821,154197,INF789F1AD04,--,--,--,--,--,--,198,33.57%,22.94%,55.28%,4.10,22.30,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,8.91,19.44,N/A,4.81,16.41,N/A
-WhiteOak Capital Flexi Cap Dir,Direct,Commodities: Silver,42320,150346,INF03VN01530,4.36,0.91,0.79,13.89,16.99,1.00,N/A,N/A,N/A,N/A,N/A,N/A,2,10,8,2,3,25,Moderate Risk,N/A,N/A,N/A,N/A,4.62,20.53,N/A,4.81,16.41,N/A
-ABSL Long Duration Reg,Regular,Commodities: Gold,42336,150482,INF209KB14J9,--,--,-0.03,3.81,5.91,-0.04,N/A,N/A,N/A,N/A,N/A,N/A,1,1,8,1,1,12,High Risk,7.77,8.92,22.57,AAA,-1.14,6.1,N/A,-2.2,5.78,N/A
-Axis Long Duration Reg,Regular,Commodities: Gold,42910,151178,INF846K015L0,--,--,-0.19,4.92,5.10,-0.24,N/A,N/A,N/A,N/A,N/A,N/A,1,1,8,1,1,12,High Risk,7.29,11.27,30.06,GOI/Cash,-2.94,5.58,N/A,-2.2,5.78,N/A
-Bandhan Long Duration Reg,Regular,Commodities: Gold,44182,152518,INF194KB1HV8,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,6.71,8.24,18.38,GOI/Cash,-1.72,N/A,N/A,-2.2,N/A,N/A
-Franklin India Long Duration Fund Reg,Regular,Commodities: Gold,44762,153104,INF090I01XV3,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,7.35,9.56,25.32,AAA,-0.38,N/A,N/A,-2.2,N/A,N/A
-HDFC Long Duration Debt Reg,Regular,Commodities: Gold,43048,151314,INF179KC1EW1,--,--,-0.14,5.15,5.30,-0.18,N/A,N/A,N/A,N/A,N/A,N/A,1,1,8,1,1,12,High Risk,7.41,11.72,28.88,AAA,-2.85,5.73,N/A,-2.2,5.78,N/A
-ICICI Pru Long Term Bond,Regular,Commodities: Gold,537,100365,INF109K01365,--,--,-0.07,3.75,5.76,-0.08,N/A,N/A,N/A,N/A,N/A,N/A,1,1,8,1,1,12,High Risk,7.57,11.52,29.17,AAA,-0.89,6.12,4.8,-2.2,5.78,4.97
-Kotak Long Duration Reg,Regular,Commodities: Gold,44190,152489,INF174KA1RC2,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,7.49,11.99,18.25,AAA,-3.43,N/A,N/A,-2.2,N/A,N/A
-Mirae Asset Long Duration Reg,Regular,Commodities: Gold,44750,153107,INF769K01MZ2,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-2.94,N/A,N/A,-2.2,N/A,N/A
-Nippon India Nivesh Lakshya Long Duration Reg,Regular,Commodities: Gold,36516,143702,INF204KB1ZB0,--,--,-0.09,4.31,5.64,-0.11,N/A,N/A,N/A,N/A,N/A,N/A,1,1,8,1,1,12,High Risk,N/A,N/A,N/A,N/A,-2.04,6.02,5.15,-2.2,5.78,4.97
-SBI Long Duration Reg,Regular,Commodities: Gold,42948,151212,INF200KA13T1,--,--,-0.08,4.79,5.66,-0.10,N/A,N/A,N/A,N/A,N/A,N/A,1,1,8,1,1,12,High Risk,7.38,12.26,38.03,GOI/Cash,-2.05,6.02,N/A,-2.2,5.78,N/A
-UTI Long Duration Reg,Regular,Commodities: Gold,43274,151527,INF789F1AXS1,--,--,-0.31,4.81,4.55,-0.38,N/A,N/A,N/A,N/A,N/A,N/A,1,1,8,1,1,12,High Risk,6.98,10.10,29.33,GOI/Cash,-3.83,4.9,N/A,-2.2,5.78,N/A
-360 ONE Flexicap Reg,Regular,Commodities: Silver,43545,151799,INF579M01AP7,--,--,--,--,--,--,49,35.67%,20.33%,65.79%,4.09,25.67,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,1.19,N/A,N/A,4.81,N/A,N/A
-360 ONE Focused Reg,Regular,Commodities: Silver,28456,131578,INF579M01878,-0.93,0.92,0.41,13.94,11.75,0.51,30,50.36%,30.45%,72.14%,4.14,25.07,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,0.09,14.34,14.43,4.81,16.41,14.62
-Abakkus Flexi Cap Reg,Regular,Commodities: Silver,45681,154041,INF2JJD01169,--,--,--,--,--,--,44,32.03%,19.27%,55.63%,2.96,22.32,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-ABSL Bal Bhavishya Yojna Reg,Regular,Commodities: Silver,38819,146409,INF209KB1E76,-1.19,0.94,0.39,14.15,11.61,0.49,71,32.68%,20.80%,53.63%,2.98,23.65,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-ABSL BSE 500 Momentum 50 Index Reg,Regular,Commodities: Silver,45375,153735,INF209KC1605,--,--,--,--,--,--,50,N/A,N/A,N/A,N/A,15.64,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,6.97,15.12,10.22,4.81,16.41,14.62
-ABSL BSE 500 Quality 50 Index Reg,Regular,Commodities: Silver,45379,153742,INF209KC1639,--,--,--,--,--,--,50,40.98%,20.96%,59.55%,7.65,22.31,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,7.2,18.62,14.55,4.81,16.41,14.62
-ABSL Flexi Cap Reg,Regular,Commodities: Silver,561,103166,INF209K01AJ8,2.21,0.95,0.65,14.02,15.09,0.82,78,31.98%,20.25%,59.33%,3.50,25.24,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,4.9,17,14.01,4.81,16.41,14.62
-ABSL Focused Reg,Regular,Commodities: Silver,2865,103309,INF209K01462,1.31,0.91,0.58,13.61,13.90,0.78,31,46.80%,27.33%,61.97%,3.27,24.27,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,12.06,17.64,11.87,4.81,16.41,14.62
-ABSL Retirement 30s Reg,Regular,Commodities: Silver,39179,146577,INF209KB1H99,0.51,0.94,0.51,14.34,13.32,0.65,74,24.36%,13.75%,53.10%,3.48,24.63,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Angel One Nifty Total Market ETF,Regular,Commodities: Silver,44964,153332,INF1J2R01015,--,--,--,--,--,--,751,30.57%,21.28%,53.25%,2.97,20.44,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.34,N/A,N/A,4.81,N/A,N/A
-Angel One Nifty Total Market Index Reg,Regular,Commodities: Silver,44962,153331,INF1J2R01031,--,--,--,--,--,--,751,30.50%,21.23%,53.12%,3.14,21.34,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.49,N/A,N/A,4.81,N/A,N/A
-Angel One Nifty Total Market Momentum Quality 50 ETF,Regular,Commodities: Silver,45605,153957,INF1J2R01148,--,--,--,--,--,--,50,48.57%,26.19%,69.61%,5.95,28.19,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Angel One Nifty Total Market Momentum Quality 50 Index Reg,Regular,Commodities: Silver,45606,153955,INF1J2R01130,--,--,--,--,--,--,50,48.71%,26.24%,69.86%,5.54,27.38,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Axis Flexi Cap Reg,Regular,Commodities: Silver,34709,141927,INF846K01B51,-0.73,0.97,0.43,14.71,12.29,0.50,60,40.48%,24.27%,56.98%,4.35,30.28,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,2.94,15.41,11.63,4.81,16.41,14.62
-Axis Focused Reg,Regular,Commodities: Silver,14951,117560,INF846K01CH7,-3.23,0.92,0.24,14.48,9.47,0.33,28,48.57%,28.44%,55.78%,4.51,29.48,2,1,8,1,3,15,Moderately High Risk,N/A,N/A,N/A,N/A,-2.66,11.5,7.01,4.81,16.41,14.62
-Axis Nifty 500 Index Reg,Regular,Commodities: Silver,44412,152730,INF846K018W1,--,--,--,--,--,--,501,31.59%,21.98%,53.95%,3.15,21.12,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.39,N/A,N/A,4.81,N/A,N/A
-Axis Nifty500 Momentum 50 Index Reg,Regular,Commodities: Silver,44904,153245,INF846KA1036,--,--,--,--,--,--,50,44.54%,24.34%,75.37%,4.37,26.75,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,1.87,N/A,N/A,4.81,N/A,N/A
-Axis Nifty500 Quality 50 Index Reg,Regular,Commodities: Silver,45467,153830,INF846KA1192,--,--,--,--,--,--,50,38.54%,22.41%,61.28%,7.29,23.31,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Bajaj Finserv Flexi Cap Reg,Regular,Commodities: Silver,43651,151898,INF0QA701383,--,--,--,--,--,--,58,35.54%,20.15%,57.08%,3.87,27.71,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,8.7,N/A,N/A,4.81,N/A,N/A
-Bandhan Flexi Cap Reg,Regular,Commodities: Silver,2886,108594,INF194K01391,0.55,0.87,0.52,13.11,12.88,0.63,94,37.97%,25.29%,58.18%,3.01,21.81,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,3.5,15.91,13.39,4.81,16.41,14.62
-Bandhan Focused Reg,Regular,Commodities: Silver,3151,108592,INF194K01466,2.37,0.94,0.59,15.46,15.19,0.76,29,54.05%,32.31%,66.71%,2.25,15.97,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,6.18,19.32,14.64,4.81,16.41,14.62
-Bandhan Nifty 500 Momentum 50 Index Reg,Regular,Commodities: Silver,44629,153002,INF194KB1IX2,--,--,--,--,--,--,50,44.64%,24.39%,75.58%,4.37,26.75,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,1.77,N/A,N/A,4.81,N/A,N/A
-Bandhan Nifty Alpha 50 Index Reg,Regular,Commodities: Silver,43862,152179,INF194KB1GX6,--,--,--,--,--,--,50,32.42%,18.42%,78.06%,3.15,20.00,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.48,N/A,N/A,4.81,N/A,N/A
-Bandhan Nifty Total Mkt Index Reg,Regular,Commodities: Silver,44402,152717,INF194KB1IH5,--,--,--,--,--,--,750,30.50%,21.22%,53.17%,3.14,21.34,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.44,N/A,N/A,4.81,N/A,N/A
-Bank of India Flexi Cap Reg,Regular,Commodities: Silver,41016,148405,INF761K01FI9,5.12,1.08,0.73,17.79,18.97,1.02,58,31.88%,18.45%,56.27%,3.13,20.69,2,10,7,2,1,22,Moderate Risk,N/A,N/A,N/A,N/A,11.5,22.97,19.23,4.81,16.41,14.62
-Baroda BNP Paribas Children's Reg,Regular,Commodities: Silver,44778,153170,INF251K01UC3,--,--,--,--,--,--,52,31.04%,19.39%,56.91%,3.74,26.79,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,8.47,N/A,N/A,4.81,N/A,N/A
-Baroda BNP Paribas Flexi Cap Reg,Regular,Commodities: Silver,42310,150385,INF251K01QW9,-0.14,1.00,0.47,15.08,13.08,0.55,43,32.58%,18.56%,58.45%,3.06,24.80,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,2.85,15.78,N/A,4.81,16.41,N/A
-Baroda BNP Paribas Focused Reg,Regular,Commodities: Silver,34651,150263,INF251K01PK6,-3.13,1.09,0.28,16.60,10.73,0.34,27,51.98%,30.49%,62.71%,3.20,25.76,2,1,7,1,1,12,High Risk,N/A,N/A,N/A,N/A,-3.06,12.11,11.48,4.81,16.41,14.62
-Canara Robeco Flexi Cap Reg,Regular,Commodities: Silver,1839,101922,INF760K01019,-0.81,0.93,0.43,13.84,11.96,0.51,72,38.76%,24.99%,56.71%,4.12,27.55,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,3.12,14.77,13.05,4.81,16.41,14.62
-Canara Robeco Focused Reg,Regular,Commodities: Silver,41456,148884,INF760K01JT0,0.56,0.93,0.52,14.05,13.30,0.62,30,48.41%,29.07%,58.14%,4.05,28.55,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,2.44,16.25,N/A,4.81,16.41,N/A
-Capitalmind Flexi Cap Reg,Regular,Commodities: Silver,45312,153739,INF226401026,--,--,--,--,--,--,35,27.64%,15.15%,42.53%,2.72,16.92,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-DSP Flexi Cap Reg,Regular,Commodities: Silver,393,105875,INF740K01037,0.46,0.99,0.51,14.96,13.64,0.64,65,40.89%,27.76%,63.70%,3.13,20.69,2,4,8,1,2,17,Moderately High Risk,N/A,N/A,N/A,N/A,0.15,16.22,13.16,4.81,16.41,14.62
-DSP Focused Reg,Regular,Commodities: Silver,11183,112901,INF740K01532,2.20,0.98,0.61,15.18,15.31,0.81,28,48.30%,29.99%,61.00%,3.12,19.82,2,8,8,1,2,21,Moderate Risk,N/A,N/A,N/A,N/A,-0.58,18.13,12.8,4.81,16.41,14.62
-DSP Nifty500 Flexicap Quality 30 ETF,Regular,Commodities: Silver,45521,153874,INF740KA1WU9,--,--,--,--,--,--,30,66.55%,33.53%,68.14%,5.68,25.82,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-DSP Nifty500 Flexicap Quality 30 Index Reg,Regular,Commodities: Silver,45444,153802,INF740KA1WO2,--,--,--,--,--,--,30,66.36%,33.43%,67.95%,6.74,23.40,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-DSP Nifty 500 Index Reg,Regular,Commodities: Silver,45717,154090,INF740KA1XV5,--,--,--,--,--,--,500,30.69%,21.31%,52.73%,3.16,21.19,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Edelweiss Flexi Cap Reg,Regular,Commodities: Silver,29261,140355,INF843K01KN5,1.93,1.00,0.61,14.88,15.15,0.73,N/A,N/A,N/A,N/A,N/A,N/A,2,8,8,1,2,21,Moderate Risk,N/A,N/A,N/A,N/A,4.65,18.5,15.91,4.81,16.41,14.62
-Edelweiss Focused Reg,Regular,Commodities: Silver,42296,150382,INF754K01OL0,0.45,1.00,0.51,15.00,13.66,0.57,30,51.15%,29.12%,60.35%,3.39,25.36,2,4,8,1,2,17,Moderately High Risk,N/A,N/A,N/A,N/A,2.69,16.96,N/A,4.81,16.41,N/A
-Franklin India Flexi Cap Reg,Regular,Commodities: Silver,116,100520,INF090I01239,1.68,0.94,0.61,13.99,14.50,0.73,54,43.51%,27.13%,55.92%,3.09,23.36,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,-0.35,17.46,16.19,4.81,16.41,14.62
-Franklin India Focused Equity Reg,Regular,Commodities: Silver,5141,105817,INF090I01981,-0.42,0.90,0.44,13.69,12.10,0.51,28,59.16%,35.71%,64.20%,3.20,23.37,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,-1.26,14.53,14.76,4.81,16.41,14.62
-Groww Nifty 500 Low Volatility 50 ETF,Regular,Commodities: Silver,45217,153583,INF666M01LB9,--,--,--,--,--,--,50,43.84%,24.38%,48.37%,3.76,23.00,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Groww Nifty 500 Momentum 50 ETF,Regular,Commodities: Silver,45094,153452,INF666M01KJ4,--,--,--,--,--,--,50,44.63%,24.40%,75.65%,3.74,25.59,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.48,N/A,N/A,4.81,N/A,N/A
-Groww Nifty 500 Momentum 50 ETF FoF Reg,Regular,Commodities: Silver,45095,153456,INF666M01KC9,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Groww Nifty Total Market Index Reg,Regular,Commodities: Silver,43804,152127,INF666M01HJ0,--,--,--,--,--,--,752,30.66%,21.34%,53.44%,3.13,21.27,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.49,N/A,N/A,4.81,N/A,N/A
-HDFC BSE 500 ETF,Regular,Commodities: Silver,43117,151376,INF179KC1EZ4,-0.32,1.00,0.47,14.62,12.92,0.57,500,32.26%,22.38%,53.79%,2.98,20.32,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,2.98,15.72,N/A,4.81,16.41,N/A
-HDFC BSE 500 Index Reg,Regular,Commodities: Silver,43476,151729,INF179KC1GH7,--,--,--,--,--,--,500,32.20%,22.34%,53.67%,3.10,20.74,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.39,14.76,N/A,4.81,16.41,N/A
-HDFC Diversified Equity All Cap Active FoF Reg,Regular,Commodities: Silver,45483,153861,INF179KC1JR0,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-HDFC Flexi Cap Reg,Regular,Commodities: Silver,219,101762,INF179K01608,4.88,0.84,0.86,12.75,17.01,0.99,59,47.24%,31.37%,64.22%,2.96,21.27,4,10,8,1,4,27,Low Risk,N/A,N/A,N/A,N/A,2.56,20.36,20.47,4.81,16.41,14.62
-HDFC Focused Reg,Regular,Commodities: Silver,2372,102760,INF179K01574,4.36,0.81,0.82,12.43,16.26,0.86,29,55.48%,36.41%,75.10%,3.04,21.15,4,10,8,1,4,27,Low Risk,N/A,N/A,N/A,N/A,1.7,19.39,21.24,4.81,16.41,14.62
-HDFC Retirement Savings Equity Reg,Regular,Commodities: Silver,31779,136090,INF179KB1MG8,0.33,0.89,0.51,13.22,12.78,0.61,74,41.13%,26.14%,55.48%,2.84,20.14,2,4,8,1,3,18,Moderately High Risk,N/A,N/A,N/A,N/A,-1.04,14.78,16.86,4.81,16.41,14.62
-Helios Flexi Cap Reg,Regular,Commodities: Silver,43837,152136,INF0R8701012,--,--,--,--,--,--,64,37.79%,23.25%,66.34%,3.71,27.36,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,6.54,19.12,15.95,4.81,16.41,14.62
-HSBC Flexi Cap Reg,Regular,Commodities: Silver,2072,102252,INF336L01AF5,1.47,1.04,0.57,15.73,14.98,0.68,78,27.61%,16.88%,56.88%,2.92,23.52,2,6,8,1,2,19,Moderately High Risk,N/A,N/A,N/A,N/A,7.98,17.25,13.27,4.81,16.41,14.62
-HSBC Focused Reg,Regular,Commodities: Silver,41020,148409,INF336L01PE6,0.62,1.01,0.50,15.80,13.91,0.55,28,52.61%,30.64%,64.47%,3.71,27.10,2,6,8,1,2,19,Moderately High Risk,N/A,N/A,N/A,N/A,6.6,N/A,N/A,4.81,N/A,N/A
-ICICI Pru BSE 500 ETF,Regular,Commodities: Silver,36037,143247,INF109KC1V59,-0.33,1.00,0.47,14.62,12.91,0.57,500,32.26%,22.38%,53.75%,2.97,20.31,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,2.96,15.7,14.13,4.81,16.41,14.62
-ICICI Pru BSE 500 ETF FOF,Regular,Commodities: Silver,41850,149334,INF109KC1V67,-1.03,0.98,0.42,14.44,12.10,0.50,N/A,N/A,N/A,N/A,N/A,N/A,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,2.67,14.8,N/A,4.81,16.41,N/A
-ICICI Pru Diversified Equity All Cap Active FoF,Regular,Commodities: Silver,45887,154265,INF109K1A450,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-ICICI Pru Diversified Equity All Cap Omni FoF,Regular,Commodities: Silver,40660,148033,INF109KC1I15,3.82,0.91,0.76,13.62,16.44,0.94,N/A,N/A,N/A,N/A,N/A,N/A,2,10,8,1,3,24,Moderate Risk,N/A,N/A,N/A,N/A,5.11,20.56,19.08,4.81,16.41,14.62
-ICICI Pru Flexicap,Regular,Commodities: Silver,41523,148989,INF109KC1Q80,2.41,0.95,0.64,14.60,15.31,0.70,75,46.55%,32.15%,69.49%,4.50,31.18,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,7.02,19.03,N/A,4.81,16.41,N/A
-ICICI Pru Focused Equity,Regular,Commodities: Silver,10399,111957,INF109K01BZ4,4.64,0.97,0.79,14.70,17.65,0.97,30,43.97%,27.45%,63.27%,3.76,18.58,2,10,8,1,2,23,Moderate Risk,N/A,N/A,N/A,N/A,5.24,21.65,18.86,4.81,16.41,14.62
-ICICI Pru Nifty 500 Index,Regular,Commodities: Silver,44818,153162,INF109KC13Y0,--,--,--,--,--,--,500,30.53%,21.25%,52.18%,3.16,21.19,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.36,N/A,N/A,4.81,N/A,N/A
-ICICI Pru Retirement Pure Equity,Regular,Commodities: Silver,39053,146346,INF109KC1TQ6,8.11,1.02,0.99,15.53,21.48,1.33,98,28.82%,17.75%,48.34%,3.78,29.85,4,10,8,2,2,26,Moderate Risk,N/A,N/A,N/A,N/A,15.7,26,22.91,4.81,16.41,14.62
-Invesco India Flexi Cap Reg,Regular,Commodities: Silver,42012,149766,INF205KA1460,2.40,1.02,0.61,16.08,15.79,0.67,63,34.18%,20.37%,64.64%,5.18,34.72,2,8,7,1,2,20,Moderate Risk,N/A,N/A,N/A,N/A,6.96,20.49,N/A,4.81,16.41,N/A
-Invesco India Focused Reg,Regular,Commodities: Silver,41094,148483,INF205KA1189,4.63,0.98,0.72,16.22,17.75,1.02,N/A,N/A,N/A,N/A,N/A,N/A,2,10,7,2,2,23,Moderate Risk,N/A,N/A,N/A,N/A,10.25,N/A,N/A,4.81,N/A,N/A
-ITI Flexi Cap Reg,Regular,Commodities: Silver,43118,151377,INF00XX01CL3,3.64,1.06,0.69,16.37,17.33,0.83,74,30.17%,19.88%,53.44%,3.42,23.84,2,10,7,1,1,21,Moderate Risk,N/A,N/A,N/A,N/A,1.3,20.25,N/A,4.81,16.41,N/A
-ITI Focused Reg,Regular,Commodities: Silver,43532,151778,INF00XX01CV2,--,--,--,--,--,--,31,46.22%,26.62%,53.83%,3.52,25.15,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-3.6,22.72,16.65,4.81,16.41,14.62
-JM Flexicap Reg,Regular,Commodities: Silver,8653,109522,INF192K01635,2.33,1.04,0.60,16.55,15.89,0.74,77,29.98%,17.36%,54.47%,2.72,20.23,2,8,7,1,2,20,Moderate Risk,N/A,N/A,N/A,N/A,-2.69,19.36,17.71,4.81,16.41,14.62
-JM Focused Reg,Regular,Commodities: Silver,6673,107410,INF192K01577,0.01,1.02,0.46,16.08,13.39,0.57,28,47.01%,25.74%,59.67%,3.96,30.19,2,4,7,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,1.05,17.14,14.48,4.81,16.41,14.62
-Kotak Flexicap Reg,Regular,Commodities: Silver,10594,112090,INF174K01336,0.46,0.95,0.51,14.36,13.36,0.60,59,42.60%,25.95%,62.03%,3.04,22.76,2,4,8,1,3,18,Moderately High Risk,N/A,N/A,N/A,N/A,5.85,16.5,14.07,4.81,16.41,14.62
-Kotak Focused Reg,Regular,Commodities: Silver,40096,147477,INF174KA1EK3,1.40,0.93,0.59,13.85,14.13,0.65,29,47.15%,27.04%,65.27%,3.70,25.96,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,10.84,17.66,14.88,4.81,16.41,14.62
-Kotak Nifty500 Momentum 50 Index Reg,Regular,Commodities: Silver,45644,154030,INF174KA1YF1,--,--,--,--,--,--,50,44.60%,24.34%,75.58%,4.37,26.75,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,4.39,23.78,N/A,4.81,16.41,N/A
-Kotak Nifty Alpha 50 ETF,Regular,Commodities: Silver,41896,149397,INF174KA1IA5,4.37,1.35,0.63,22.29,20.16,0.81,50,32.32%,18.37%,77.84%,3.38,24.17,2,10,4,1,1,18,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Kotak Nifty Alpha 50 Index Reg,Regular,Commodities: Silver,45400,153784,INF174KA1XJ5,--,--,--,--,--,--,50,32.29%,18.36%,77.73%,3.15,20.00,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-LIC MF Children's Reg,Regular,Commodities: Silver,1135,101271,INF767K01048,-3.75,0.89,0.19,14.12,8.66,0.20,58,24.89%,14.66%,47.95%,3.74,25.80,2,1,8,1,3,15,Moderately High Risk,N/A,N/A,N/A,N/A,1.1,11.18,9.07,4.81,16.41,14.62
-LIC MF Flexi Cap Reg,Regular,Commodities: Silver,134,100313,INF767K01071,-2.24,1.00,0.32,15.51,10.99,0.37,69,29.58%,18.17%,52.13%,3.36,24.68,2,2,8,1,2,15,Moderately High Risk,N/A,N/A,N/A,N/A,5.01,13.25,12.08,4.81,16.41,14.62
-LIC MF Focused Reg,Regular,Commodities: Silver,34736,152009,INF397L01KE9,-5.02,0.97,0.13,15.04,8.01,0.16,30,50.58%,29.59%,51.18%,3.38,21.06,2,1,8,1,2,14,Moderately High Risk,N/A,N/A,N/A,N/A,-4.01,9.61,10.5,4.81,16.41,14.62
-Mahindra Manulife Flexi Cap Reg,Regular,Commodities: Silver,41631,149101,INF174V01AP8,-0.59,0.95,0.44,14.04,12.27,0.55,70,37.38%,25.23%,55.52%,3.18,25.06,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,-0.05,14.68,N/A,4.81,16.41,N/A
-Mahindra Manulife Focused Reg,Regular,Commodities: Silver,41167,148571,INF174V01AD4,3.15,0.92,0.69,14.06,15.79,0.87,30,47.89%,28.61%,56.88%,2.37,18.37,2,10,8,1,3,24,Moderate Risk,N/A,N/A,N/A,N/A,2.43,18.54,17.3,4.81,16.41,14.62
-Mirae Asset Flexi Cap Reg,Regular,Commodities: Silver,43132,151414,INF769K01JG8,0.43,0.94,0.52,13.91,13.23,0.62,85,31.26%,21.24%,56.63%,3.41,22.61,2,4,8,1,3,18,Moderately High Risk,N/A,N/A,N/A,N/A,6.51,16.05,N/A,4.81,16.41,N/A
-Mirae Asset Focused Reg,Regular,Commodities: Silver,39821,147203,INF769K01ES4,-6.37,0.92,0.02,14.47,6.29,0.02,28,52.33%,33.35%,60.03%,3.50,24.87,2,1,8,1,3,15,Moderately High Risk,N/A,N/A,N/A,N/A,-4.7,9.14,8.58,4.81,16.41,14.62
-Mirae Asset Nifty Total Market Index Reg,Regular,Commodities: Silver,44599,152970,INF769K01MA5,--,--,--,--,--,--,750,30.54%,21.25%,53.20%,3.14,21.34,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.59,N/A,N/A,4.81,N/A,N/A
-Motilal Oswal BSE 1000 Index Reg,Regular,Commodities: Silver,45218,153597,INF247L01FN7,--,--,--,--,--,--,1,30.48%,21.15%,51.96%,3.05,20.99,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Motilal Oswal Diversified Equity Flexicap Passive FoF Reg,Regular,Commodities: Silver,45728,154113,INF247L01GM7,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Motilal Oswal Flexi Cap Reg,Regular,Commodities: Silver,26123,129048,INF247L01478,4.84,0.98,0.70,17.05,17.96,0.93,26,53.09%,31.48%,71.58%,4.12,31.58,2,10,7,1,2,22,Moderate Risk,N/A,N/A,N/A,N/A,-2.76,21.22,12.98,4.81,16.41,14.62
-Motilal Oswal Focused Reg,Regular,Commodities: Silver,19512,122387,INF247L01155,-4.28,1.03,0.18,17.91,9.20,0.22,29,40.85%,22.13%,55.35%,4.55,42.03,2,1,7,1,2,13,Moderately High Risk,N/A,N/A,N/A,N/A,12.2,11.77,8.93,4.81,16.41,14.62
-Motilal Oswal Nifty 500 ETF,Regular,Commodities: Silver,43812,152106,INF247L01BU1,--,--,--,--,--,--,501,31.75%,22.10%,54.26%,3.00,20.29,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,3.39,N/A,N/A,4.81,N/A,N/A
-Motilal Oswal Nifty 500 Index Reg,Regular,Commodities: Silver,40239,147626,INF247L01940,-0.69,1.00,0.45,14.63,12.55,0.54,501,31.74%,22.09%,54.26%,3.15,21.12,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,2.67,15.32,13.45,4.81,16.41,14.62
-Motilal Oswal Nifty 500 Momentum 50 ETF,Regular,Commodities: Silver,44555,152874,INF247L01DK8,--,--,--,--,--,--,50,44.68%,24.41%,75.68%,3.74,25.59,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.26,N/A,N/A,4.81,N/A,N/A
-Motilal Oswal Nifty 500 Momentum 50 Index Reg,Regular,Commodities: Silver,44553,152876,INF247L01DM4,--,--,--,--,--,--,50,44.67%,24.41%,75.65%,4.37,26.75,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,1.81,N/A,N/A,4.81,N/A,N/A
-Motilal Oswal Nifty Alpha 50 ETF,Regular,Commodities: Silver,45363,153724,INF247L01FR8,--,--,--,--,--,--,50,32.36%,18.40%,77.86%,3.38,24.17,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Navi Flexi Cap Reg,Regular,Commodities: Silver,36680,143787,INF959L01EE9,-2.43,0.96,0.31,14.65,10.54,0.38,65,31.57%,19.04%,60.91%,3.24,20.99,2,2,8,1,2,15,Moderately High Risk,N/A,N/A,N/A,N/A,-2.79,N/A,N/A,4.81,N/A,N/A
-Nippon India Diversified Equity Flexicap Passive FoF Reg,Regular,Commodities: Silver,41239,148641,INF204KB13X3,-0.60,1.00,0.45,14.71,12.65,0.57,N/A,N/A,N/A,N/A,N/A,N/A,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,8.33,13.88,12.93,4.81,16.41,14.62
-Nippon India Flexi Cap Reg,Regular,Commodities: Silver,41614,149089,INF204KC1097,-0.58,0.98,0.44,14.75,12.55,0.52,83,34.67%,23.14%,56.46%,3.31,23.26,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,2.36,15.16,13.53,4.81,16.41,14.62
-Nippon India Focused Reg,Regular,Commodities: Silver,3900,104637,INF204K01GE7,-0.59,0.92,0.43,14.09,12.09,0.57,N/A,N/A,N/A,N/A,N/A,N/A,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,2.49,15.74,N/A,4.81,16.41,N/A
-Nippon India Nifty 500 Low Volatility 50 Index Reg,Regular,Commodities: Silver,45107,153475,INF204KC1EN9,--,--,--,--,--,--,50,44.01%,24.45%,48.74%,3.91,20.36,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,4.26,15.63,14.2,4.81,16.41,14.62
-Nippon India Nifty 500 Momentum 50 Index Reg,Regular,Commodities: Silver,44556,152883,INF204KC1DD2,--,--,--,--,--,--,50,44.39%,24.24%,75.18%,4.37,26.75,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Nippon India Nifty 500 Quality 50 Index Reg,Regular,Commodities: Silver,45103,153472,INF204KC1ET6,--,--,--,--,--,--,49,39.07%,22.72%,60.51%,7.25,23.20,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2,N/A,N/A,4.81,N/A,N/A
-Nippon India Retirement Wealth Creation Reg,Regular,Commodities: Silver,29289,133565,INF204KA1B64,1.10,0.97,0.56,14.53,14.13,0.66,74,41.79%,26.68%,60.02%,3.25,22.73,2,6,8,1,2,19,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-NJ Flexi Cap Reg,Regular,Commodities: Silver,43712,151920,INF0J8L01131,--,--,--,--,--,--,51,40.90%,23.86%,60.11%,4.27,24.16,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,1.98,17.48,14.91,4.81,16.41,14.62
-Old Bridge Flexi Cap Reg,Regular,Commodities: Silver,45844,154226,INF0S5R01166,--,--,--,--,--,--,19,25.60%,14.79%,26.35%,2.66,14.25,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Old Bridge Focused Reg,Regular,Commodities: Silver,44036,152361,INF0S5R01034,--,--,--,--,--,--,23,47.86%,27.65%,48.99%,2.58,13.80,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,7.54,N/A,N/A,4.81,N/A,N/A
-Parag Parikh Flexi Cap Reg,Regular,Commodities: Silver,19699,122640,INF879O01019,5.35,0.62,1.01,9.75,15.84,1.32,43,48.82%,31.26%,53.24%,2.92,16.06,6,10,8,2,4,30,Low Risk,N/A,N/A,N/A,N/A,2.05,12.94,11.61,4.81,16.41,14.62
-PGIM India Flexi Cap Reg,Regular,Commodities: Silver,29471,133836,INF663L01FJ3,-2.80,0.90,0.27,13.85,9.75,0.35,78,34.67%,23.78%,56.11%,4.25,27.12,2,2,8,1,3,16,Moderately High Risk,N/A,N/A,N/A,N/A,4.34,17.87,16.46,4.81,16.41,14.62
-Quant Flexi Cap Reg,Regular,Commodities: Silver,8827,109830,INF966L01457,0.71,1.10,0.49,17.48,14.65,0.78,31,56.17%,35.36%,68.33%,3.19,23.94,2,6,7,1,1,17,Moderately High Risk,N/A,N/A,N/A,N/A,6.77,19.14,19.14,4.81,16.41,14.62
-Quantum Diversified Equity All Cap Active FoF Reg,Regular,Commodities: Silver,33962,141063,INF082J01275,0.33,0.93,0.51,13.77,13.10,0.59,N/A,N/A,N/A,N/A,N/A,N/A,2,4,8,1,3,18,Moderately High Risk,N/A,N/A,N/A,N/A,2.37,15.98,13.47,4.81,16.41,14.62
-Samco Flexi Cap Reg,Regular,Commodities: Silver,41934,149449,INF0K1H01016,-12.12,1.08,-0.23,18.87,1.70,-0.25,25,48.86%,26.19%,67.24%,5.07,24.39,1,1,6,1,1,10,High Risk,N/A,N/A,N/A,N/A,1.7,12.1,11.61,4.81,16.41,14.62
-SBI Flexicap Reg,Regular,Commodities: Silver,2859,103215,INF200K01222,-2.32,0.89,0.31,13.23,10.10,0.35,69,38.33%,22.00%,64.16%,2.74,20.69,2,2,8,1,3,16,Moderately High Risk,N/A,N/A,N/A,N/A,14.47,19.39,15.49,4.81,16.41,14.62
-SBI Focused Reg,Regular,Commodities: Silver,2415,102756,INF200K01370,3.86,0.75,0.77,12.00,15.30,0.97,26,47.28%,27.72%,62.08%,3.93,23.00,2,10,8,1,4,25,Moderate Risk,N/A,N/A,N/A,N/A,2.7,N/A,N/A,4.81,N/A,N/A
-SBI Nifty 500 Index Reg,Regular,Commodities: Silver,44565,152906,INF200KB1357,--,--,--,--,--,--,501,31.77%,22.11%,54.31%,3.15,21.12,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,2.75,12.38,14.16,4.81,16.41,14.62
-SBI Retirement Benefit Aggressive Reg,Regular,Commodities: Silver,41269,148698,INF200KA1S30,-3.29,0.93,0.25,13.93,9.44,0.29,53,42.44%,27.21%,60.46%,3.51,26.19,2,1,8,1,3,15,Moderately High Risk,N/A,N/A,N/A,N/A,-1.52,2.66,N/A,4.81,16.41,N/A
-Shriram Flexi Cap Reg,Regular,Commodities: Silver,37579,144902,INF680P01075,-4.82,1.02,0.15,16.46,8.55,0.18,71,37.44%,23.50%,56.11%,3.06,17.87,2,1,7,1,2,13,Moderately High Risk,N/A,N/A,N/A,N/A,-2.16,10.34,9.68,4.81,16.41,14.62
-Sundaram Flexi Cap Reg,Regular,Commodities: Silver,42502,150568,INF903JA1LB8,-1.30,0.91,0.39,13.69,11.30,0.46,56,41.51%,25.52%,61.96%,2.81,20.40,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,2.47,14.17,N/A,4.81,16.41,N/A
-Sundaram Focused Reg,Regular,Commodities: Silver,2916,149532,INF173K01189,-1.08,0.84,0.39,12.76,10.99,0.48,29,54.01%,32.94%,64.30%,3.94,28.14,2,3,8,1,4,18,Moderately High Risk,N/A,N/A,N/A,N/A,0.41,13.21,11.91,4.81,16.41,14.62
-Tata Children's Reg,Regular,Commodities: Silver,210,101491,INF277K01AJ5,-4.90,0.97,0.15,14.64,8.16,0.18,52,38.98%,23.15%,57.46%,2.51,16.83,2,1,8,1,2,14,Moderately High Risk,N/A,N/A,N/A,N/A,1.55,N/A,N/A,4.81,N/A,N/A
-Tata Flexi Cap Reg,Regular,Commodities: Silver,37435,144548,INF277K019K2,0.83,0.87,0.54,13.20,13.11,0.69,56,36.81%,23.58%,54.47%,2.76,21.48,2,6,8,1,3,20,Moderate Risk,N/A,N/A,N/A,N/A,-5.35,10.8,11.11,4.81,16.41,14.62
-Tata Focused Reg,Regular,Commodities: Silver,40403,147760,INF277K010Y2,-0.81,0.92,0.42,14.08,11.89,0.48,27,49.61%,30.16%,55.85%,2.91,22.16,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,0.5,15.97,12.44,4.81,16.41,14.62
-Tata Retirement Savings Progressive Reg,Regular,Commodities: Silver,13413,115942,INF277K01FG0,-0.57,0.94,0.43,14.61,12.26,0.53,45,38.62%,22.88%,58.41%,3.75,25.31,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,1.45,14.78,13.55,4.81,16.41,14.62
-Taurus Flexi Cap Reg,Regular,Commodities: Silver,214,100476,INF044D01989,-1.42,0.99,0.38,15.03,11.73,0.49,43,49.01%,31.01%,57.22%,2.51,16.67,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,3.54,16.28,12.24,4.81,16.41,14.62
-The Wealth Company Flexi Cap Reg,Regular,Commodities: Silver,45497,153870,INF2F0001016,--,--,--,--,--,--,40,33.49%,19.25%,64.09%,3.52,21.88,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,0.2,13.96,12.05,4.81,16.41,14.62
-TRUST MF Flexi Cap Reg,Regular,Commodities: Silver,44269,152582,INF0GCD01719,--,--,--,--,--,--,58,37.81%,23.74%,53.11%,4.02,27.23,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Unifi Flexi Cap Reg,Regular,Commodities: Silver,45188,153542,INF1MIY01049,--,--,--,--,--,--,55,38.17%,22.55%,56.00%,2.95,19.82,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-1.64,12.44,10.73,4.81,16.41,14.62
-Union Children's Reg,Regular,Commodities: Silver,43922,152217,INF582M01JI7,--,--,--,--,--,--,63,28.40%,17.20%,61.79%,3.61,27.88,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-6.22,9.99,7.15,4.81,16.41,14.62
-Union Diversified Equity All Cap Active FoF Reg,Regular,Commodities: Silver,45471,153822,INF582M01LV6,--,--,--,--,--,--,N/A,N/A,N/A,N/A,N/A,N/A,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,-0.19,14.19,N/A,4.81,16.41,N/A
-Union Flexi Cap Reg,Regular,Commodities: Silver,12817,115270,INF582M01104,-0.55,0.94,0.44,14.21,12.29,0.48,72,31.47%,19.76%,59.08%,3.48,24.81,2,3,8,1,3,17,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Union Focused Reg,Regular,Commodities: Silver,40106,147490,INF582M01FW6,-1.04,0.85,0.38,13.45,11.13,0.44,29,47.99%,28.18%,64.79%,4.40,31.74,2,3,8,1,4,18,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-Union Retirement Reg,Regular,Commodities: Silver,42490,150552,INF582M01IM1,2.02,0.91,0.63,13.66,14.63,0.73,73,31.29%,19.89%,60.16%,3.86,26.35,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,4.8,N/A,N/A,4.81,N/A,N/A
-UTI Children's Equity Reg,Regular,Commodities: Silver,2090,102267,,-2.69,0.96,0.29,14.39,10.25,0.37,64,44.57%,28.84%,60.21%,3.55,24.67,2,2,8,1,2,15,Moderately High Risk,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
-UTI Flexi Cap Reg,Regular,Commodities: Silver,247,100669,INF789F01513,-4.75,0.87,0.11,13.84,7.56,0.15,59,44.52%,27.49%,63.56%,4.68,34.39,2,1,8,1,3,15,Moderately High Risk,N/A,N/A,N/A,N/A,2.33,15.11,13.73,4.81,16.41,14.62
-UTI Focused Reg,Regular,Commodities: Silver,41627,149090,INF789F1AUY5,-1.09,0.96,0.40,14.60,11.88,0.48,29,53.50%,33.54%,65.68%,3.78,27.44,2,3,8,1,2,16,Moderately High Risk,N/A,N/A,N/A,N/A,7.87,14.3,12.57,4.81,16.41,14.62
-UTI Nifty500 Shariah Index Reg,Regular,Commodities: Silver,45820,154198,INF789F1AC96,--,--,--,--,--,--,198,33.57%,22.94%,55.28%,4.10,22.30,1,1,1,1,1,5,High Risk,N/A,N/A,N/A,N/A,7.5,17.84,N/A,4.81,16.41,N/A
-WhiteOak Capital Flexi Cap Reg,Regular,Commodities: Silver,42318,150347,INF03VN01506,2.93,0.91,0.69,13.86,15.55,0.87,153,35.10%,23.58%,59.23%,3.29,23.74,2,8,8,1,3,22,Moderate Risk,N/A,N/A,N/A,N/A,3.26,18.84,N/A,4.81,16.41,N/A
+Fund Name,Plan,Category,VR ID,Scheme Code,ISIN,Alpha,Beta,Sharpe,Standard Deviation,Sortino,No. of Stocks,Top 10 Stocks (%),Top 5 Stocks (%),Top 3 Sectors (%),P/B Ratio,P/E Ratio,Avg Maturity,YTM,Macaulay Duration,Avg Credit Rating,Fund_Ret_1Y,Fund_Ret_3Y,Fund_Ret_5Y,BM_Ret_1Y,BM_Ret_3Y,BM_Ret_5Y
+360 ONE Gold ETF-Growth,Regular,Commodities: Gold,44993,153357,INF579M01BB5,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,61.83,--,--,63.22,35.92,25.14
+Aditya Birla Sun Life Gold ETF,Regular,Commodities: Gold,12631,115127,INF209KB18D3,-0.17,0.97,1.37,18.61,--,--,--,--,--,--,--,--,--,--,--,63.25,36.05,25.31,63.22,35.92,25.14
+Aditya Birla Sun Life Gold Fund Direct-Growth,Direct,Commodities: Gold,15842,120546,INF209K01YU5,-0.3,0.96,1.36,18.53,--,--,--,--,--,--,--,--,--,--,--,63.3,36.02,25.31,63.22,35.92,25.14
+Aditya Birla Sun Life Gold Fund Regular-Growth,Regular,Commodities: Gold,14217,116796,INF209K01PF4,-0.64,0.96,1.34,18.53,--,--,--,--,--,--,--,--,--,--,--,62.78,35.56,24.87,63.22,35.92,25.14
+Angel One Gold ETF FoF Direct - Growth,Direct,Commodities: Gold,45470,153827,INF1J2R01098,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Angel One Gold ETF FoF Regular - Growth,Regular,Commodities: Gold,45469,153828,INF1J2R01106,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Angel One Gold ETF Regular-Growth,Regular,Commodities: Gold,45466,153826,INF1J2R01114,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Axis Gold Direct Plan-Growth,Direct,Commodities: Gold,15686,120473,INF846K01DS2,3.06,0.83,1.53,16.32,--,--,--,--,--,--,--,--,--,--,--,62.99,35.6,25.29,63.22,35.92,25.14
+Axis Gold ETF-Growth,Regular,Commodities: Gold,11669,113434,INF846K01W80,0.04,0.97,1.37,18.68,--,--,--,--,--,--,--,--,--,--,--,62.86,36,25.3,63.22,35.92,25.14
+Axis Gold Fund Regular-Growth,Regular,Commodities: Gold,13393,115897,INF846K01AL3,2.77,0.83,1.51,16.33,--,--,--,--,--,--,--,--,--,--,--,62.48,35.22,24.97,63.22,35.92,25.14
+Axis Gold and Silver Passive FoF Direct-Growth,Direct,Commodities: Gold,45710,154078,INF846KA1408,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Axis Gold and Silver Passive FoF Regular-Growth,Regular,Commodities: Gold,45709,154077,INF846KA1390,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Bandhan Gold ETF - Growth,Regular,Commodities: Gold,45553,153930,INF194KB1KJ7,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--
+Bandhan Gold ETF FoF Direct - Growth,Direct,Commodities: Gold,45732,154129,INF194KB1KL3,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Bandhan Gold ETF FoF Regular - Growth,Regular,Commodities: Gold,45731,154130,INF194KB1KK5,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Bandhan Gold ETF-Growth,Regular,Commodities: Gold,45672,153930,INF194KB1KJ7,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Baroda BNP Paribas Gold ETF - Growth,Regular,Commodities: Gold,43930,152231,INF251K01SU9,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,62.41,--,--,63.22,35.92,25.14
+Baroda BNP Paribas Gold ETF FoF Direct - Growth,Direct,Commodities: Gold,45422,153795,INF251K01VF4,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Baroda BNP Paribas Gold ETF FoF Regular - Growth,Regular,Commodities: Gold,45421,153794,INF251K01VE7,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Choice Gold ETF - Growth,Regular,Commodities: Gold,45571,153933,INF2KCX01012,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+DSP Gold ETF - Growth,Regular,Commodities: Gold,43492,151737,INF740KA1SW3,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,62.99,35.97,--,63.22,35.92,25.14
+DSP Gold ETF FoF Direct - Growth,Direct,Commodities: Gold,43856,152183,INF740KA1TK6,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,62.71,--,--,63.22,35.92,25.14
+DSP Gold ETF FoF Regular - Growth,Regular,Commodities: Gold,43854,152182,INF740KA1TH2,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,62.12,--,--,63.22,35.92,25.14
+Edelweiss Gold ETF - Growth,Regular,Commodities: Gold,43879,152193,INF754K01SE6,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,62.47,--,--,63.22,35.92,25.14
+Edelweiss Gold ETF FoF Direct-Growth,Direct,Commodities: Gold,45830,154208,INF754K01WP4,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Edelweiss Gold ETF FoF Regular-Growth,Regular,Commodities: Gold,45829,154209,INF754K01WQ2,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Edelweiss Gold and Silver ETF FoF Direct-Growth,Direct,Commodities: Gold,42500,150581,INF754K01OX5,0.27,1.18,1.23,25.77,--,--,--,--,--,--,--,--,--,--,--,112.55,44.51,--,63.22,35.92,25.14
+Edelweiss Gold and Silver ETF FoF Regular-Growth,Regular,Commodities: Gold,42498,150579,INF754K01OT3,-0.13,1.18,1.21,25.77,--,--,--,--,--,--,--,--,--,--,--,111.75,43.94,--,63.22,35.92,25.14
+Groww Gold ETF - Growth,Regular,Commodities: Gold,44631,152957,INF666M01OE7,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,62.25,--,--,63.22,35.92,25.14
+Groww Gold ETF FOF Direct-Growth,Direct,Commodities: Gold,44662,152980,INF666M01IX9,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,60.97,--,--,63.22,35.92,25.14
+Groww Gold ETF FOF Regular-Growth,Regular,Commodities: Gold,44660,153006,INF666M01JA5,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,60.47,--,--,63.22,35.92,25.14
+HDFC Gold ETF Fund of Fund Direct Plan-Growth,Direct,Commodities: Gold,16053,119132,INF179K01VX0,1.52,0.89,1.45,17.26,--,--,--,--,--,--,--,--,--,--,--,63.27,35.9,25.34,63.22,35.92,25.14
+HDFC Gold ETF Fund of Fund Regular-Growth,Regular,Commodities: Gold,13410,115934,INF179K01LC5,1.21,0.89,1.43,17.25,--,--,--,--,--,--,--,--,--,--,--,62.76,35.48,24.93,63.22,35.92,25.14
+HDFC Gold Silver Passive FoF Direct-Growth,Direct,Commodities: Gold,45979,154355,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--
+HDFC Gold Silver Passive FoF Regular-Growth,Regular,Commodities: Gold,45978,154356,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--
+HSBC Gold ETF FoF Direct-Growth,Direct,Commodities: Gold,45929,154295,INF336L01SB6,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+HSBC Gold ETF FoF Regular-Growth,Regular,Commodities: Gold,45927,154298,INF336L01RY0,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+HSBC Gold ETF-Growth,Regular,Commodities: Gold,45919,154294,INF336L01RX2,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+ICICI Prudential Gold ETF FoF Direct-Growth,Direct,Commodities: Gold,15858,120685,INF109K01U92,0.27,0.95,1.39,18.21,--,--,--,--,--,--,--,--,--,--,--,63.73,36.01,25.39,63.22,35.92,25.14
+ICICI Prudential Gold ETF FoF-Growth,Regular,Commodities: Gold,13289,115833,INF109K01TK8,-0.02,0.95,1.38,18.21,--,--,--,--,--,--,--,--,--,--,--,63.14,35.63,25.03,63.22,35.92,25.14
+ICICI Prudential Gold Exchange Traded Fund,Regular,Commodities: Gold,11347,113076,INF109KC1NT3,0.05,0.97,1.37,18.6,--,--,--,--,--,--,--,--,--,--,--,63.17,36.09,25.34,63.22,35.92,25.14
+Invesco India Gold ETF,Regular,Commodities: Gold,10862,112368,INF205KA1BP1,-1.58,1.03,1.29,19.91,--,--,--,--,--,--,--,--,--,--,--,62.53,36.07,25.35,63.22,35.92,25.14
+Invesco India Gold ETF FoF Direct-Growth,Direct,Commodities: Gold,16767,120531,INF205K01NJ9,1.18,0.89,1.44,17.16,--,--,--,--,--,--,--,--,--,--,--,61.75,35.04,24.97,63.22,35.92,25.14
+Invesco India Gold ETF FoF Regular-Growth,Regular,Commodities: Gold,13545,116077,INF205K01FA4,0.92,0.89,1.42,17.15,--,--,--,--,--,--,--,--,--,--,--,61.17,34.68,24.59,63.22,35.92,25.14
+Kotak Gold Fund Direct-Growth,Direct,Commodities: Gold,16358,119781,INF174K01MP6,3.07,0.83,1.53,16.32,--,--,--,--,--,--,--,--,--,--,--,63.58,35.83,25.17,63.22,35.92,25.14
+Kotak Gold Fund Regular-Growth,Regular,Commodities: Gold,12458,114758,INF174K01AT3,2.73,0.83,1.51,16.31,--,--,--,--,--,--,--,--,--,--,--,63.03,35.37,24.73,63.22,35.92,25.14
+Kotak Gold Silver Passive FoF Direct-Growth,Direct,Commodities: Gold,45551,153921,INF174KA1XT4,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Kotak Gold Silver Passive FoF Regular-Growth,Regular,Commodities: Gold,45550,153922,INF174KA1XU2,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+LIC MF Gold ETF,Regular,Commodities: Gold,13461,151961,INF767K01SM1,1.81,0.9,1.44,17.72,--,--,--,--,--,--,--,--,--,--,--,63.06,36.31,25.68,63.22,35.92,25.14
+LIC MF Gold ETF FoF Direct-Growth,Direct,Commodities: Gold,16496,151974,INF397L01BU4,0.75,0.92,1.39,18.01,--,--,--,--,--,--,--,--,--,--,--,62.09,35.95,25.81,63.22,35.92,25.14
+LIC MF Gold ETF FoF-Growth,Regular,Commodities: Gold,15154,151973,INF397L01992,0.35,0.92,1.37,18,--,--,--,--,--,--,--,--,--,--,--,61.54,35.41,25.31,63.22,35.92,25.14
+Mirae Asset Gold ETF - Growth,Regular,Commodities: Gold,43168,151416,INF769K01JP9,0.18,0.96,1.38,18.46,--,--,--,--,--,--,--,--,--,--,--,62.86,36.04,--,63.22,35.92,25.14
+Mirae Asset Gold ETF FoF Direct-Growth,Direct,Commodities: Gold,44666,153007,INF769K01MV1,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,62.95,--,--,63.22,35.92,25.14
+Mirae Asset Gold ETF FoF Regular-Growth,Regular,Commodities: Gold,44664,153009,INF769K01MS7,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,62.02,--,--,63.22,35.92,25.14
+Mirae Asset Gold Silver Passive FoF Direct-Growth,Direct,Commodities: Gold,45451,153812,INF769K01PM3,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Mirae Asset Gold Silver Passive FoF Regular-Growth,Regular,Commodities: Gold,45449,153814,INF769K01PP6,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Motilal Oswal Gold ETF-Growth,Regular,Commodities: Gold,45416,153780,INF247L01FY4,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+Motilal Oswal Gold and Silver Passive FoF Direct-Growth,Direct,Commodities: Gold,42571,150642,INF247L01BM8,-3.34,1.21,1.16,24.82,--,--,--,--,--,--,--,--,--,--,--,88.75,40.26,--,63.22,35.92,25.14
+Motilal Oswal Gold and Silver Passive FoF Regular-Growth,Regular,Commodities: Gold,42570,150641,INF247L01BN6,-3.71,1.21,1.14,24.81,--,--,--,--,--,--,--,--,--,--,--,88.1,39.76,--,63.22,35.92,25.14
+Nippon India ETF Gold BeES,Regular,Commodities: Gold,4957,140088,INF204KB17I5,-0.25,0.97,1.36,18.64,--,--,--,--,--,--,--,--,--,--,--,62.72,35.75,24.98,63.22,35.92,25.14
+Nippon India Gold Savings Fund Direct-Growth,Direct,Commodities: Gold,16080,118663,INF204K01YC4,-0.49,0.97,1.35,18.57,--,--,--,--,--,--,--,--,--,--,--,63.22,35.67,25.14,63.22,35.92,25.14
+Nippon India Gold Savings Fund-Growth,Regular,Commodities: Gold,12184,114616,INF204K01KN0,-0.7,0.97,1.34,18.57,--,--,--,--,--,--,--,--,--,--,--,62.86,35.38,24.85,63.22,35.92,25.14
+Quantum Gold Fund,Regular,Commodities: Gold,6695,107693,INF082J01408,-0.78,1,1.33,19.22,--,--,--,--,--,--,--,--,--,--,--,63.19,36.03,25.25,63.22,35.92,25.14
+Quantum Gold Savings Fund Direct-Growth,Direct,Commodities: Gold,12683,115132,INF082J01150,2.17,0.87,1.49,16.87,--,--,--,--,--,--,--,--,--,--,--,63.88,36.08,25.41,63.22,35.92,25.14
+Quantum Gold Savings Fund Regular - Growth,Regular,Commodities: Gold,33964,141064,INF082J01358,1.94,0.87,1.47,16.86,--,--,--,--,--,--,--,--,--,--,--,63.2,35.75,25.15,63.22,35.92,25.14
+SBI Gold Direct Plan-Growth,Direct,Commodities: Gold,16207,119788,INF200K01RP8,1.43,0.9,1.45,17.37,--,--,--,--,--,--,--,--,--,--,--,63.63,36.01,25.47,63.22,35.92,25.14
+SBI Gold ETF,Regular,Commodities: Gold,10382,111954,INF200KA16D8,-0.35,0.97,1.35,18.72,--,--,--,--,--,--,--,--,--,--,--,62.82,35.79,25.16,63.22,35.92,25.14
+SBI Gold Fund-Growth,Regular,Commodities: Gold,13190,115676,INF200K01HA1,1.22,0.9,1.44,17.36,--,--,--,--,--,--,--,--,--,--,--,63.31,35.73,25.14,63.22,35.92,25.14
+Tata Gold ETF - Growth,Regular,Commodities: Gold,44015,152284,INF277KA1976,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.02,--,--,63.22,35.92,25.14
+Tata Gold ETF FoF Direct - Growth,Direct,Commodities: Gold,44018,152287,INF277KA1869,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,61.47,--,--,63.22,35.92,25.14
+Tata Gold ETF FoF Regular - Growth,Regular,Commodities: Gold,44016,152290,INF277KA1901,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,60.88,--,--,63.22,35.92,25.14
+The Wealth Company Gold ETF - Growth,Regular,Commodities: Gold,45711,154092,INF2F0001370,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+The Wealth Company Gold ETF FoF Direct - Growth,Direct,Commodities: Gold,45759,154131,INF2F0001412,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+The Wealth Company Gold ETF FoF Regular - Growth,Regular,Commodities: Gold,45757,154133,INF2F0001388,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.22,35.92,25.14
+UTI Gold ETF FoF Direct - Growth,Direct,Commodities: Gold,42640,150714,INF789F1AWB9,4.38,0.79,1.58,16,--,--,--,--,--,--,--,--,--,--,--,63.67,36.32,--,63.22,35.92,25.14
+UTI Gold ETF FoF Regular - Growth,Regular,Commodities: Gold,42639,150715,INF789F1AWA1,3.96,0.79,1.55,15.99,--,--,--,--,--,--,--,--,--,--,--,63.05,35.75,--,63.22,35.92,25.14
+Union Gold ETF FoF Direct - Growth,Direct,Commodities: Gold,44981,153340,INF582M01LA0,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,61.06,--,--,63.22,35.92,25.14
+Union Gold ETF FoF Regular - Growth,Regular,Commodities: Gold,44979,153338,INF582M01KT2,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,60.63,--,--,63.22,35.92,25.14
+Union Gold ETF-Growth,Regular,Commodities: Gold,44978,153337,INF582M01KS4,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,62.29,--,--,63.22,35.92,25.14
+Zerodha Gold ETF FoF Direct-Growth,Direct,Commodities: Gold,44674,153011,INF0R8F01083,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.01,--,--,63.22,35.92,25.14
+Zerodha Gold ETF-Growth,Regular,Commodities: Gold,44177,152476,INF0R8F01042,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,63.15,--,--,63.22,35.92,25.14
+360 ONE Silver ETF-Growth,Regular,Commodities: Silver,45054,153415,INF579M01BC3,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.84,--,--,165.53,51.54,--
+Aditya Birla Sun Life Silver ETF FoF Direct-Growth,Direct,Commodities: Silver,42019,149780,INF209KB16F2,2.68,0.84,1.04,36.4,--,--,--,--,--,--,--,--,--,--,--,163.25,51.48,--,165.53,51.54,--
+Aditya Birla Sun Life Silver ETF FoF Regular-Growth,Regular,Commodities: Silver,42017,149783,INF209KB13F9,2.25,0.84,1.03,36.39,--,--,--,--,--,--,--,--,--,--,--,162.3,50.86,--,165.53,51.54,--
+Aditya Birla Sun Life Silver ETF-Growth,Regular,Commodities: Silver,42016,149779,INF209KB19F6,-1.5,0.99,0.95,42.11,--,--,--,--,--,--,--,--,--,--,--,167.43,51.55,--,165.53,51.54,--
+Angel One Silver ETF FoF Direct-Growth,Direct,Commodities: Silver,45827,154206,INF1J2R01155,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Angel One Silver ETF FoF Regular-Growth,Regular,Commodities: Silver,45826,154207,INF1J2R01163,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Angel One Silver ETF-Growth,Regular,Commodities: Silver,45828,154205,INF1J2R01171,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Axis Silver ETF Regular-Growth,Regular,Commodities: Silver,42522,150610,INF846K011K1,-0.98,0.98,0.96,41.97,--,--,--,--,--,--,--,--,--,--,--,166.63,52.25,--,165.53,51.54,--
+Axis Silver FoF Direct-Growth,Direct,Commodities: Silver,42525,150615,INF846K015J4,3.06,0.83,1.05,36.07,--,--,--,--,--,--,--,--,--,--,--,163.54,51.31,--,165.53,51.54,--
+Axis Silver FoF Regular-Growth,Regular,Commodities: Silver,42523,150617,INF846K018J8,2.55,0.83,1.04,36.06,--,--,--,--,--,--,--,--,--,--,--,162.12,50.54,--,165.53,51.54,--
+Bandhan Silver ETF - Growth,Regular,Commodities: Silver,45554,153929,INF194KB1KI9,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--
+Bandhan Silver ETF FoF Direct - Growth,Direct,Commodities: Silver,45734,154136,INF194KB1KN9,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Bandhan Silver ETF FoF Regular - Growth,Regular,Commodities: Silver,45733,154135,INF194KB1KM1,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Bandhan Silver ETF-Growth,Regular,Commodities: Silver,45671,153929,INF194KB1KI9,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+DSP Silver ETF - Growth,Regular,Commodities: Silver,42419,150523,INF740KA1RE3,-0.86,0.99,0.96,42.05,--,--,--,--,--,--,--,--,--,--,--,167.64,52.32,--,165.53,51.54,--
+DSP Silver ETF FoF Direct - Growth,Direct,Commodities: Silver,45137,153487,INF740KA1VZ0,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,164.25,--,--,165.53,51.54,--
+DSP Silver ETF FoF Regular - Growth,Regular,Commodities: Silver,45135,153486,INF740KA1VW7,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,163.09,--,--,165.53,51.54,--
+Edelweiss Silver ETF - Growth,Regular,Commodities: Silver,43921,152212,INF754K01SF3,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,166.19,--,--,165.53,51.54,--
+Edelweiss Silver ETF FoF Direct - Growth,Direct,Commodities: Silver,45702,154072,INF754K01VZ5,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Edelweiss Silver ETF FoF Regular - Growth,Regular,Commodities: Silver,45701,154075,INF754K01WD0,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Groww Silver ETF FoF Direct-Growth,Direct,Commodities: Silver,45153,153525,INF666M01KQ9,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Groww Silver ETF FoF Regular-Growth,Regular,Commodities: Silver,45151,153527,INF666M01KX5,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Groww Silver ETF-Growth,Regular,Commodities: Silver,45150,153524,INF666M01OF4,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,164.86,--,--,165.53,51.54,--
+HDFC Silver ETF FoF Direct - Growth,Direct,Commodities: Silver,42666,150737,INF179KC1DU7,1.23,0.89,1.01,38.25,--,--,--,--,--,--,--,--,--,--,--,165.27,51.5,--,165.53,51.54,--
+HDFC Silver ETF FoF Regular - Growth,Regular,Commodities: Silver,42665,150736,INF179KC1DV5,0.88,0.89,1,38.24,--,--,--,--,--,--,--,--,--,--,--,164.23,50.97,--,165.53,51.54,--
+HDFC Silver ETF Regular - Growth,Regular,Commodities: Silver,42489,150556,INF179KC1DI2,-0.96,1,0.95,42.71,--,--,--,--,--,--,--,--,--,--,--,166.21,52.69,--,165.53,51.54,--
+ICICI Prudential Silver ETF - Growth,Regular,Commodities: Silver,41982,149464,INF109KC1Y56,-0.57,0.98,0.97,41.76,--,--,--,--,--,--,--,--,--,--,--,167.85,52.48,--,165.53,51.54,--
+ICICI Prudential Silver ETF FoF - Growth,Regular,Commodities: Silver,42021,149777,INF109KC1Y64,3.15,0.82,1.05,35.51,--,--,--,--,--,--,--,--,--,--,--,163.71,51.05,--,165.53,51.54,--
+ICICI Prudential Silver ETF FoF Direct - Growth,Direct,Commodities: Silver,42023,149775,INF109KC1Y98,3.61,0.82,1.06,35.53,--,--,--,--,--,--,--,--,--,--,--,164.99,51.74,--,165.53,51.54,--
+Kotak Silver ETF FoF Direct - Growth,Direct,Commodities: Silver,43295,151603,INF174KA1MQ3,3.38,0.82,1.06,35.62,--,--,--,--,--,--,--,--,--,--,--,165.81,51.46,--,165.53,51.54,--
+Kotak Silver ETF FoF Regular - Growth,Regular,Commodities: Silver,43294,151602,INF174KA1MR1,2.92,0.82,1.04,35.6,--,--,--,--,--,--,--,--,--,--,--,164.64,50.78,--,165.53,51.54,--
+Kotak Silver ETF-Growth,Regular,Commodities: Silver,42858,150948,INF174KA1ZD3,-0.62,0.98,0.97,41.69,--,--,--,--,--,--,--,--,--,--,--,167.2,52.33,--,165.53,51.54,--
+Mirae Asset Silver ETF - Growth,Regular,Commodities: Silver,43544,151779,INF769K01KG6,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,166.68,--,--,165.53,51.54,--
+Mirae Asset Silver ETF FoF Direct-Growth,Direct,Commodities: Silver,45902,154279,INF769K01QS8,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Mirae Asset Silver ETF FoF Regular-Growth,Regular,Commodities: Silver,45900,154281,INF769K01QP4,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Motilal Oswal Silver ETF-Growth,Regular,Commodities: Silver,45453,153820,INF247L01FZ1,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Nippon India Silver ETF - Growth,Regular,Commodities: Silver,41984,149758,INF204KC1402,-0.74,0.98,0.96,41.62,--,--,--,--,--,--,--,--,--,--,--,166.65,52.04,--,165.53,51.54,--
+Nippon India Silver ETF FoF Direct - Growth,Direct,Commodities: Silver,41987,149760,INF204KC1378,-1.5,0.98,0.94,41.81,--,--,--,--,--,--,--,--,--,--,--,164.49,51.28,--,165.53,51.54,--
+Nippon India Silver ETF FoF Regular - Growth,Regular,Commodities: Silver,41985,149759,INF204KC1345,-1.82,0.98,0.94,41.8,--,--,--,--,--,--,--,--,--,--,--,163.66,50.8,--,165.53,51.54,--
+SBI Silver ETF FoF Direct-Growth,Direct,Commodities: Silver,44422,152735,INF200KB1233,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,168.99,--,--,165.53,51.54,--
+SBI Silver ETF FoF Regular-Growth,Regular,Commodities: Silver,44420,152733,INF200KB1266,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,168.07,--,--,165.53,51.54,--
+SBI Silver ETF-Growth,Regular,Commodities: Silver,44407,152725,INF200KB1217,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,166.56,--,--,165.53,51.54,--
+Tata Silver ETF - Growth,Regular,Commodities: Silver,44020,152285,INF277KA1984,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,171.4,--,--,165.53,51.54,--
+Tata Silver ETF FoF Direct - Growth,Direct,Commodities: Silver,44026,152293,INF277KA1943,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,158.48,--,--,165.53,51.54,--
+Tata Silver ETF FoF Regular - Growth,Regular,Commodities: Silver,44024,152297,INF277KA1893,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,157.21,--,--,165.53,51.54,--
+UTI Silver ETF FoF Direct - Growth,Direct,Commodities: Silver,43487,151731,INF789F1AYL4,-1.58,0.85,0.9,37.5,--,--,--,--,--,--,--,--,--,--,--,164.75,51.64,--,165.53,51.54,--
+UTI Silver ETF FoF Regular - Growth,Regular,Commodities: Silver,43486,151732,INF789F1AYM2,-1.95,0.85,0.89,37.49,--,--,--,--,--,--,--,--,--,--,--,163.84,51.09,--,165.53,51.54,--
+UTI Silver ETF- Growth,Regular,Commodities: Silver,43485,151730,INF789F1AYK6,-0.97,0.97,0.96,41.44,--,--,--,--,--,--,--,--,--,--,--,168.65,51.38,--,165.53,51.54,--
+Zerodha Silver ETF FoF Direct-Growth,Direct,Commodities: Silver,45264,153656,INF0R8F01109,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,165.53,51.54,--
+Zerodha Silver ETF-Growth,Regular,Commodities: Silver,45052,153413,INF0R8F01091,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,166.66,--,--,165.53,51.54,--
