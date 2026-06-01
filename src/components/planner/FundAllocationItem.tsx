@@ -122,70 +122,77 @@ export function FundAllocationItem({
 
   const schemeNames = useMemo(() => schemes.map(s => s.schemeName), [schemes]);
 
-  const remainingSip = useMemo(() => {
+  // Shared helper: computes remainingPct, requiredSIP, requiredLumpsum for this goal
+  const goalRemainingData = useMemo(() => {
+    // --- Retirement goal ---
     if (alloc.goalId === 'retirement') {
-      const totalSipForRetirement = fundAllocations
+      const requiredSIP = retirementCalculations.monthlyInvestmentNeeded;
+      const annualRate = retirementCalculations.realRateOfReturn > 0 ? retirementCalculations.realRateOfReturn / 100 : 0;
+      const yrs = retirementCalculations.yearsToRetirement;
+      const requiredLumpsum = retirementCalculations.requiredRetirementCorpus > 0 && annualRate > 0 && yrs > 0
+        ? retirementCalculations.requiredRetirementCorpus / Math.pow(1 + annualRate, yrs)
+        : retirementCalculations.requiredRetirementCorpus;
+
+      const currentSip = typeof alloc.sipRequired === 'number' ? alloc.sipRequired : 0;
+      const currentLumpsum = typeof alloc.lumpsumAmount === 'number' ? alloc.lumpsumAmount : 0;
+      const totalSip = fundAllocations
         .filter(a => a.goalId === 'retirement')
         .reduce((sum, a) => sum + (typeof a.sipRequired === 'number' ? a.sipRequired : 0), 0);
-      const totalLumpsumForRetirement = fundAllocations
+      const totalLumpsum = fundAllocations
         .filter(a => a.goalId === 'retirement')
         .reduce((sum, a) => sum + (typeof a.lumpsumAmount === 'number' ? a.lumpsumAmount : 0), 0);
-      
-      const allocated = retirementCalculations.monthlyInvestmentNeeded;
-      return allocated - totalSipForRetirement - totalLumpsumForRetirement + (typeof alloc.sipRequired === 'number' ? alloc.sipRequired : 0) + (typeof alloc.lumpsumAmount === 'number' ? alloc.lumpsumAmount : 0);
-    }
-    
-    const selectedGoal = optimizedGoals.find(g => g.id === alloc.goalId);
-    if (!selectedGoal) return 0;
-    
-    const goalAllocatedSip = selectedGoal.investmentStatus.allocatedInvestment;
-    
-    // Calculate total already allocated for this goal across ALL items
-    const totalAllocatedSip = fundAllocations
-      .filter(a => a.goalId === alloc.goalId)
-      .reduce((sum, a) => sum + (typeof a.sipRequired === 'number' ? a.sipRequired : 0), 0);
-      
-    const totalAllocatedLumpsum = fundAllocations
-      .filter(a => a.goalId === alloc.goalId)
-      .reduce((sum, a) => sum + (typeof a.lumpsumAmount === 'number' ? a.lumpsumAmount : 0), 0);
-      
-    const currentSipForThisAlloc = typeof alloc.sipRequired === 'number' ? alloc.sipRequired : 0;
-    const currentLumpsumForThisAlloc = typeof alloc.lumpsumAmount === 'number' ? alloc.lumpsumAmount : 0;
-    
-    return goalAllocatedSip - totalAllocatedSip - totalAllocatedLumpsum + currentSipForThisAlloc + currentLumpsumForThisAlloc;
-  }, [alloc.goalId, alloc.sipRequired, alloc.lumpsumAmount, optimizedGoals, fundAllocations, retirementCalculations]);
 
-  const remainingLumpsum = useMemo(() => {
-    if (alloc.goalId === 'retirement') {
-      const n = retirementCalculations.yearsToRetirement * 12;
-      const annualRate = retirementCalculations.realRateOfReturn > 0 ? retirementCalculations.realRateOfReturn / 100 : 0;
-      const r = annualRate > 0 ? Math.pow(1 + annualRate, 1 / 12) - 1 : 0;
-      const monthlySip = typeof alloc.sipRequired === 'number' ? alloc.sipRequired : 0;
-      const futureValue = monthlySip > 0 && r > 0 && n > 0
-        ? monthlySip * (((Math.pow(1 + r, n) - 1) / r) * (1 + r))
-        : monthlySip;
-      const presentValue = r > 0 && n > 0 ? futureValue / Math.pow(1 + r, n) : futureValue;
-      return presentValue;
+      // Other cards' contributions (exclude this card)
+      const otherSip = totalSip - currentSip;
+      const otherLumpsum = totalLumpsum - currentLumpsum;
+
+      const sipFraction = requiredSIP > 0 ? otherSip / requiredSIP : 0;
+      const lumpsumFraction = requiredLumpsum > 0 ? otherLumpsum / requiredLumpsum : 0;
+      const remainingPct = 1 - (sipFraction + lumpsumFraction);
+
+      return { requiredSIP, requiredLumpsum, remainingPct };
     }
 
+    // --- Non-retirement goal ---
     const selectedGoal = optimizedGoals.find(g => g.id === alloc.goalId);
-    if (!selectedGoal) return 0;
+    if (!selectedGoal) return { requiredSIP: 0, requiredLumpsum: 0, remainingPct: 1 };
 
+    const requiredSIP = selectedGoal.investmentStatus.allocatedInvestment;
     const originalGoal = availableGoals.find(g => g.id === alloc.goalId);
     const annualRate = originalGoal && typeof originalGoal.rate === 'number' && originalGoal.rate > 0
       ? originalGoal.rate / 100
       : 0.12;
     const n = selectedGoal.timeline.required;
     const fv = selectedGoal.futureValue;
-    const totalLumpsumRequired = n > 0 && annualRate > 0 ? fv / Math.pow(1 + annualRate, n) : fv;
+    const requiredLumpsum = n > 0 && annualRate > 0 ? fv / Math.pow(1 + annualRate, n) : fv;
 
-    const totalAllocatedLumpsum = fundAllocations
+    const currentSip = typeof alloc.sipRequired === 'number' ? alloc.sipRequired : 0;
+    const currentLumpsum = typeof alloc.lumpsumAmount === 'number' ? alloc.lumpsumAmount : 0;
+    const totalSip = fundAllocations
+      .filter(a => a.goalId === alloc.goalId)
+      .reduce((sum, a) => sum + (typeof a.sipRequired === 'number' ? a.sipRequired : 0), 0);
+    const totalLumpsum = fundAllocations
       .filter(a => a.goalId === alloc.goalId)
       .reduce((sum, a) => sum + (typeof a.lumpsumAmount === 'number' ? a.lumpsumAmount : 0), 0);
-    const currentLumpsumForThisAlloc = typeof alloc.lumpsumAmount === 'number' ? alloc.lumpsumAmount : 0;
 
-    return totalLumpsumRequired - totalAllocatedLumpsum + currentLumpsumForThisAlloc;
-  }, [alloc.goalId, alloc.lumpsumAmount, optimizedGoals, availableGoals, fundAllocations, retirementCalculations]);
+    // Other cards' contributions (exclude this card)
+    const otherSip = totalSip - currentSip;
+    const otherLumpsum = totalLumpsum - currentLumpsum;
+
+    const sipFraction = requiredSIP > 0 ? otherSip / requiredSIP : 0;
+    const lumpsumFraction = requiredLumpsum > 0 ? otherLumpsum / requiredLumpsum : 0;
+    const remainingPct = 1 - (sipFraction + lumpsumFraction);
+
+    return { requiredSIP, requiredLumpsum, remainingPct };
+  }, [alloc.goalId, alloc.sipRequired, alloc.lumpsumAmount, optimizedGoals, availableGoals, fundAllocations, retirementCalculations]);
+
+  const remainingSip = useMemo(() => {
+    return goalRemainingData.requiredSIP * goalRemainingData.remainingPct;
+  }, [goalRemainingData]);
+
+  const remainingLumpsum = useMemo(() => {
+    return goalRemainingData.requiredLumpsum * goalRemainingData.remainingPct;
+  }, [goalRemainingData]);
 
   // Unified data fetching prioritizing local CSV over mfapi fallback
   useEffect(() => {
