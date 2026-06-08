@@ -12,6 +12,11 @@ export function getSupabase(): SupabaseClient | null {
     return null;
   }
 
-  cachedClient = createClient(supabaseUrl, supabaseAnonKey);
-  return cachedClient;
+  try {
+    cachedClient = createClient(supabaseUrl, supabaseAnonKey);
+    return cachedClient;
+  } catch (err) {
+    console.warn('Supabase client could not be initialised:', err);
+    return null;
+  }
 }
