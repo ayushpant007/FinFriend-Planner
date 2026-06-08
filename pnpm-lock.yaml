@@ -201,6 +201,9 @@ importers:
       '@types/react-dom':
         specifier: ^18
         version: 18.3.7(@types/react@18.3.29)
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
       genkit-cli:
         specifier: ^1.14.1
         version: 1.36.0(@cfworker/json-schema@4.1.1)(@types/node@20.19.41)(zod@3.25.76)
@@ -2671,6 +2674,9 @@ packages:
 
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@types/yauzl@2.10.3':
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
@@ -7992,6 +7998,10 @@ snapshots:
 
   '@types/trusted-types@2.0.7':
     optional: true
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 20.19.41
 
   '@types/yauzl@2.10.3':
     dependencies:
