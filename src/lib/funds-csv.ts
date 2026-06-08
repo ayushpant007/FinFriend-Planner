@@ -20,11 +20,11 @@ interface CsvFileSpec {
 }
 
 const FILES: CsvFileSpec[] = [
-  { category: 'Equity', file: 'equity.csv' },
-  { category: 'Debt', file: 'debt.csv' },
-  { category: 'Hybrid', file: 'hybrid.csv' },
-  { category: 'Solutions', file: 'solutions.csv' },
-  { category: 'Commodities', file: 'commodities.csv' },
+  { category: 'Equity', file: 'Equity Funds.csv' },
+  { category: 'Debt', file: 'Debt_Funds.csv' },
+  { category: 'Hybrid', file: 'Hybrid Funds.csv' },
+  { category: 'Solutions', file: 'Solution Funds.csv' },
+  { category: 'Commodities', file: 'Commodities Funds.csv' },
 ];
 
 let cache: { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] } | null = null;
@@ -69,12 +69,17 @@ function parseCSV(text: string): string[][] {
   return rows.filter(r => r.length > 1 || (r.length === 1 && r[0].trim().length > 0));
 }
 
+function cleanType(val: string | undefined): string {
+  if (!val) return '';
+  return val.replace(/^(Debt|Hybrid|Solution|Commodities):\s*/i, '').trim();
+}
+
 function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] } {
   if (cache) return cache;
 
   const byCode = new Map<string, FundCsvRecord>();
   const all: FundCsvRecord[] = [];
-  const baseDir = path.join(process.cwd(), 'Funds');
+  const baseDir = path.join(process.cwd(), 'Mutual Fund');
 
   for (const spec of FILES) {
     const fullPath = path.join(baseDir, spec.file);
@@ -87,12 +92,20 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
     if (rows.length < 2) continue;
     const headers = rows[0].map(h => h);
 
-    const idx = (key: string) => headers.findIndex(h => h.replace(/\s+/g, ' ').trim().toLowerCase() === key.toLowerCase());
-    const codeIdx = idx('Scheme Code');
-    const nameIdx = idx('Fund Name');
-    const isinIdx = idx('ISIN');
-    const planIdx = idx('Plan');
-    const catIdx = idx('Category');
+    const idx = (...keys: string[]) => {
+      return headers.findIndex(h => {
+        const normH = h.replace(/[\s_]+/g, ' ').trim().toLowerCase();
+        return keys.some(key => {
+          const normKey = key.replace(/[\s_]+/g, ' ').trim().toLowerCase();
+          return normH === normKey;
+        });
+      });
+    };
+    const codeIdx = idx('Scheme Code', 'AMFI Scheme Code', 'scheme_code');
+    const nameIdx = idx('Fund Name', 'fund_name', 'Scheme Name', 'scheme_name');
+    const isinIdx = idx('ISIN', 'isin', 'ISIN (Growth/Cumulative)');
+    const planIdx = idx('Plan', 'plan');
+    const catIdx = idx('Category', 'category', 'bm');
 
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
@@ -103,6 +116,10 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
       });
       const schemeCode = (codeIdx >= 0 ? row[codeIdx] : '')?.trim() || '';
       if (!schemeCode) continue;
+
+      const rawType = (catIdx >= 0 ? row[catIdx] : '')?.trim() || '';
+      const schemeCategory = cleanType(rawType);
+
       const record: FundCsvRecord = {
         category: spec.category,
         schemeCode,
@@ -110,7 +127,7 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
         schemeName: (nameIdx >= 0 ? row[nameIdx] : '')?.trim() || '',
         isin: (isinIdx >= 0 ? row[isinIdx] : '')?.trim() || '',
         plan: (planIdx >= 0 ? row[planIdx] : '')?.trim() || '',
-        schemeCategory: (catIdx >= 0 ? row[catIdx] : '')?.trim() || '',
+        schemeCategory,
         raw,
       };
       all.push(record);
@@ -138,7 +155,11 @@ export function getAllFundCsvRecords(): FundCsvRecord[] {
 
 function pickFirst(raw: Record<string, string>, keys: string[]): string | undefined {
   for (const k of keys) {
-    const found = Object.keys(raw).find(rk => rk.replace(/\s+/g, ' ').trim().toLowerCase() === k.toLowerCase());
+    const normKey = k.replace(/[\s_]+/g, ' ').trim().toLowerCase();
+    const found = Object.keys(raw).find(rk => {
+      const normRk = rk.replace(/[\s_]+/g, ' ').trim().toLowerCase();
+      return normRk === normKey;
+    });
     if (found && raw[found] !== undefined && raw[found] !== '' && raw[found] !== '--') return raw[found];
   }
   return undefined;
@@ -203,31 +224,31 @@ export interface AllocationFundData {
 
 const FUND_RETURN_KEYS: Record<FundCsvCategory, { label: string; fund: string[]; bench: string[] }[]> = {
   Equity: [
-    { label: '1Y', fund: ['Return_1Y'], bench: ['BM_Return_1Y'] },
-    { label: '3Y', fund: ['Return_3Y'], bench: ['BM_Return_3Y'] },
-    { label: '5Y', fund: ['Return_5Y'], bench: ['BM_Return_5Y'] },
+    { label: '1Y', fund: ['Return_1Y', 'f1y'], bench: ['BM_Return_1Y', 'b1y'] },
+    { label: '3Y', fund: ['Return_3Y', 'f3y'], bench: ['BM_Return_3Y', 'b3y'] },
+    { label: '5Y', fund: ['Return_5Y', 'f5y'], bench: ['BM_Return_5Y', 'b5y'] },
     { label: '7Y', fund: ['Return_7Y'], bench: ['BM_Return_7Y'] },
     { label: '10Y', fund: ['Return_10Y'], bench: ['BM_Return_10Y'] },
   ],
   Debt: [
-    { label: '1Y', fund: ['Return_1Y'], bench: ['BM_Return_1Y'] },
-    { label: '3Y', fund: ['Return_3Y'], bench: ['BM_Return_3Y'] },
-    { label: '5Y', fund: ['Return_5Y'], bench: ['BM_Return_5Y'] },
+    { label: '1Y', fund: ['Return_1Y', 'f1y'], bench: ['BM_Return_1Y', 'b1y'] },
+    { label: '3Y', fund: ['Return_3Y', 'f3y'], bench: ['BM_Return_3Y', 'b3y'] },
+    { label: '5Y', fund: ['Return_5Y', 'f5y'], bench: ['BM_Return_5Y', 'b5y'] },
   ],
   Hybrid: [
-    { label: '1Y', fund: ['Fund 1Y'], bench: ['Bench 1Y'] },
-    { label: '3Y', fund: ['Fund 3Y'], bench: ['Bench 3Y'] },
-    { label: '5Y', fund: ['Fund 5Y'], bench: ['Bench 5Y'] },
+    { label: '1Y', fund: ['Fund 1Y', 'f1y'], bench: ['Bench 1Y', 'b1y'] },
+    { label: '3Y', fund: ['Fund 3Y', 'f3y'], bench: ['Bench 3Y', 'b3y'] },
+    { label: '5Y', fund: ['Fund 5Y', 'f5y'], bench: ['Bench 5Y', 'b5y'] },
   ],
   Solutions: [
-    { label: '1Y', fund: ['Fund 1Y'], bench: ['Bench 1Y'] },
-    { label: '3Y', fund: ['Fund 3Y'], bench: ['Bench 3Y'] },
-    { label: '5Y', fund: ['Fund 5Y'], bench: ['Bench 5Y'] },
+    { label: '1Y', fund: ['Fund 1Y', 'f1y'], bench: ['Bench 1Y', 'b1y'] },
+    { label: '3Y', fund: ['Fund 3Y', 'f3y'], bench: ['Bench 3Y', 'b3y'] },
+    { label: '5Y', fund: ['Fund 5Y', 'f5y'], bench: ['Bench 5Y', 'b5y'] },
   ],
   Commodities: [
-    { label: '1Y', fund: ['Fund_Ret_1Y'], bench: ['BM_Ret_1Y'] },
-    { label: '3Y', fund: ['Fund_Ret_3Y'], bench: ['BM_Ret_3Y'] },
-    { label: '5Y', fund: ['Fund_Ret_5Y'], bench: ['BM_Ret_5Y'] },
+    { label: '1Y', fund: ['Fund_Ret_1Y', 'f1y'], bench: ['BM_Ret_1Y', 'b1y'] },
+    { label: '3Y', fund: ['Fund_Ret_3Y', 'f3y'], bench: ['BM_Ret_3Y', 'b3y'] },
+    { label: '5Y', fund: ['Fund_Ret_5Y', 'f5y'], bench: ['BM_Ret_5Y', 'b5y'] },
   ],
 };
 
@@ -235,8 +256,41 @@ const RISK_LABEL_KEYS = ['RISK CATEGORY', 'Risk Category', 'RISK\nLABEL', 'RISK 
 const TOTAL_SCORE_KEYS = ['TOTAL\n(/40)', 'Total Score(/40)', 'TOTAL SCORE\n(40)', 'TOTAL\nSCORE'];
 const BENCHMARK_NAME_KEYS = ['Benchmark_Name', 'Benchmark Name'];
 
+function normalizeFundName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\b(reg|regular|dir|direct|gr|growth|dividend|div|idcw|payout|reinvestment|plan|fund)\b/gi, '')
+    .replace(/[^a-z0-9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function findDirectCounterpart(record: FundCsvRecord): FundCsvRecord | null {
+  if (record.plan.toLowerCase() === 'direct') {
+    return null;
+  }
+  const allRecords = getAllFundCsvRecords();
+  const normalizedName = normalizeFundName(record.schemeName);
+  
+  const candidates = allRecords.filter(r => 
+    r.plan.toLowerCase() === 'direct' &&
+    r.category === record.category
+  );
+  
+  let best = candidates.find(r => normalizeFundName(r.schemeName) === normalizedName);
+  if (best) return best;
+  
+  best = candidates.find(r => {
+    const n = normalizeFundName(r.schemeName);
+    return n.includes(normalizedName) || normalizedName.includes(n);
+  });
+  
+  return best || null;
+}
+
 export function buildAllocationFundData(record: FundCsvRecord): AllocationFundData {
   const r = record.raw;
+  const counterpart = findDirectCounterpart(record);
 
   const metrics: FundMetricsView = {
     category: record.category,
@@ -244,22 +298,22 @@ export function buildAllocationFundData(record: FundCsvRecord): AllocationFundDa
     benchmarkName: pickFirst(r, BENCHMARK_NAME_KEYS) ?? null,
     riskCategory: pickFirst(r, RISK_LABEL_KEYS) ?? null,
     totalScore: toNum(pickFirst(r, TOTAL_SCORE_KEYS)),
-    alpha: toNum(pickFirst(r, ['Alpha'])),
-    beta: toNum(pickFirst(r, ['Beta'])),
-    sharpe: toNum(pickFirst(r, ['Sharpe'])),
-    sortino: toNum(pickFirst(r, ['Sortino'])),
-    stdDev: toNum(pickFirst(r, ['Std Dev', 'Standard Deviation', 'Std Dev\n(%)'])),
-    meanReturn: toNum(pickFirst(r, ['Mean Return', 'Mean Return\n(%)'])),
-    ytm: toNum(pickFirst(r, ['YTM (%)', 'YTM\n(%)', 'Yield to Maturity (%)', 'YTM'])),
-    macaulayDuration: toNum(pickFirst(r, ['Macaulay Dur (yrs)', 'Mac Dur\n(yrs)', 'Macaulay Duration (yrs)', 'Macaulay Duration'])),
-    avgMaturity: toNum(pickFirst(r, ['Avg Maturity (yrs)', 'Avg Mat\n(yrs)', 'Average Maturity (yrs)', 'Avg Maturity'])),
-    avgCreditRating: pickFirst(r, ['Avg Credit Rating', 'Avg Credit\nRating']) ?? null,
-    noOfStocks: toNum(pickFirst(r, ['No. of Stocks', 'No. of\nStocks'])),
-    top10Holdings: toNum(pickFirst(r, ['Top 10 Stocks (%)', 'Top 10\nHoldings %'])),
-    top5Stocks: toNum(pickFirst(r, ['Top 5 Stocks (%)', 'Top 5\nStocks %'])),
-    top3Sectors: toNum(pickFirst(r, ['Top 3 Sectors (%)', 'Top 3\nSectors %'])),
-    pbRatio: toNum(pickFirst(r, ['P/B Ratio', 'P/B\nRatio'])),
-    peRatio: toNum(pickFirst(r, ['P/E Ratio', 'P/E\nRatio'])),
+    alpha: toNum(pickFirst(r, ['Alpha', 'alpha'])),
+    beta: toNum(pickFirst(r, ['Beta', 'beta'])),
+    sharpe: toNum(pickFirst(r, ['Sharpe', 'sharpe'])),
+    sortino: toNum(pickFirst(r, ['Sortino', 'sortino'])),
+    stdDev: toNum(pickFirst(r, ['Std Dev', 'Standard Deviation', 'Std Dev\n(%)', 'std_dev'])),
+    meanReturn: toNum(pickFirst(r, ['Mean Return', 'Mean Return\n(%)', 'mean_return'])),
+    ytm: toNum(pickFirst(r, ['YTM (%)', 'YTM\n(%)', 'Yield to Maturity (%)', 'YTM', 'ytm'])),
+    macaulayDuration: toNum(pickFirst(r, ['Macaulay Dur (yrs)', 'Mac Dur\n(yrs)', 'Macaulay Duration (yrs)', 'Macaulay Duration', 'mac_duration'])),
+    avgMaturity: toNum(pickFirst(r, ['Avg Maturity (yrs)', 'Avg Mat\n(yrs)', 'Average Maturity (yrs)', 'Avg Maturity', 'avg_maturity'])),
+    avgCreditRating: pickFirst(r, ['Avg Credit Rating', 'Avg Credit\nRating', 'avg_credit_rating']) ?? null,
+    noOfStocks: toNum(pickFirst(r, ['No. of Stocks', 'No. of\nStocks', 'num_securities'])),
+    top10Holdings: toNum(pickFirst(r, ['Top 10 Stocks (%)', 'Top 10\nHoldings %', 'top_10_holdings'])),
+    top5Stocks: toNum(pickFirst(r, ['Top 5 Stocks (%)', 'Top 5\nStocks %', 'top_5_stocks'])),
+    top3Sectors: toNum(pickFirst(r, ['Top 3 Sectors (%)', 'Top 3\nSectors %', 'top_3_sectors'])),
+    pbRatio: toNum(pickFirst(r, ['P/B Ratio', 'P/B\nRatio', 'pb_ratio'])),
+    peRatio: toNum(pickFirst(r, ['P/E Ratio', 'P/E\nRatio', 'pe_ratio'])),
   };
 
   const returnSpec = FUND_RETURN_KEYS[record.category];
@@ -268,8 +322,16 @@ export function buildAllocationFundData(record: FundCsvRecord): AllocationFundDa
   const yearly: { year: string; fundReturn: number; benchmarkReturn: number }[] = [];
 
   for (const spec of returnSpec) {
-    const fv = toNum(pickFirst(r, spec.fund));
-    const bv = toNum(pickFirst(r, spec.bench));
+    let fv = toNum(pickFirst(r, spec.fund));
+    let bv = toNum(pickFirst(r, spec.bench));
+
+    if (fv === null && counterpart) {
+      fv = toNum(pickFirst(counterpart.raw, spec.fund));
+    }
+    if (bv === null && counterpart) {
+      bv = toNum(pickFirst(counterpart.raw, spec.bench));
+    }
+
     if (fv !== null) fundReturns.push({ label: spec.label, value: fv });
     if (bv !== null) benchReturns.push({ label: spec.label, value: bv });
     if (fv !== null || bv !== null) {
@@ -279,6 +341,9 @@ export function buildAllocationFundData(record: FundCsvRecord): AllocationFundDa
 
   // Hybrid CSV doesn't have an explicit benchmark name column; default for that row
   let benchmarkName = metrics.benchmarkName;
+  if (!benchmarkName && counterpart) {
+    benchmarkName = pickFirst(counterpart.raw, BENCHMARK_NAME_KEYS) ?? null;
+  }
   if (!benchmarkName) {
     if (record.category === 'Hybrid') benchmarkName = 'Hybrid Benchmark';
     else if (record.category === 'Solutions') benchmarkName = 'Solution Oriented Benchmark';
@@ -400,17 +465,33 @@ export function buildPortfolioGrowth(
       .find(b => !!b) || 'Benchmark';
 
   // Generate a smooth growth-of-100 curve year by year
-  const points: PortfolioGrowthChartPoint[] = [];
+  const points: any[] = [];
   const steps = Math.max(chosenHorizon.years, 1);
   const today = new Date();
   for (let y = 0; y <= steps; y++) {
     const d = new Date(today);
     d.setFullYear(today.getFullYear() - (steps - y));
-    points.push({
+    
+    const pointData: any = {
       date: d.toISOString().slice(0, 10),
       modelPortfolio: Number((100 * Math.pow(1 + portCagr / 100, y)).toFixed(2)),
       benchmark: Number((100 * Math.pow(1 + benchCagr / 100, y)).toFixed(2)),
-    });
+    };
+
+    for (const r of resolved) {
+      const f = r.data.returns.fund.find(x => x.label === chosenHorizon.label);
+      const b = r.data.returns.benchmark.find(x => x.label === chosenHorizon.label);
+      const cagrFund = f?.value ?? 0;
+      const cagrBench = b?.value ?? 0;
+      
+      const fundRebased = 100 * Math.pow(1 + cagrFund / 100, y);
+      const benchRebased = 100 * Math.pow(1 + cagrBench / 100, y);
+      
+      pointData[r.data.fundName] = Number(fundRebased.toFixed(2));
+      pointData[`${r.data.fundName} Benchmark`] = Number(benchRebased.toFixed(2));
+    }
+    
+    points.push(pointData);
   }
 
   return { chartData: points, benchmarkName, horizonYears: steps };

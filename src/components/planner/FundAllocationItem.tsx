@@ -154,11 +154,26 @@ export function FundAllocationItem({
     }
 
     // --- Non-retirement goal ---
-    const selectedGoal = optimizedGoals.find(g => g.id === alloc.goalId);
+    let selectedGoal = optimizedGoals.find(g => g.id === alloc.goalId);
+    
+    // Fallback: match manual options (wealth_accommodation, education_goal, home_goal, child_planning)
+    // to their corresponding goals from the user form
+    if (!selectedGoal && alloc.goalId) {
+      const lowerId = alloc.goalId.toLowerCase();
+      selectedGoal = optimizedGoals.find(g => {
+        const gName = g.name.toLowerCase();
+        if (lowerId === 'wealth_accommodation') return gName.includes('wealth');
+        if (lowerId === 'education_goal') return gName.includes('education');
+        if (lowerId === 'home_goal') return gName.includes('house') || gName.includes('home');
+        if (lowerId === 'child_planning') return gName.includes('child') || gName.includes('marriage');
+        return false;
+      });
+    }
+
     if (!selectedGoal) return { requiredSIP: 0, requiredLumpsum: 0, remainingPct: 1 };
 
     const requiredSIP = selectedGoal.investmentStatus.allocatedInvestment;
-    const originalGoal = availableGoals.find(g => g.id === alloc.goalId);
+    const originalGoal = availableGoals.find(g => g.id === alloc.goalId) || (selectedGoal ? availableGoals.find(g => g.id === selectedGoal.id) : undefined);
     const annualRate = originalGoal && typeof originalGoal.rate === 'number' && originalGoal.rate > 0
       ? originalGoal.rate / 100
       : 0.12;
@@ -168,11 +183,36 @@ export function FundAllocationItem({
 
     const currentSip = typeof alloc.sipRequired === 'number' ? alloc.sipRequired : 0;
     const currentLumpsum = typeof alloc.lumpsumAmount === 'number' ? alloc.lumpsumAmount : 0;
+
+    // Helper to determine if an allocation belongs to the same goal
+    const isSameGoal = (gId: string) => {
+      if (!gId || !alloc.goalId) return false;
+      if (gId === alloc.goalId) return true;
+      
+      const getNormalizedId = (id: string) => {
+        const found = optimizedGoals.find(g => g.id === id);
+        if (found) return found.id;
+        
+        const lowerId = id.toLowerCase();
+        const matched = optimizedGoals.find(g => {
+          const gName = g.name.toLowerCase();
+          if (lowerId === 'wealth_accommodation') return gName.includes('wealth');
+          if (lowerId === 'education_goal') return gName.includes('education');
+          if (lowerId === 'home_goal') return gName.includes('house') || gName.includes('home');
+          if (lowerId === 'child_planning') return gName.includes('child') || gName.includes('marriage');
+          return false;
+        });
+        return matched ? matched.id : id;
+      };
+      
+      return getNormalizedId(gId) === getNormalizedId(alloc.goalId);
+    };
+
     const totalSip = fundAllocations
-      .filter(a => a.goalId === alloc.goalId)
+      .filter(a => isSameGoal(a.goalId))
       .reduce((sum, a) => sum + (typeof a.sipRequired === 'number' ? a.sipRequired : 0), 0);
     const totalLumpsum = fundAllocations
-      .filter(a => a.goalId === alloc.goalId)
+      .filter(a => isSameGoal(a.goalId))
       .reduce((sum, a) => sum + (typeof a.lumpsumAmount === 'number' ? a.lumpsumAmount : 0), 0);
 
     // Other cards' contributions (exclude this card)

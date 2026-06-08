@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   Area, ComposedChart, Bar, BarChart, ReferenceLine, Cell
@@ -26,6 +26,19 @@ const COLORS = {
   positiveLight: 'rgba(16, 185, 129, 0.15)',
   negativeLight: 'rgba(239, 68, 68, 0.15)',
 };
+
+const CHART_COLORS = [
+  '#0D9488', // Teal
+  '#3B82F6', // Blue
+  '#8B5CF6', // Purple
+  '#F59E0B', // Amber
+  '#EC4899', // Pink
+  '#10B981', // Emerald
+  '#6366F1', // Indigo
+  '#F97316', // Orange
+  '#14B8A6', // Alternate Teal
+  '#84CC16', // Lime
+];
 
 interface MetricCardProps {
   label: string;
@@ -58,9 +71,10 @@ interface CustomTooltipProps {
   active?: boolean;
   payload?: any[];
   label?: string;
+  hiddenKeys?: string[];
 }
 
-function EnhancedTooltip({ active, payload }: CustomTooltipProps) {
+function EnhancedTooltip({ active, payload, hiddenKeys }: CustomTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
 
   const portfolioValue = payload.find((p: any) => p.dataKey === 'modelPortfolio')?.value;
@@ -70,6 +84,13 @@ function EnhancedTooltip({ active, payload }: CustomTooltipProps) {
   const alpha = portfolioGain !== null && benchmarkGain !== null ? portfolioGain - benchmarkGain : null;
   const date = payload[0]?.payload?.date;
 
+  const excludedKeys = new Set(['modelPortfolio', 'benchmark', 'variance', 'ribbonTop', 'ribbonBottom', 'isOutperforming']);
+  const individualFunds = payload.filter((p: any) => 
+    p.dataKey && 
+    !excludedKeys.has(p.dataKey) && 
+    !(hiddenKeys && hiddenKeys.includes(p.dataKey))
+  );
+
   return (
     <div className="rounded-xl border-2 bg-white dark:bg-gray-900 p-4 shadow-2xl min-w-[240px]">
       <div className="text-base font-bold text-foreground mb-3 pb-2 border-b border-border">
@@ -77,37 +98,86 @@ function EnhancedTooltip({ active, payload }: CustomTooltipProps) {
       </div>
       
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: COLORS.portfolio }} />
-            <span className="text-sm text-muted-foreground">Your Portfolio:</span>
+        {individualFunds.length > 0 && (
+          <div className="space-y-1.5 border-b border-border pb-2">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Fund Details</p>
+            {individualFunds.map((p: any) => {
+              const isBench = p.dataKey.endsWith(' Benchmark');
+              return (
+                <div key={p.dataKey} className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span 
+                      style={{ 
+                        display: 'inline-block',
+                        width: '12px',
+                        height: '0px',
+                        borderTop: isBench ? `1.5px dashed ${p.color || COLORS.portfolio}` : `2.5px solid ${p.color || COLORS.portfolio}`,
+                        marginRight: '6px',
+                        verticalAlign: 'middle'
+                      }} 
+                    />
+                    <span className="text-muted-foreground font-medium truncate max-w-[170px]">{p.name || p.dataKey}</span>
+                  </div>
+                  <span className="font-mono font-bold text-foreground">₹{p.value?.toFixed(2)}</span>
+                </div>
+              );
+            })}
           </div>
-          <div className="text-right">
-            <span className="font-mono font-bold text-foreground">₹{portfolioValue?.toFixed(2)}</span>
-            {portfolioGain !== null && (
-              <span className={`text-xs ml-1 font-medium ${portfolioGain >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                ({portfolioGain >= 0 ? '+' : ''}{portfolioGain.toFixed(1)}%)
-              </span>
-            )}
+        )}
+
+        {!hiddenKeys?.includes('modelPortfolio') && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span 
+                style={{ 
+                  display: 'inline-block',
+                  width: '14px',
+                  height: '0px',
+                  borderTop: `3px solid ${COLORS.portfolio}`,
+                  marginRight: '6px',
+                  verticalAlign: 'middle'
+                }} 
+              />
+              <span className="text-sm text-muted-foreground font-semibold">Your Portfolio:</span>
+            </div>
+            <div className="text-right">
+              <span className="font-mono font-bold text-foreground">₹{portfolioValue?.toFixed(2)}</span>
+              {portfolioGain !== null && (
+                <span className={`text-xs ml-1 font-medium ${portfolioGain >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                  ({portfolioGain >= 0 ? '+' : ''}{portfolioGain.toFixed(1)}%)
+                </span>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: COLORS.benchmark }} />
-            <span className="text-sm text-muted-foreground">Benchmark:</span>
+        {!hiddenKeys?.includes('benchmark') && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span 
+                style={{ 
+                  display: 'inline-block',
+                  width: '14px',
+                  height: '0px',
+                  borderTop: `2px dashed ${COLORS.benchmark}`,
+                  marginRight: '6px',
+                  verticalAlign: 'middle'
+                }} 
+              />
+              <span className="text-sm text-muted-foreground">Benchmark:</span>
+            </div>
+            <div className="text-right">
+              <span className="font-mono font-bold text-foreground">₹{benchmarkValue?.toFixed(2)}</span>
+              {benchmarkGain !== null && (
+                <span className={`text-xs ml-1 font-medium ${benchmarkGain >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                  ({benchmarkGain >= 0 ? '+' : ''}{benchmarkGain.toFixed(1)}%)
+                </span>
+              )}
+            </div>
           </div>
-          <div className="text-right">
-            <span className="font-mono font-bold text-foreground">₹{benchmarkValue?.toFixed(2)}</span>
-            {benchmarkGain !== null && (
-              <span className={`text-xs ml-1 font-medium ${benchmarkGain >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                ({benchmarkGain >= 0 ? '+' : ''}{benchmarkGain.toFixed(1)}%)
-              </span>
-            )}
-          </div>
-        </div>
+        )}
         
-        {alpha !== null && (
+        {alpha !== null && !hiddenKeys?.includes('modelPortfolio') && !hiddenKeys?.includes('benchmark') && (
           <div className="pt-2 mt-2 border-t-2 border-dashed border-border">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-foreground">Alpha:</span>
@@ -145,31 +215,109 @@ function VarianceTooltip({ active, payload }: CustomTooltipProps) {
   );
 }
 
-function CustomLegend({ payload }: { payload?: any[] }) {
+interface CustomLegendProps {
+  payload?: any[];
+  hiddenKeys: string[];
+  onToggleKey: (key: string) => void;
+  onShowAll: () => void;
+  onHideAll: () => void;
+}
+
+function CustomLegend({ payload, hiddenKeys, onToggleKey, onShowAll, onHideAll }: CustomLegendProps) {
   if (!payload) return null;
 
   const formatName = (name: string) => {
     if (name === 'benchmark') return 'Weighted Benchmark';
-    if (name === 'modelPortfolio') return 'Your Portfolio';
+    if (name === 'modelPortfolio') return 'Your Portfolio (Total)';
     return name;
   };
 
+  // De-duplicate legend entries by name/dataKey
+  const seen = new Set<string>();
+  const uniquePayload = payload.filter((entry) => {
+    const key = entry.dataKey || entry.name;
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
   return (
-    <div className="flex items-center justify-center gap-8 text-sm mt-4">
-      {payload.map((entry, index) => (
-        <div key={`item-${index}`} className="flex items-center gap-2">
-          <div 
-            className="h-3 w-3 rounded-full" 
-            style={{ backgroundColor: entry.dataKey === 'modelPortfolio' ? COLORS.portfolio : COLORS.benchmark }} 
-          />
-          <span className="font-medium text-foreground">{formatName(entry.dataKey)}</span>
-        </div>
-      ))}
+    <div className="flex flex-col items-center mt-4 w-full select-none">
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+        {uniquePayload.map((entry, index) => {
+          const key = entry.dataKey || entry.name;
+          const name = formatName(entry.name || entry.dataKey);
+          const color = entry.color || (entry.dataKey === 'modelPortfolio' ? COLORS.portfolio : COLORS.benchmark);
+          const isBenchmarkLine = entry.dataKey === 'benchmark' || entry.name?.endsWith(' Benchmark') || entry.dataKey?.endsWith(' Benchmark');
+          const isHidden = hiddenKeys.includes(key);
+
+          return (
+            <div 
+              key={`item-${index}`} 
+              onClick={() => onToggleKey(key)}
+              className="flex items-center gap-2 cursor-pointer transition-all duration-200 hover:opacity-80 px-2 py-1 rounded hover:bg-muted/10"
+              style={{ 
+                opacity: isHidden ? 0.35 : 1,
+              }}
+            >
+              <span 
+                style={{ 
+                  display: 'inline-block', 
+                  width: '18px', 
+                  height: '0px', 
+                  borderTop: isBenchmarkLine ? `2px dashed ${color}` : `3px solid ${color}`,
+                  verticalAlign: 'middle',
+                  marginBottom: '3px'
+                }} 
+              />
+              <span 
+                className="font-medium text-foreground"
+                style={{ 
+                  display: 'inline-block', 
+                  fontSize: '11px', 
+                  verticalAlign: 'middle',
+                  textDecoration: isHidden ? 'line-through' : 'none'
+                }}
+              >
+                {name}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      
+      <div className="flex gap-4 mt-3 text-[10px] text-muted-foreground">
+        <button 
+          onClick={onShowAll} 
+          className="hover:text-primary transition-colors font-semibold underline underline-offset-2"
+        >
+          Show All Lines
+        </button>
+        <span>•</span>
+        <button 
+          onClick={onHideAll} 
+          className="hover:text-primary transition-colors font-semibold underline underline-offset-2"
+        >
+          Hide All Lines
+        </button>
+      </div>
     </div>
   );
 }
 
 export function PortfolioNiftyChart({ data, title, isReport }: Props) {
+  const [hiddenKeys, setHiddenKeys] = useState<string[]>([]);
+
+  const handleToggleKey = (key: string) => {
+    setHiddenKeys(prev => 
+      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
+    );
+  };
+
+  const handleShowAll = () => {
+    setHiddenKeys([]);
+  };
+
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-96 text-muted-foreground">
@@ -178,7 +326,12 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
     );
   }
 
-  const isGrowthChart = data.length > 5;
+  const isGrowthChart = useMemo(() => {
+    if (!data || data.length === 0) return true;
+    const firstDate = String(data[0].date).toLowerCase();
+    const isCagrLabel = firstDate.includes('year') || firstDate.endsWith('y') || firstDate === '1y' || firstDate === '3y' || firstDate === '5y' || firstDate === '7y' || firstDate === '10y';
+    return !isCagrLabel;
+  }, [data]);
 
   const chartData = useMemo(() => {
     return data.map((point, index) => {
@@ -196,10 +349,40 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
     });
   }, [data]);
 
+  const fundKeys = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    const keys = new Set<string>();
+    const excludedKeys = new Set(['date', 'modelPortfolio', 'benchmark', 'variance', 'ribbonTop', 'ribbonBottom', 'isOutperforming']);
+    for (const point of data) {
+      for (const k of Object.keys(point)) {
+        if (!excludedKeys.has(k)) {
+          keys.add(k);
+        }
+      }
+    }
+    return Array.from(keys);
+  }, [data]);
+
+  const fundNames = useMemo(() => {
+    return fundKeys.filter(k => !k.endsWith(' Benchmark'));
+  }, [fundKeys]);
+
+  const handleHideAll = () => {
+    const allKeys = [
+      'modelPortfolio',
+      'benchmark',
+      ...fundNames.flatMap(fund => [fund, `${fund} Benchmark`])
+    ];
+    setHiddenKeys(allKeys);
+  };
+
   const { minValue, maxValue, yAxisMin, yAxisMax } = useMemo(() => {
-    const allValues = data.flatMap(d => [d.modelPortfolio ?? 100, d.benchmark ?? 100]);
-    const min = Math.min(...allValues);
-    const max = Math.max(...allValues);
+    const allValues = data.flatMap(d => {
+      const keys = Object.keys(d).filter(k => k !== 'date' && k !== 'variance' && k !== 'ribbonTop' && k !== 'ribbonBottom' && k !== 'isOutperforming');
+      return keys.map(k => (d as any)[k]).filter((v): v is number => typeof v === 'number');
+    });
+    const min = Math.min(...allValues, 100);
+    const max = Math.max(...allValues, 100);
     const range = max - min;
     const padding = range * 0.05;
     
@@ -225,6 +408,18 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
   }, [data]);
 
   if (isGrowthChart) {
+    const customPayload = [
+      ...fundNames.flatMap((fund, idx) => {
+        const color = CHART_COLORS[idx % CHART_COLORS.length];
+        return [
+          { name: fund, dataKey: fund, color: color },
+          { name: `${fund} Benchmark`, dataKey: `${fund} Benchmark`, color: color }
+        ];
+      }),
+      { name: 'benchmark', dataKey: 'benchmark', color: COLORS.benchmark },
+      { name: 'modelPortfolio', dataKey: 'modelPortfolio', color: COLORS.portfolio }
+    ];
+
     return (
       <Card className="mt-6 overflow-hidden">
         <CardHeader className="pb-2">
@@ -261,94 +456,12 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
         </CardHeader>
         
         <CardContent className="pt-4">
-          <div className="h-[400px] w-full">
+          <div className="w-full" style={{ minHeight: '400px' }}>
             {isReport ? (
-              <ComposedChart
-                width={700}
-                height={400}
-                data={chartData}
-                margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
-              >
-                <defs>
-                  <linearGradient id="positiveGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={COLORS.positive} stopOpacity={0.3} />
-                    <stop offset="100%" stopColor={COLORS.positive} stopOpacity={0.05} />
-                  </linearGradient>
-                  <linearGradient id="negativeGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={COLORS.negative} stopOpacity={0.3} />
-                    <stop offset="100%" stopColor={COLORS.negative} stopOpacity={0.05} />
-                  </linearGradient>
-                  <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={COLORS.portfolio} stopOpacity={0.2} />
-                    <stop offset="100%" stopColor={COLORS.portfolio} stopOpacity={0.02} />
-                  </linearGradient>
-                </defs>
-                
-                <CartesianGrid 
-                  strokeDasharray="3 3" 
-                  stroke="hsl(var(--border) / 0.5)" 
-                  vertical={false} 
-                />
-                
-                <XAxis
-                  dataKey="date"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  interval="preserveStartEnd"
-                  minTickGap={60}
-                  tick={{ fill: 'hsl(var(--muted-foreground))' }}
-                />
-                
-                <YAxis
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  domain={[yAxisMin, yAxisMax]}
-                  tickFormatter={(value) => `₹${value.toFixed(0)}`}
-                  tick={{ fill: 'hsl(var(--muted-foreground))' }}
-                  width={60}
-                />
-                
-                <Tooltip content={<EnhancedTooltip />} />
-                
-                <Area
-                  type="monotone"
-                  dataKey="modelPortfolio"
-                  stroke="none"
-                  fill="url(#portfolioGradient)"
-                  fillOpacity={1}
-                  isAnimationActive={false}
-                />
-                
-                <Line
-                  type="monotone"
-                  dataKey="benchmark"
-                  stroke={COLORS.benchmark}
-                  name="Weighted Benchmark"
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  dot={false}
-                  activeDot={{ r: 5, stroke: COLORS.benchmark, strokeWidth: 2, fill: 'white' }}
-                  isAnimationActive={false}
-                />
-                
-                <Line
-                  type="monotone"
-                  dataKey="modelPortfolio"
-                  stroke={COLORS.portfolio}
-                  name="Your Portfolio"
-                  strokeWidth={3}
-                  dot={false}
-                  activeDot={{ r: 6, stroke: COLORS.portfolio, strokeWidth: 2, fill: 'white' }}
-                  isAnimationActive={false}
-                />
-                
-                <Legend content={<CustomLegend />} verticalAlign="bottom" />
-              </ComposedChart>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
+              <>
                 <ComposedChart
+                  width={700}
+                  height={340}
                   data={chartData}
                   margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
                 >
@@ -393,15 +506,43 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                     width={60}
                   />
                   
-                  <Tooltip content={<EnhancedTooltip />} />
+                  <Tooltip content={<EnhancedTooltip hiddenKeys={hiddenKeys} />} />
                   
-                  <Area
-                    type="monotone"
-                    dataKey="modelPortfolio"
-                    stroke="none"
-                    fill="url(#portfolioGradient)"
-                    fillOpacity={1}
-                  />
+                  {fundNames.map((fund, idx) => {
+                    const color = CHART_COLORS[idx % CHART_COLORS.length];
+                    return (
+                      <Line
+                        key={fund}
+                        type="monotone"
+                        dataKey={fund}
+                        stroke={color}
+                        name={fund}
+                        strokeWidth={2}
+                        dot={false}
+                        activeDot={{ r: 4 }}
+                        isAnimationActive={false}
+                        hide={hiddenKeys.includes(fund)}
+                      />
+                    );
+                  })}
+                  {fundNames.map((fund, idx) => {
+                    const color = CHART_COLORS[idx % CHART_COLORS.length];
+                    return (
+                      <Line
+                        key={`${fund} Benchmark`}
+                        type="monotone"
+                        dataKey={`${fund} Benchmark`}
+                        stroke={color}
+                        name={`${fund} Benchmark`}
+                        strokeWidth={1.5}
+                        strokeDasharray="3 3"
+                        dot={false}
+                        activeDot={{ r: 3 }}
+                        isAnimationActive={false}
+                        hide={hiddenKeys.includes(`${fund} Benchmark`)}
+                      />
+                    );
+                  })}
                   
                   <Line
                     type="monotone"
@@ -412,6 +553,8 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                     strokeDasharray="5 5"
                     dot={false}
                     activeDot={{ r: 5, stroke: COLORS.benchmark, strokeWidth: 2, fill: 'white' }}
+                    isAnimationActive={false}
+                    hide={hiddenKeys.includes('benchmark')}
                   />
                   
                   <Line
@@ -422,11 +565,136 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                     strokeWidth={3}
                     dot={false}
                     activeDot={{ r: 6, stroke: COLORS.portfolio, strokeWidth: 2, fill: 'white' }}
+                    isAnimationActive={false}
+                    hide={hiddenKeys.includes('modelPortfolio')}
                   />
-                  
-                  <Legend content={<CustomLegend />} verticalAlign="bottom" />
                 </ComposedChart>
-              </ResponsiveContainer>
+                <CustomLegend 
+                  payload={customPayload} 
+                  hiddenKeys={hiddenKeys}
+                  onToggleKey={handleToggleKey}
+                  onShowAll={handleShowAll}
+                  onHideAll={handleHideAll}
+                />
+              </>
+            ) : (
+              <>
+                <div className="h-[340px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart
+                      data={chartData}
+                      margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
+                    >
+                      <defs>
+                        <linearGradient id="positiveGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={COLORS.positive} stopOpacity={0.3} />
+                          <stop offset="100%" stopColor={COLORS.positive} stopOpacity={0.05} />
+                        </linearGradient>
+                        <linearGradient id="negativeGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={COLORS.negative} stopOpacity={0.3} />
+                          <stop offset="100%" stopColor={COLORS.negative} stopOpacity={0.05} />
+                        </linearGradient>
+                        <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={COLORS.portfolio} stopOpacity={0.2} />
+                          <stop offset="100%" stopColor={COLORS.portfolio} stopOpacity={0.02} />
+                        </linearGradient>
+                      </defs>
+                      
+                      <CartesianGrid 
+                        strokeDasharray="3 3" 
+                        stroke="hsl(var(--border) / 0.5)" 
+                        vertical={false} 
+                      />
+                      
+                      <XAxis
+                        dataKey="date"
+                        fontSize={11}
+                        tickLine={false}
+                        axisLine={false}
+                        interval="preserveStartEnd"
+                        minTickGap={60}
+                        tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                      />
+                      
+                      <YAxis
+                        fontSize={11}
+                        tickLine={false}
+                        axisLine={false}
+                        domain={[yAxisMin, yAxisMax]}
+                        tickFormatter={(value) => `₹${value.toFixed(0)}`}
+                        tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                        width={60}
+                      />
+                      
+                      <Tooltip content={<EnhancedTooltip hiddenKeys={hiddenKeys} />} />
+                      
+                      {fundNames.map((fund, idx) => {
+                        const color = CHART_COLORS[idx % CHART_COLORS.length];
+                        return (
+                          <Line
+                            key={fund}
+                            type="monotone"
+                            dataKey={fund}
+                            stroke={color}
+                            name={fund}
+                            strokeWidth={2}
+                            dot={false}
+                            activeDot={{ r: 4 }}
+                            hide={hiddenKeys.includes(fund)}
+                          />
+                        );
+                      })}
+                      {fundNames.map((fund, idx) => {
+                        const color = CHART_COLORS[idx % CHART_COLORS.length];
+                        return (
+                          <Line
+                            key={`${fund} Benchmark`}
+                            type="monotone"
+                            dataKey={`${fund} Benchmark`}
+                            stroke={color}
+                            name={`${fund} Benchmark`}
+                            strokeWidth={1.5}
+                            strokeDasharray="3 3"
+                            dot={false}
+                            activeDot={{ r: 3 }}
+                            hide={hiddenKeys.includes(`${fund} Benchmark`)}
+                          />
+                        );
+                      })}
+                      
+                      <Line
+                        type="monotone"
+                        dataKey="benchmark"
+                        stroke={COLORS.benchmark}
+                        name="Weighted Benchmark"
+                        strokeWidth={2}
+                        strokeDasharray="5 5"
+                        dot={false}
+                        activeDot={{ r: 5, stroke: COLORS.benchmark, strokeWidth: 2, fill: 'white' }}
+                        hide={hiddenKeys.includes('benchmark')}
+                      />
+                      
+                      <Line
+                        type="monotone"
+                        dataKey="modelPortfolio"
+                        stroke={COLORS.portfolio}
+                        name="Your Portfolio"
+                        strokeWidth={3}
+                        dot={false}
+                        activeDot={{ r: 6, stroke: COLORS.portfolio, strokeWidth: 2, fill: 'white' }}
+                        hide={hiddenKeys.includes('modelPortfolio')}
+                      />
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                </div>
+                <CustomLegend 
+                  payload={customPayload} 
+                  hiddenKeys={hiddenKeys}
+                  onToggleKey={handleToggleKey}
+                  onShowAll={handleShowAll}
+                  onHideAll={handleHideAll}
+                />
+              </>
             )}
           </div>
           
@@ -523,6 +791,11 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
     alpha: (point.modelPortfolio ?? 0) - (point.benchmark ?? 0),
   }));
 
+  const cagrPayload = [
+    { name: 'modelPortfolio', dataKey: 'modelPortfolio', color: COLORS.portfolio },
+    { name: 'benchmark', dataKey: 'benchmark', color: COLORS.benchmark }
+  ];
+
   return (
     <Card className="mt-6">
       <CardHeader>
@@ -553,55 +826,12 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="h-96 w-full">
+      <CardContent className="w-full" style={{ minHeight: '400px' }}>
         {isReport ? (
-          <LineChart
-            width={700}
-            height={384}
-            data={data}
-            margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" vertical={false} />
-            <XAxis
-              dataKey="date"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-            />
-            <YAxis
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-              label={{ value: 'CAGR %', angle: -90, position: 'insideLeft' }}
-              tickFormatter={(value) => `${value}%`}
-            />
-            <Tooltip content={<EnhancedTooltip />} />
-            <Legend content={<CustomLegend />} verticalAlign="bottom" />
-            <Line
-              type="monotone"
-              dataKey="modelPortfolio"
-              stroke={COLORS.portfolio}
-              name="Your Portfolio"
-              strokeWidth={3}
-              dot={{ fill: COLORS.portfolio, r: 6 }}
-              activeDot={{ r: 8 }}
-              isAnimationActive={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="benchmark"
-              stroke={COLORS.benchmark}
-              name="Weighted Benchmark"
-              strokeWidth={2}
-              strokeDasharray="5 5"
-              dot={{ fill: COLORS.benchmark, r: 6 }}
-              activeDot={{ r: 8 }}
-              isAnimationActive={false}
-            />
-          </LineChart>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          <>
             <LineChart
+              width={700}
+              height={340}
               data={data}
               margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
             >
@@ -619,8 +849,7 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                 label={{ value: 'CAGR %', angle: -90, position: 'insideLeft' }}
                 tickFormatter={(value) => `${value}%`}
               />
-              <Tooltip content={<EnhancedTooltip />} />
-              <Legend content={<CustomLegend />} verticalAlign="bottom" />
+              <Tooltip content={<EnhancedTooltip hiddenKeys={hiddenKeys} />} />
               <Line
                 type="monotone"
                 dataKey="modelPortfolio"
@@ -629,6 +858,8 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                 strokeWidth={3}
                 dot={{ fill: COLORS.portfolio, r: 6 }}
                 activeDot={{ r: 8 }}
+                isAnimationActive={false}
+                hide={hiddenKeys.includes('modelPortfolio')}
               />
               <Line
                 type="monotone"
@@ -639,9 +870,73 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                 strokeDasharray="5 5"
                 dot={{ fill: COLORS.benchmark, r: 6 }}
                 activeDot={{ r: 8 }}
+                isAnimationActive={false}
+                hide={hiddenKeys.includes('benchmark')}
               />
             </LineChart>
-          </ResponsiveContainer>
+            <CustomLegend 
+              payload={cagrPayload} 
+              hiddenKeys={hiddenKeys}
+              onToggleKey={handleToggleKey}
+              onShowAll={handleShowAll}
+              onHideAll={handleHideAll}
+            />
+          </>
+        ) : (
+          <>
+            <div className="h-[340px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={data}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    label={{ value: 'CAGR %', angle: -90, position: 'insideLeft' }}
+                    tickFormatter={(value) => `${value}%`}
+                  />
+                  <Tooltip content={<EnhancedTooltip hiddenKeys={hiddenKeys} />} />
+                  <Line
+                    type="monotone"
+                    dataKey="modelPortfolio"
+                    stroke={COLORS.portfolio}
+                    name="Your Portfolio"
+                    strokeWidth={3}
+                    dot={{ fill: COLORS.portfolio, r: 6 }}
+                    activeDot={{ r: 8 }}
+                    hide={hiddenKeys.includes('modelPortfolio')}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="benchmark"
+                    stroke={COLORS.benchmark}
+                    name="Weighted Benchmark"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={{ fill: COLORS.benchmark, r: 6 }}
+                    activeDot={{ r: 8 }}
+                    hide={hiddenKeys.includes('benchmark')}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <CustomLegend 
+              payload={cagrPayload} 
+              hiddenKeys={hiddenKeys}
+              onToggleKey={handleToggleKey}
+              onShowAll={handleShowAll}
+              onHideAll={handleHideAll}
+            />
+          </>
         )}
       </CardContent>
     </Card>

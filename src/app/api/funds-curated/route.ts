@@ -22,13 +22,13 @@ const AMC_NAMES = [
 ];
 
 export async function GET() {
-  const fundsDir = path.join(process.cwd(), 'Funds');
+  const fundsDir = path.join(process.cwd(), 'Mutual Fund');
   const files = [
-    { name: 'equity.csv', category: 'Equity Scheme' },
-    { name: 'debt.csv', category: 'Debt Scheme' },
-    { name: 'hybrid.csv', category: 'Hybrid Scheme' },
-    { name: 'solutions.csv', category: 'Solution Oriented Scheme' },
-    { name: 'commodities.csv', category: 'Commodities' }
+    { name: 'Equity Funds.csv', category: 'Equity Scheme' },
+    { name: 'Debt_Funds.csv', category: 'Debt Scheme' },
+    { name: 'Hybrid Funds.csv', category: 'Hybrid Scheme' },
+    { name: 'Solution Funds.csv', category: 'Solution Oriented Scheme' },
+    { name: 'Commodities Funds.csv', category: 'Commodities' }
   ];
 
   let allFunds: MutualFundScheme[] = [];
@@ -44,9 +44,10 @@ export async function GET() {
 
       if (parsed.data && parsed.data.length > 0) {
         parsed.data.forEach((row: any) => {
-          const schemeName = row['Fund Name'] || '';
-          const type = row['Category'] || '';
-          const schemeCode = row['Scheme Code'] || '';
+          const schemeName = row['Fund Name'] || row['fund_name'] || '';
+          const rawType = row['Category'] || row['category'] || row['bm'] || '';
+          const type = rawType.replace(/^(Debt|Hybrid|Solution|Commodities):\s*/i, '').trim();
+          const schemeCode = row['Scheme Code'] || row['scheme_code'] || row['AMFI Scheme Code'] || '';
           
           let fundName = schemeName.split(' ')[0] || 'Unknown';
           
@@ -65,7 +66,7 @@ export async function GET() {
               fundName: fundName,
               schemeName: schemeName,
               schemeCode: schemeCode,
-              primaryBenchmark: row['Benchmark_Name'] || ''
+              primaryBenchmark: row['Benchmark_Name'] || row['bm'] || ''
             });
           }
         });

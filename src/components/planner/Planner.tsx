@@ -580,7 +580,7 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
         hybridWeightAnalysis: hasHybridFunds,
         solutionOrientedWeightAnalysis: fundAllocations.some(a => categoryMatches(a.fundCategory, 'Solution') && a.schemeCode),
         othersWeightAnalysis: fundAllocations.some(a => (categoryMatches(a.fundCategory, 'Other') || categoryMatches(a.fundCategory, 'Commodities')) && a.schemeCode),
-        liquidAssetAllocation: true,
+        liquidAssetAllocation: false,
       };
 
       const allocationReportData: SipOptimizerReportData & { goalsWithCalculations: GoalWithCalculations[] } = {

@@ -6,10 +6,10 @@ export const EQUITY_BENCHMARK_MAPPING: { [key: string]: string } = {
   'Mid Cap': 'Nifty Benchmark - NIFTY Midcap 150 TRI.csv',
   'Small Cap': 'Nifty Benchmark - NIFTY Smallcap 250 TRI.csv',
   'Multi Cap': 'Nifty Benchmark - NIFTY500 MULTICAP 50_25_25.csv',
-  'Flexi Cap': 'Nifty Benchmark - Nifty 500.csv',
+  'Flexi Cap': 'Nifty Benchmark - Nifty 500 TRI.csv',
   'Value': 'Nifty Benchmark - NIFTY 500 Value 50 TRI.csv',
-  'ELSS': 'Nifty Benchmark - Nifty 500.csv',
-  'Contra': 'Nifty Benchmark - Nifty 500.csv',
+  'ELSS': 'Nifty Benchmark - Nifty 500 TRI.csv',
+  'Contra': 'Nifty Benchmark - Nifty 500 TRI.csv',
   'Dividend Yield': 'Nifty Benchmark - NIFTY Dividend Opportunities 50 TRI.csv',
   'Focused': 'Nifty Benchmark - Nifty 50 TRI.csv',
   'Sectoral/Thematic - Banking': 'Nifty Benchmark - NIFTY Financial Services TRI.csv',
@@ -46,6 +46,11 @@ export function getBenchmarkFileForFund(schemeName: string): string {
     const file = getOtherBenchmarkFileForFund(schemeName);
     console.log(`[BenchmarkMapping] Mapping ${schemeName} to specialized benchmark: ${file}`);
     return file;
+  }
+
+  // Map retirement/children solutions in equity to Flexi Cap (Nifty 500 TRI)
+  if (lowerName.includes('retirement') || lowerName.includes('children')) {
+    return EQUITY_BENCHMARK_MAPPING['Flexi Cap'];
   }
 
   if (lowerName.includes('small cap') || lowerName.includes('smallcap')) {
@@ -87,7 +92,7 @@ export function getBenchmarkFileForFund(schemeName: string): string {
   if (lowerName.includes('banking') || lowerName.includes('bank') || lowerName.includes('financial')) {
     return EQUITY_BENCHMARK_MAPPING['Sectoral/Thematic - Financial Services'];
   }
-  if (lowerName.includes('it ') || lowerName.includes('technology') || lowerName.includes('tech')) {
+  if (lowerName.includes('it ') || lowerName.includes('technology') || lowerName.includes('tech') || lowerName.includes('digital')) {
     return EQUITY_BENCHMARK_MAPPING['Sectoral/Thematic - IT'];
   }
   if (lowerName.includes('pharma') || lowerName.includes('healthcare') || lowerName.includes('health')) {

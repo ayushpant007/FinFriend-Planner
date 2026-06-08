@@ -364,11 +364,30 @@ export async function POST(request: Request) {
           year: '2-digit' 
         });
         
-        chartData.push({
+        const pointData: any = {
           date: monthStr,
           modelPortfolio: parseFloat(weightedPortfolioValue.toFixed(2)),
           benchmark: parseFloat(weightedBenchmarkValue.toFixed(2))
-        });
+        };
+
+        for (const vf of validFunds) {
+          const navValue = findClosestValue(vf.navData, targetDate);
+          const isYearlyBenchmark = vf.benchmarkFile.includes('Gold') || vf.benchmarkFile.includes('Silver');
+          const benchmarkValue = isYearlyBenchmark
+            ? findClosestValueYearly(vf.benchmarkData, targetDate)
+            : findClosestValue(vf.benchmarkData, targetDate);
+            
+          if (navValue !== null) {
+            const rebasedNav = (navValue / vf.navBaseValue) * 100;
+            pointData[vf.fund.schemeName] = parseFloat(rebasedNav.toFixed(2));
+          }
+          if (benchmarkValue !== null) {
+            const rebasedBenchmark = (benchmarkValue / vf.benchmarkBaseValue) * 100;
+            pointData[`${vf.fund.schemeName} Benchmark`] = parseFloat(rebasedBenchmark.toFixed(2));
+          }
+        }
+        
+        chartData.push(pointData);
       }
     }
     

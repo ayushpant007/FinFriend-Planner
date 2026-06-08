@@ -249,6 +249,10 @@ const FundAllocationRow = ({ alloc, goalName, data }: { alloc: FundAllocation, g
 
     const getGoalDisplayName = (goalId: string) => {
         if (goalId === 'retirement') return 'Retirement Goal';
+        if (goalId === 'wealth_accommodation') return 'Wealth Accommodation';
+        if (goalId === 'education_goal') return 'Education Goal';
+        if (goalId === 'home_goal') return 'Home Goal';
+        if (goalId === 'child_planning') return 'Child Planning';
         const goal = data.goalsWithCalculations.find(g => g.id === goalId);
         if (!goal) return 'Unlinked';
         return goal.otherType || goal.name;
@@ -723,7 +727,12 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
     if (totalCategoryValue === 0) return [];
     return categoryAllocations.map(alloc => ({
         ...alloc,
-        goalName: data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.name || 'Unlinked',
+        goalName: alloc.goalId === 'retirement' ? 'Retirement Goal' :
+                  alloc.goalId === 'wealth_accommodation' ? 'Wealth Accommodation' :
+                  alloc.goalId === 'education_goal' ? 'Education Goal' :
+                  alloc.goalId === 'home_goal' ? 'Home Goal' :
+                  alloc.goalId === 'child_planning' ? 'Child Planning' :
+                  (data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.name || 'Unlinked'),
         weight: ((getNum(alloc.sipRequired) + getNum(alloc.lumpsumAmount)) / totalCategoryValue) * 100,
         fundType: alloc.fundType || 'N/A'
     }));
@@ -907,13 +916,11 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
       }}>
         {/* Header */}
         <header className="p-4 pt-8 rounded-t-lg bg-pink-100 print:bg-pink-100 print-avoid-break flex justify-between items-center border-b border-pink-200">
-            <div className="relative h-12 w-48">
-              <Image
+            <div className="h-12 w-48">
+              <img
                 src={logoUrl}
                 alt="Financial Friend Logo"
-                fill
-                style={{ objectFit: 'contain' }}
-                priority
+                style={{ height: '48px', width: 'auto', objectFit: 'contain' }}
               />
             </div>
             <div className="text-right text-xs">
@@ -1009,17 +1016,25 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
             </div>
             <div className="mt-3">
                 {(data.cashflow?.investibleSurplus || 0) >= (data.totalInvestmentStatus?.requiredInvestment || 0) ? (
-                    <p className="text-sm text-center">
+                    <p className="text-sm text-center leading-relaxed">
                         Your investable surplus is sufficient to meet your required investments.
                         <br/>
-                        <span className="font-bold text-green-600 bg-green-100 rounded-md px-1.5 py-0.5 mx-1 print:bg-green-100">
+                        <span 
+                          style={{ display: 'inline-block', marginTop: '8px' }} 
+                          className="font-bold text-green-600 bg-green-100 rounded-md px-2.5 py-1 mx-1 print:bg-green-100"
+                        >
                             I must invest / month = I can invest / month
                         </span>
                     </p>
                 ) : (
-                    <p className="text-sm text-center">
+                    <p className="text-sm text-center leading-relaxed">
                         You are currently underinvesting and need an additional SIP of 
-                        <span className="font-bold text-red-600 bg-red-100 rounded-md px-1.5 py-0.5 mx-1 print:bg-red-100">{formatCurrency(additionalSipRequired)}</span>
+                        <span 
+                          style={{ display: 'inline-block' }} 
+                          className="font-bold text-red-600 bg-red-100 rounded-md px-1.5 py-0.5 mx-1 print:bg-red-100"
+                        >
+                          {formatCurrency(additionalSipRequired)}
+                        </span>
                         per month to stay on track and achieve your goals.
                     </p>
                 )}
@@ -1056,11 +1071,11 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Goal Name</TableHead>
-                                <TableHead>Target Corpus (Today's Value)</TableHead>
-                                <TableHead>Years to Goal</TableHead>
-                                <TableHead>Current Savings for Goal</TableHead>
-                                <TableHead>Current Monthly SIP</TableHead>
+                                <TableHead style={{ height: 'auto' }} className="h-auto py-3">Goal Name</TableHead>
+                                <TableHead style={{ height: 'auto' }} className="h-auto py-3">Target Corpus (Today's Value)</TableHead>
+                                <TableHead style={{ height: 'auto' }} className="h-auto py-3">Years to Goal</TableHead>
+                                <TableHead style={{ height: 'auto' }} className="h-auto py-3">Current Savings for Goal</TableHead>
+                                <TableHead style={{ height: 'auto' }} className="h-auto py-3">Current Monthly SIP</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody className="text-xs">
@@ -1193,66 +1208,49 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         </section>
         )}
         
-        {sections.liquidAssetAllocation && (
-          <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
-              <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
-                  <h3 className="font-bold text-gray-700">Liquid Asset Allocation</h3>
-              </div>
-              <div className="flex flex-col md:flex-row gap-4 items-center">
-                  <div className="w-full md:w-1/2 min-h-[260px] flex justify-center items-center overflow-visible chart-container">
-                      <AssetAllocationChart assets={aggregatedLiquidAssets} isReport={true} />
-                  </div>
-                  <div className="w-full md:w-1/2">
-                      <div className="rounded-lg border bg-white p-2 text-xs">
-                          <Table>
-                              <TableHeader>
-                                  <TableRow>
-                                      <TableHead>Asset</TableHead>
-                                      <TableHead className="text-right">Value</TableHead>
-                                      <TableHead className="text-right">%</TableHead>
-                                  </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                  {aggregatedLiquidAssets.map((asset, index) => (
-                                      <TableRow key={index}>
-                                          <TableCell className="font-medium flex items-center gap-2">
-                                              <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: asset.color }}></div>
-                                              {asset.name}
-                                          </TableCell>
-                                          <TableCell className="text-right roboto">{formatCurrency(asset.value)}</TableCell>
-                                          <TableCell className="text-right roboto">{asset.percentage.toFixed(1)}%</TableCell>
-                                      </TableRow>
-                                  ))}
-                                  <TableRow className="font-bold bg-gray-50 print:bg-gray-50">
-                                       <TableCell>Total</TableCell>
-                                       <TableCell className="text-right roboto">{formatCurrency(totalLiquidAssets)}</TableCell>
-                                       <TableCell className="text-right roboto">100%</TableCell>
-                                  </TableRow>
-                              </TableBody>
-                          </Table>
-                      </div>
-                  </div>
-              </div>
 
-              {nonLiquidAssets.length > 0 && (
-                  <div className="mt-4">
-                      <h3 className="font-bold text-gray-700 mb-2 flex items-center gap-2"><Building className="h-5 w-5 text-gray-500"/>Non-Liquid Assets</h3>
-                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
-                          {nonLiquidAssets.map(asset => (
-                               <AssetCard 
-                                  key={asset.id}
-                                  icon={<Building className="h-4 w-4 text-muted-foreground" />}
-                                  title={asset.type === 'Other' && asset.otherType ? asset.otherType : asset.type}
-                                  value={getNumericValue(asset.amount)}
-                                  colorClass="border-indigo-500"
-                                  isNonLiquid={true}
-                               />
-                          ))}
-                      </div>
-                  </div>
-              )}
+
+        {sections.assetAllocation && recommendedAllocation && Object.entries(recommendedAllocation).some(([key, val]) => val > 0 && key !== 'Expected Return') && (
+          <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
+            <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
+                <h3 className="font-bold text-gray-700">Recommended Asset Allocation</h3>
+            </div>
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
+              <div className="w-full md:w-2/3">
+                <div className="rounded-lg border bg-white p-2 text-xs">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead style={{ height: 'auto' }} className="h-auto py-2.5">Asset Category</TableHead>
+                        <TableHead style={{ height: 'auto' }} className="h-auto py-2.5 text-right">Allocation (%)</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {Object.entries(recommendedAllocation).map(([key, value]) => {
+                        if (value > 0 && key !== 'Expected Return') {
+                          return (
+                            <TableRow key={key}>
+                              <TableCell className="font-medium py-2">{key}</TableCell>
+                              <TableCell className="text-right font-bold py-2">{value}%</TableCell>
+                            </TableRow>
+                          );
+                        }
+                        return null;
+                      })}
+                      {recommendedAllocation['Expected Return'] !== undefined && (
+                        <TableRow className="font-bold bg-gray-50 print:bg-gray-50">
+                          <TableCell className="py-2">Expected Portfolio Return</TableCell>
+                          <TableCell className="text-right font-bold py-2">{recommendedAllocation['Expected Return']}%</TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
           </section>
         )}
+
              {sections.mutualFundPortfolio && data.fundAllocations && data.fundAllocations.length > 0 && (
             <>
             <section className="mt-4 pdf-section print-avoid-break">
@@ -1286,7 +1284,12 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                                     <FundAllocationRow 
                                         key={alloc.id} 
                                         alloc={alloc} 
-                                        goalName={alloc.goalId === 'retirement' ? 'Retirement Goal' : (data.goalsWithCalculations.find(g => g.id === alloc.goalId)?.name || 'Unlinked')} 
+                                        goalName={alloc.goalId === 'retirement' ? 'Retirement Goal' :
+                                                  alloc.goalId === 'wealth_accommodation' ? 'Wealth Accommodation' :
+                                                  alloc.goalId === 'education_goal' ? 'Education Goal' :
+                                                  alloc.goalId === 'home_goal' ? 'Home Goal' :
+                                                  alloc.goalId === 'child_planning' ? 'Child Planning' :
+                                                  (data.goalsWithCalculations.find(g => g.id === alloc.goalId)?.name || 'Unlinked')} 
                                         data={data}
                                     />
                                 ))}
@@ -1295,7 +1298,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                     </CardContent>
                  </Card>
             </section>
-
+ 
              {sections.modelPortfolioAnalysis && (
                <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
                 <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
@@ -1307,7 +1310,12 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                     <FundDetailCard 
                       key={alloc.id}
                       alloc={alloc}
-                      goalName={alloc.goalId === 'retirement' ? 'Retirement Goal' : (data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.otherType || data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.name || 'Unlinked')}
+                      goalName={alloc.goalId === 'retirement' ? 'Retirement Goal' :
+                                alloc.goalId === 'wealth_accommodation' ? 'Wealth Accommodation' :
+                                alloc.goalId === 'education_goal' ? 'Education Goal' :
+                                alloc.goalId === 'home_goal' ? 'Home Goal' :
+                                alloc.goalId === 'child_planning' ? 'Child Planning' :
+                                (data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.otherType || data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.name || 'Unlinked')}
                       formatCurrency={formatCurrency}
                       cachedBenchmarkData={data.fundBenchmarkCache?.[alloc.schemeCode] ?? null}
                     />

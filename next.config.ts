@@ -24,6 +24,13 @@ const nextConfig = {
       },
     ],
   },
+  serverExternalPackages: [
+    'express',
+    'genkit',
+    '@genkit-ai/core',
+    '@genkit-ai/googleai',
+    '@genkit-ai/next',
+  ],
 };
 
 module.exports = nextConfig;

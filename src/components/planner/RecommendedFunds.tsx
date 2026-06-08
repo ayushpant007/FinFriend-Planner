@@ -122,9 +122,13 @@ export function RecommendedFunds({ allocations, setAllocations, investibleSurplu
   
   const availableGoals = useMemo(() => {
     const regularGoals = goals.filter(g => g.name);
-    // Manually add a "Retirement Goal" option
+    // Manually add standard goal options
     const retirementGoal = { id: 'retirement', name: 'Retirement Goal' } as Goal;
-    return [...regularGoals, retirementGoal];
+    const wealthGoal = { id: 'wealth_accommodation', name: 'Wealth Accommodation' } as Goal;
+    const educationGoal = { id: 'education_goal', name: 'Education Goal' } as Goal;
+    const homeGoal = { id: 'home_goal', name: 'Home Goal' } as Goal;
+    const childGoal = { id: 'child_planning', name: 'Child Planning' } as Goal;
+    return [...regularGoals, retirementGoal, wealthGoal, educationGoal, homeGoal, childGoal];
   }, [goals]);
 
 

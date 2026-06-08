@@ -79,8 +79,13 @@ function convertSipToDetailed(sipData: any): any {
     });
     
     for (const [gId, values] of Object.entries(goalGroups)) {
-      let name = gId === 'retirement' ? 'Retirement Goal' : gId;
-      if (gId !== 'retirement') {
+      let name = gId;
+      if (gId === 'retirement') name = 'Retirement Goal';
+      else if (gId === 'wealth_accommodation') name = 'Wealth Accommodation';
+      else if (gId === 'education_goal') name = 'Education Goal';
+      else if (gId === 'home_goal') name = 'Home Goal';
+      else if (gId === 'child_planning') name = 'Child Planning';
+      else {
         name = gId.charAt(0).toUpperCase() + gId.slice(1);
       }
       
