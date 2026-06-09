@@ -271,8 +271,8 @@ export function calculateRetirementDetails(inputs: RetirementInputs): Retirement
     if (requiredShortfall < 0) requiredShortfall = 0;
     
     let monthlyInvestmentNeeded = 0;
-    if (requiredRetirementCorpus > 0 && yearsToRetirement > 0 && preRetirementRoi > 0) {
-        monthlyInvestmentNeeded = pmt(preRetirementRoi / 12, yearsToRetirement * 12, 0, -requiredRetirementCorpus, 0);
+    if (requiredShortfall > 0 && yearsToRetirement > 0 && preRetirementRoi > 0) {
+        monthlyInvestmentNeeded = pmt(preRetirementRoi / 12, yearsToRetirement * 12, 0, -requiredShortfall, 0);
     }
     
     let incrementalMonthlyInvestment = 0;
