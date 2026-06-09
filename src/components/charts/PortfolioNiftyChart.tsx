@@ -409,13 +409,6 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
 
   if (isGrowthChart) {
     const customPayload = [
-      ...fundNames.flatMap((fund, idx) => {
-        const color = CHART_COLORS[idx % CHART_COLORS.length];
-        return [
-          { name: fund, dataKey: fund, color: color },
-          { name: `${fund} Benchmark`, dataKey: `${fund} Benchmark`, color: color }
-        ];
-      }),
       { name: 'benchmark', dataKey: 'benchmark', color: COLORS.benchmark },
       { name: 'modelPortfolio', dataKey: 'modelPortfolio', color: COLORS.portfolio }
     ];
@@ -508,42 +501,6 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                   
                   <Tooltip content={<EnhancedTooltip hiddenKeys={hiddenKeys} />} />
                   
-                  {fundNames.map((fund, idx) => {
-                    const color = CHART_COLORS[idx % CHART_COLORS.length];
-                    return (
-                      <Line
-                        key={fund}
-                        type="monotone"
-                        dataKey={fund}
-                        stroke={color}
-                        name={fund}
-                        strokeWidth={2}
-                        dot={false}
-                        activeDot={{ r: 4 }}
-                        isAnimationActive={false}
-                        hide={hiddenKeys.includes(fund)}
-                      />
-                    );
-                  })}
-                  {fundNames.map((fund, idx) => {
-                    const color = CHART_COLORS[idx % CHART_COLORS.length];
-                    return (
-                      <Line
-                        key={`${fund} Benchmark`}
-                        type="monotone"
-                        dataKey={`${fund} Benchmark`}
-                        stroke={color}
-                        name={`${fund} Benchmark`}
-                        strokeWidth={1.5}
-                        strokeDasharray="3 3"
-                        dot={false}
-                        activeDot={{ r: 3 }}
-                        isAnimationActive={false}
-                        hide={hiddenKeys.includes(`${fund} Benchmark`)}
-                      />
-                    );
-                  })}
-                  
                   <Line
                     type="monotone"
                     dataKey="benchmark"
@@ -561,7 +518,7 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                     type="monotone"
                     dataKey="modelPortfolio"
                     stroke={COLORS.portfolio}
-                    name="Your Portfolio"
+                    name="Your Portfolio (Total)"
                     strokeWidth={3}
                     dot={false}
                     activeDot={{ r: 6, stroke: COLORS.portfolio, strokeWidth: 2, fill: 'white' }}
@@ -628,40 +585,6 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                       
                       <Tooltip content={<EnhancedTooltip hiddenKeys={hiddenKeys} />} />
                       
-                      {fundNames.map((fund, idx) => {
-                        const color = CHART_COLORS[idx % CHART_COLORS.length];
-                        return (
-                          <Line
-                            key={fund}
-                            type="monotone"
-                            dataKey={fund}
-                            stroke={color}
-                            name={fund}
-                            strokeWidth={2}
-                            dot={false}
-                            activeDot={{ r: 4 }}
-                            hide={hiddenKeys.includes(fund)}
-                          />
-                        );
-                      })}
-                      {fundNames.map((fund, idx) => {
-                        const color = CHART_COLORS[idx % CHART_COLORS.length];
-                        return (
-                          <Line
-                            key={`${fund} Benchmark`}
-                            type="monotone"
-                            dataKey={`${fund} Benchmark`}
-                            stroke={color}
-                            name={`${fund} Benchmark`}
-                            strokeWidth={1.5}
-                            strokeDasharray="3 3"
-                            dot={false}
-                            activeDot={{ r: 3 }}
-                            hide={hiddenKeys.includes(`${fund} Benchmark`)}
-                          />
-                        );
-                      })}
-                      
                       <Line
                         type="monotone"
                         dataKey="benchmark"
@@ -678,7 +601,7 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                         type="monotone"
                         dataKey="modelPortfolio"
                         stroke={COLORS.portfolio}
-                        name="Your Portfolio"
+                        name="Your Portfolio (Total)"
                         strokeWidth={3}
                         dot={false}
                         activeDot={{ r: 6, stroke: COLORS.portfolio, strokeWidth: 2, fill: 'white' }}
