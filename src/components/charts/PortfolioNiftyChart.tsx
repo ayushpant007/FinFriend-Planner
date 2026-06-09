@@ -526,13 +526,6 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                     hide={hiddenKeys.includes('modelPortfolio')}
                   />
                 </ComposedChart>
-                <CustomLegend 
-                  payload={customPayload} 
-                  hiddenKeys={hiddenKeys}
-                  onToggleKey={handleToggleKey}
-                  onShowAll={handleShowAll}
-                  onHideAll={handleHideAll}
-                />
               </>
             ) : (
               <>
@@ -610,13 +603,6 @@ export function PortfolioNiftyChart({ data, title, isReport }: Props) {
                     </ComposedChart>
                   </ResponsiveContainer>
                 </div>
-                <CustomLegend 
-                  payload={customPayload} 
-                  hiddenKeys={hiddenKeys}
-                  onToggleKey={handleToggleKey}
-                  onShowAll={handleShowAll}
-                  onHideAll={handleHideAll}
-                />
               </>
             )}
           </div>
