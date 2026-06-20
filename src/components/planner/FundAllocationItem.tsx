@@ -883,55 +883,58 @@ export function FundAllocationItem({
             Portfolio composition as of latest available data
           </p>
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-blue-200 dark:border-blue-700">
-                  <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">#</th>
-                  <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Company / Instrument</th>
-                  {topHoldings.some(h => h.sector) && (
-                    <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Sector</th>
-                  )}
-                  {topHoldings.some(h => h.creditRating) && (
-                    <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Rating</th>
-                  )}
-                  <th className="text-right py-1 font-medium text-blue-700 dark:text-blue-300">% Assets</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topHoldings.map((h, idx) => (
-                  <tr key={idx} className="border-b border-blue-100 dark:border-blue-800/50 last:border-0">
-                    <td className="py-1.5 pr-3 text-muted-foreground">{idx + 1}</td>
-                    <td className="py-1.5 pr-3 font-medium text-foreground">{h.companyName}</td>
-                    {topHoldings.some(hh => hh.sector) && (
-                      <td className="py-1.5 pr-3 text-muted-foreground">{h.sector || '—'}</td>
-                    )}
-                    {topHoldings.some(hh => hh.creditRating) && (
-                      <td className="py-1.5 pr-3">
-                        {h.creditRating ? (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-                            {h.creditRating}
-                          </span>
-                        ) : '—'}
+            {(() => {
+              const hasSector     = topHoldings.some(h => h.sector);
+              const hasInstrument = topHoldings.some(h => h.instrument);
+              const hasRating     = topHoldings.some(h => h.creditRating);
+              const extraCols     = (hasSector ? 1 : 0) + (hasInstrument ? 1 : 0) + (hasRating ? 1 : 0);
+              return (
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-blue-200 dark:border-blue-700">
+                      <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">#</th>
+                      <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Company / Instrument</th>
+                      {hasSector     && <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Sector</th>}
+                      {hasInstrument && <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Instrument</th>}
+                      {hasRating     && <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Rating</th>}
+                      <th className="text-right py-1 font-medium text-blue-700 dark:text-blue-300">% Assets</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topHoldings.map((h, idx) => (
+                      <tr key={idx} className="border-b border-blue-100 dark:border-blue-800/50 last:border-0">
+                        <td className="py-1.5 pr-3 text-muted-foreground">{idx + 1}</td>
+                        <td className="py-1.5 pr-3 font-medium text-foreground">{h.companyName}</td>
+                        {hasSector     && <td className="py-1.5 pr-3 text-muted-foreground">{h.sector || '—'}</td>}
+                        {hasInstrument && <td className="py-1.5 pr-3 text-muted-foreground">{h.instrument || '—'}</td>}
+                        {hasRating && (
+                          <td className="py-1.5 pr-3">
+                            {h.creditRating ? (
+                              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                                {h.creditRating}
+                              </span>
+                            ) : '—'}
+                          </td>
+                        )}
+                        <td className="py-1.5 text-right font-semibold text-blue-700 dark:text-blue-300">
+                          {h.percentOfAssets.toFixed(2)}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t border-blue-200 dark:border-blue-700">
+                      <td colSpan={2 + extraCols} className="py-1.5 text-muted-foreground font-medium">
+                        Total ({topHoldings.length} holdings)
                       </td>
-                    )}
-                    <td className="py-1.5 text-right font-semibold text-blue-700 dark:text-blue-300">
-                      {h.percentOfAssets.toFixed(2)}%
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className="border-t border-blue-200 dark:border-blue-700">
-                  <td colSpan={2 + (topHoldings.some(h => h.sector) ? 1 : 0) + (topHoldings.some(h => h.creditRating) ? 1 : 0)}
-                    className="py-1.5 text-muted-foreground font-medium">
-                    Total ({topHoldings.length} holdings)
-                  </td>
-                  <td className="py-1.5 text-right font-bold text-blue-700 dark:text-blue-300">
-                    {topHoldings.reduce((s, h) => s + h.percentOfAssets, 0).toFixed(2)}%
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
+                      <td className="py-1.5 text-right font-bold text-blue-700 dark:text-blue-300">
+                        {topHoldings.reduce((s, h) => s + h.percentOfAssets, 0).toFixed(2)}%
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              );
+            })()}
           </div>
         </div>
       )}
