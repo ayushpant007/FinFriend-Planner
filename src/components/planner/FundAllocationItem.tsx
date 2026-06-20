@@ -288,11 +288,29 @@ export function FundAllocationItem({
             threeYearRollingReturn: threeYearReturnNum,
             threeYearCagr: threeYearReturnNum,
           } as RiskMetrics;
-          setRiskMetrics(riskData);
+
+          // Check if CSV has any real risk metric values; if not, we'll fall through to live fetch
+          const csvHasRiskMetrics = (
+            m.sharpe !== null ||
+            m.sortino !== null ||
+            m.beta !== null ||
+            m.alpha !== null ||
+            m.stdDev !== null
+          );
+
+          if (csvHasRiskMetrics) {
+            setRiskMetrics(riskData);
+          }
           setCsvMetrics(m as FundMetricsView);
           // Bubble benchmark data up to parent for caching
           if (alloc.schemeCode && yearlyComp.length > 0) {
-            onBenchmarkData?.(alloc.schemeCode, { yearlyComparison: yearlyComp, benchmarkName: bName, riskMetrics: riskData, csvMetrics: m as FundMetricsView });
+            onBenchmarkData?.(alloc.schemeCode, { yearlyComparison: yearlyComp, benchmarkName: bName, riskMetrics: csvHasRiskMetrics ? riskData : null, csvMetrics: m as FundMetricsView });
+          }
+
+          // If CSV lacks risk metrics, treat as if not found so live MFAPI fetch kicks in
+          if (!csvHasRiskMetrics) {
+            foundInCsv = false;
+            console.log(`[Data Fetch] Fund ${alloc.schemeCode} found in CSV but missing risk metrics — will fetch live from MFAPI.`);
           }
         } else if (response.status !== 404) {
           throw new Error(`Failed to load from CSV. Status: ${response.status}`);
