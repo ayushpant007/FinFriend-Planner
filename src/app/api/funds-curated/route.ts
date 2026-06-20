@@ -44,7 +44,7 @@ export async function GET() {
 
       if (parsed.data && parsed.data.length > 0) {
         parsed.data.forEach((row: any) => {
-          const schemeName = row['Fund Name'] || row['fund_name'] || '';
+          const schemeName = row['Fund Name'] || row['fund_name'] || row[''] || '';
           const rawType = row['Category'] || row['category'] || row['bm'] || '';
           const type = rawType.replace(/^(Debt|Hybrid|Solution|Commodities):\s*/i, '').trim();
           const schemeCode = row['Scheme Code'] || row['scheme_code'] || row['AMFI Scheme Code'] || '';
