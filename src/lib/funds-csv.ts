@@ -102,10 +102,15 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
       });
     };
     const codeIdx = idx('Scheme Code', 'AMFI Scheme Code', 'scheme_code');
-    const nameIdx = idx('Fund Name', 'fund_name', 'Scheme Name', 'scheme_name');
+    // Some CSVs (e.g. Solution Oriented) have an empty first-column header for Fund Name
+    let nameIdx = idx('Fund Name', 'fund_name', 'Scheme Name', 'scheme_name');
+    if (nameIdx === -1 && headers[0] !== undefined && headers[0].trim() === '') nameIdx = 0;
     const isinIdx = idx('ISIN', 'isin', 'ISIN (Growth/Cumulative)');
     const planIdx = idx('Plan', 'plan');
-    const catIdx = idx('Category', 'category', 'bm');
+    // Prefer Subcategory (specific type) over Category (broad group)
+    // Use a separate lookup so 'Subcategory' is tried before 'Category' regardless of column order
+    let catIdx = idx('Subcategory');
+    if (catIdx === -1) catIdx = idx('Category', 'category', 'bm');
 
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
@@ -224,37 +229,37 @@ export interface AllocationFundData {
 
 const FUND_RETURN_KEYS: Record<FundCsvCategory, { label: string; fund: string[]; bench: string[] }[]> = {
   Equity: [
-    { label: '1Y', fund: ['Return_1Y', 'f1y'], bench: ['BM_Return_1Y', 'b1y'] },
-    { label: '3Y', fund: ['Return_3Y', 'f3y'], bench: ['BM_Return_3Y', 'b3y'] },
-    { label: '5Y', fund: ['Return_5Y', 'f5y'], bench: ['BM_Return_5Y', 'b5y'] },
-    { label: '7Y', fund: ['Return_7Y'], bench: ['BM_Return_7Y'] },
-    { label: '10Y', fund: ['Return_10Y'], bench: ['BM_Return_10Y'] },
+    { label: '1Y', fund: ['1Y Return (%)', 'Return_1Y', 'f1y'], bench: ['Benchmark 1Y (%)', 'BM_Return_1Y', 'b1y'] },
+    { label: '3Y', fund: ['3Y Return (%)', 'Return_3Y', 'f3y'], bench: ['Benchmark 3Y (%)', 'BM_Return_3Y', 'b3y'] },
+    { label: '5Y', fund: ['5Y Return (%)', 'Return_5Y', 'f5y'], bench: ['Benchmark 5Y (%)', 'BM_Return_5Y', 'b5y'] },
+    { label: '7Y', fund: ['7Y Return (%)', 'Return_7Y'], bench: ['Benchmark 7Y (%)', 'BM_Return_7Y'] },
+    { label: '10Y', fund: ['10Y Return (%)', 'Return_10Y'], bench: ['Benchmark 10Y (%)', 'BM_Return_10Y'] },
   ],
   Debt: [
-    { label: '1Y', fund: ['Return_1Y', 'f1y'], bench: ['BM_Return_1Y', 'b1y'] },
-    { label: '3Y', fund: ['Return_3Y', 'f3y'], bench: ['BM_Return_3Y', 'b3y'] },
-    { label: '5Y', fund: ['Return_5Y', 'f5y'], bench: ['BM_Return_5Y', 'b5y'] },
+    { label: '1Y', fund: ['1Y Return (%)', 'Return_1Y', 'f1y'], bench: ['Benchmark 1Y (%)', 'BM_Return_1Y', 'b1y'] },
+    { label: '3Y', fund: ['3Y Return (%)', 'Return_3Y', 'f3y'], bench: ['Benchmark 3Y (%)', 'BM_Return_3Y', 'b3y'] },
+    { label: '5Y', fund: ['5Y Return (%)', 'Return_5Y', 'f5y'], bench: ['Benchmark 5Y (%)', 'BM_Return_5Y', 'b5y'] },
   ],
   Hybrid: [
-    { label: '1Y', fund: ['Fund 1Y', 'f1y'], bench: ['Bench 1Y', 'b1y'] },
-    { label: '3Y', fund: ['Fund 3Y', 'f3y'], bench: ['Bench 3Y', 'b3y'] },
-    { label: '5Y', fund: ['Fund 5Y', 'f5y'], bench: ['Bench 5Y', 'b5y'] },
+    { label: '1Y', fund: ['1Y Return (%)', 'Fund 1Y', 'f1y'], bench: ['Benchmark 1Y (%)', 'Bench 1Y', 'b1y'] },
+    { label: '3Y', fund: ['3Y Return (%)', 'Fund 3Y', 'f3y'], bench: ['Benchmark 3Y (%)', 'Bench 3Y', 'b3y'] },
+    { label: '5Y', fund: ['5Y Return (%)', 'Fund 5Y', 'f5y'], bench: ['Benchmark 5Y (%)', 'Bench 5Y', 'b5y'] },
   ],
   Solutions: [
-    { label: '1Y', fund: ['Fund 1Y', 'f1y'], bench: ['Bench 1Y', 'b1y'] },
-    { label: '3Y', fund: ['Fund 3Y', 'f3y'], bench: ['Bench 3Y', 'b3y'] },
-    { label: '5Y', fund: ['Fund 5Y', 'f5y'], bench: ['Bench 5Y', 'b5y'] },
+    { label: '1Y', fund: ['1Y Return (%)', 'Fund 1Y', 'f1y'], bench: ['Benchmark 1Y (%)', 'Bench 1Y', 'b1y'] },
+    { label: '3Y', fund: ['3Y Return (%)', 'Fund 3Y', 'f3y'], bench: ['Benchmark 3Y (%)', 'Bench 3Y', 'b3y'] },
+    { label: '5Y', fund: ['5Y Return (%)', 'Fund 5Y', 'f5y'], bench: ['Benchmark 5Y (%)', 'Bench 5Y', 'b5y'] },
   ],
   Commodities: [
-    { label: '1Y', fund: ['Fund_Ret_1Y', 'f1y'], bench: ['BM_Ret_1Y', 'b1y'] },
-    { label: '3Y', fund: ['Fund_Ret_3Y', 'f3y'], bench: ['BM_Ret_3Y', 'b3y'] },
-    { label: '5Y', fund: ['Fund_Ret_5Y', 'f5y'], bench: ['BM_Ret_5Y', 'b5y'] },
+    { label: '1Y', fund: ['1Y Return (%)', 'Fund_Ret_1Y', 'f1y'], bench: ['Benchmark 1Y (%)', 'BM_Ret_1Y', 'b1y'] },
+    { label: '3Y', fund: ['3Y Return (%)', 'Fund_Ret_3Y', 'f3y'], bench: ['Benchmark 3Y (%)', 'BM_Ret_3Y', 'b3y'] },
+    { label: '5Y', fund: ['5Y Return (%)', 'Fund_Ret_5Y', 'f5y'], bench: ['Benchmark 5Y (%)', 'BM_Ret_5Y', 'b5y'] },
   ],
 };
 
-const RISK_LABEL_KEYS = ['RISK CATEGORY', 'Risk Category', 'RISK\nLABEL', 'RISK LABEL'];
-const TOTAL_SCORE_KEYS = ['TOTAL\n(/40)', 'Total Score(/40)', 'TOTAL SCORE\n(40)', 'TOTAL\nSCORE'];
-const BENCHMARK_NAME_KEYS = ['Benchmark_Name', 'Benchmark Name'];
+const RISK_LABEL_KEYS = ['Risk Category', 'RISK CATEGORY', 'RISK\nLABEL', 'RISK LABEL'];
+const TOTAL_SCORE_KEYS = ['Total Score (40)', 'Total Score(40)', 'total_score', 'Total Score (Available)', 'TOTAL\n(/40)', 'Total Score(/40)', 'TOTAL SCORE\n(40)', 'TOTAL\nSCORE'];
+const BENCHMARK_NAME_KEYS = ['Benchmark Name', 'Benchmark_Name'];
 
 function normalizeFundName(name: string): string {
   return name
@@ -300,10 +305,10 @@ export function buildAllocationFundData(record: FundCsvRecord): AllocationFundDa
     totalScore: toNum(pickFirst(r, TOTAL_SCORE_KEYS)),
     alpha: toNum(pickFirst(r, ['Alpha', 'alpha'])),
     beta: toNum(pickFirst(r, ['Beta', 'beta'])),
-    sharpe: toNum(pickFirst(r, ['Sharpe', 'sharpe'])),
-    sortino: toNum(pickFirst(r, ['Sortino', 'sortino'])),
+    sharpe: toNum(pickFirst(r, ['Sharpe Ratio', 'Sharpe', 'sharpe'])),
+    sortino: toNum(pickFirst(r, ['Sortino (%)', 'Sortino', 'sortino'])),
     stdDev: toNum(pickFirst(r, ['Std Dev', 'Standard Deviation', 'Std Dev\n(%)', 'std_dev'])),
-    meanReturn: toNum(pickFirst(r, ['Mean Return', 'Mean Return\n(%)', 'mean_return'])),
+    meanReturn: toNum(pickFirst(r, ['Mean Return (%)', 'Mean Return', 'Mean Return\n(%)', 'mean_return'])),
     ytm: toNum(pickFirst(r, ['YTM (%)', 'YTM\n(%)', 'Yield to Maturity (%)', 'YTM', 'ytm'])),
     macaulayDuration: toNum(pickFirst(r, ['Macaulay Dur (yrs)', 'Mac Dur\n(yrs)', 'Macaulay Duration (yrs)', 'Macaulay Duration', 'mac_duration'])),
     avgMaturity: toNum(pickFirst(r, ['Avg Maturity (yrs)', 'Avg Mat\n(yrs)', 'Average Maturity (yrs)', 'Avg Maturity', 'avg_maturity'])),
