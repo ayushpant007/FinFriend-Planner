@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
-import LoginCardSection from "@/components/ui/login-signup";
 
 const LandingDashboard = dynamic(
   () => import('@/components/landing/LandingDashboard').then(mod => mod.LandingDashboard),
@@ -18,15 +16,5 @@ const LandingDashboard = dynamic(
 );
 
 export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  if (!isAuthenticated) {
-    return (
-      <LoginCardSection
-        onSuccess={() => setIsAuthenticated(true)}
-      />
-    );
-  }
-
   return <LandingDashboard />;
 }
