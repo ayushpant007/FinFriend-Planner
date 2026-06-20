@@ -259,6 +259,23 @@ export function FundAllocationItem({
     setTopHoldings([]);
 
     const run = async () => {
+      // Fetch top holdings immediately in parallel — no need to wait for NAV/benchmark
+      fetch('/api/allocation/top-holdings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ schemeCode: alloc.schemeCode }),
+      }).then(async (hRes) => {
+        if (cancelled) return;
+        if (hRes.ok) {
+          const hData = await hRes.json();
+          if (!cancelled) setTopHoldings(hData.holdings || []);
+        }
+      }).catch(() => {
+        // silently ignore
+      }).finally(() => {
+        if (!cancelled) setIsLoadingHoldings(false);
+      });
+
       try {
         const response = await fetch('/api/allocation/fund-data', {
           method: 'POST',
@@ -408,23 +425,6 @@ export function FundAllocationItem({
           if (!cancelled) setIsLoadingBenchmark(false);
         }
 
-        // 4. Fetch Top Holdings (always, from local CSV endpoint)
-        try {
-          const hRes = await fetch('/api/allocation/top-holdings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ schemeCode: alloc.schemeCode }),
-          });
-          if (!cancelled && hRes.ok) {
-            const hData = await hRes.json();
-            setTopHoldings(hData.holdings || []);
-          }
-        } catch {
-          // silently ignore top holdings errors
-        } finally {
-          if (!cancelled) setIsLoadingHoldings(false);
-        }
-
       } catch (error) {
         if (cancelled) return;
         console.error('[Data Fetch] Failed to load fund data:', error);
@@ -435,8 +435,6 @@ export function FundAllocationItem({
         setBenchmarkName('');
         setRiskMetrics(null);
         setCsvMetrics(null);
-        setTopHoldings([]);
-        setIsLoadingHoldings(false);
       } finally {
         if (!cancelled) {
           setIsFetchingNAV(false);
