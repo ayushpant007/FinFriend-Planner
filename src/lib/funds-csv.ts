@@ -380,6 +380,95 @@ export function buildAllocationFundData(record: FundCsvRecord): AllocationFundDa
   };
 }
 
+export interface TopHolding {
+  companyName: string;
+  sector: string | null;
+  holdingsType: string | null;
+  instrument: string | null;
+  creditRating: string | null;
+  percentOfAssets: number;
+}
+
+interface TopHoldingsCache {
+  byCode: Map<string, TopHolding[]>;
+}
+
+let holdingsCache: TopHoldingsCache | null = null;
+
+const TOP_HOLDINGS_FILES = [
+  { file: 'Equity_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector', typeCol: null, instrCol: null, creditCol: null, pctCol: '% of Assets' },
+  { file: 'Hybrid_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector', typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
+  { file: 'Debt_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null, typeCol: null, instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
+  { file: 'Solution_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector', typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
+  { file: 'Commodities_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector', typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
+];
+
+function loadTopHoldings(): TopHoldingsCache {
+  if (holdingsCache) return holdingsCache;
+  const byCode = new Map<string, TopHolding[]>();
+  const baseDir = path.join(process.cwd(), 'Mutual Fund');
+
+  for (const spec of TOP_HOLDINGS_FILES) {
+    const fullPath = path.join(baseDir, spec.file);
+    if (!fs.existsSync(fullPath)) {
+      console.warn(`[funds-csv] Missing top holdings CSV: ${fullPath}`);
+      continue;
+    }
+    const text = fs.readFileSync(fullPath, 'utf-8');
+    const rows = parseCSV(text);
+    if (rows.length < 2) continue;
+    const headers = rows[0];
+
+    const colIdx = (name: string | null) => {
+      if (!name) return -1;
+      return headers.findIndex(h => h.trim().toLowerCase() === name.toLowerCase());
+    };
+
+    const codeIdx = colIdx(spec.codeCol);
+    const companyIdx = colIdx(spec.companyCol);
+    const sectorIdx = colIdx(spec.sectorCol);
+    const typeIdx = colIdx(spec.typeCol);
+    const instrIdx = colIdx(spec.instrCol);
+    const creditIdx = colIdx(spec.creditCol);
+    const pctIdx = colIdx(spec.pctCol);
+
+    if (codeIdx === -1 || companyIdx === -1 || pctIdx === -1) continue;
+
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row || row.length === 0) continue;
+      const code = (row[codeIdx] ?? '').trim();
+      if (!code) continue;
+      const company = (row[companyIdx] ?? '').trim();
+      if (!company) continue;
+      const pctRaw = (row[pctIdx] ?? '').trim().replace(/[%,\s]/g, '');
+      const pct = parseFloat(pctRaw);
+      if (!Number.isFinite(pct)) continue;
+
+      const holding: TopHolding = {
+        companyName: company,
+        sector: sectorIdx >= 0 ? (row[sectorIdx] ?? '').trim() || null : null,
+        holdingsType: typeIdx >= 0 ? (row[typeIdx] ?? '').trim() || null : null,
+        instrument: instrIdx >= 0 ? (row[instrIdx] ?? '').trim() || null : null,
+        creditRating: creditIdx >= 0 ? (row[creditIdx] ?? '').trim() || null : null,
+        percentOfAssets: pct,
+      };
+
+      if (!byCode.has(code)) byCode.set(code, []);
+      byCode.get(code)!.push(holding);
+    }
+  }
+
+  holdingsCache = { byCode };
+  return holdingsCache;
+}
+
+export function getTopHoldings(schemeCode: string | number): TopHolding[] {
+  const key = String(schemeCode).trim();
+  const cache = loadTopHoldings();
+  return cache.byCode.get(key) ?? [];
+}
+
 export interface PortfolioGrowthInput {
   funds: { schemeCode: string | number; weight: number }[];
 }

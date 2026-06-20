@@ -15,7 +15,7 @@ import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { RiskMetrics } from '@/lib/risk-metrics';
-import type { FundMetricsView } from '@/lib/funds-csv';
+import type { FundMetricsView, TopHolding } from '@/lib/funds-csv';
 
 interface YearlyComparison {
   year: string;
@@ -64,6 +64,8 @@ export function FundAllocationItem({
   const [isLoadingBenchmark, setIsLoadingBenchmark] = useState(false);
   const [riskMetrics, setRiskMetrics] = useState<RiskMetrics | null>(null);
   const [csvMetrics, setCsvMetrics] = useState<FundMetricsView | null>(null);
+  const [topHoldings, setTopHoldings] = useState<TopHolding[]>([]);
+  const [isLoadingHoldings, setIsLoadingHoldings] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -244,6 +246,7 @@ export function FundAllocationItem({
       setBenchmarkName('');
       setRiskMetrics(null);
       setCsvMetrics(null);
+      setTopHoldings([]);
       return;
     }
 
@@ -252,6 +255,8 @@ export function FundAllocationItem({
     setNavError(null);
     setIsLoadingReturns(true);
     setIsLoadingBenchmark(true);
+    setIsLoadingHoldings(true);
+    setTopHoldings([]);
 
     const run = async () => {
       try {
@@ -403,6 +408,22 @@ export function FundAllocationItem({
           if (!cancelled) setIsLoadingBenchmark(false);
         }
 
+        // 4. Fetch Top Holdings (always, from local CSV endpoint)
+        try {
+          const hRes = await fetch('/api/allocation/top-holdings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ schemeCode: alloc.schemeCode }),
+          });
+          if (!cancelled && hRes.ok) {
+            const hData = await hRes.json();
+            setTopHoldings(hData.holdings || []);
+          }
+        } catch {
+          // silently ignore top holdings errors
+        } finally {
+          if (!cancelled) setIsLoadingHoldings(false);
+        }
 
       } catch (error) {
         if (cancelled) return;
@@ -414,6 +435,8 @@ export function FundAllocationItem({
         setBenchmarkName('');
         setRiskMetrics(null);
         setCsvMetrics(null);
+        setTopHoldings([]);
+        setIsLoadingHoldings(false);
       } finally {
         if (!cancelled) {
           setIsFetchingNAV(false);
@@ -844,6 +867,73 @@ export function FundAllocationItem({
                 <p className="text-sm font-semibold text-amber-700 dark:text-amber-300">{csvMetrics.pbRatio.toFixed(2)}</p>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      {/* Top Holdings Section */}
+      {isLoadingHoldings && alloc.schemeCode && (
+        <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+          <Loader2 className="h-3 w-3 animate-spin" />
+          Loading top holdings…
+        </div>
+      )}
+
+      {!isLoadingHoldings && topHoldings.length > 0 && (
+        <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <h4 className="font-semibold text-blue-800 dark:text-blue-300 mb-1">Top Holdings</h4>
+          <p className="text-[10px] text-blue-700/70 dark:text-blue-300/70 mb-3">
+            Portfolio composition as of latest available data
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-blue-200 dark:border-blue-700">
+                  <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">#</th>
+                  <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Company / Instrument</th>
+                  {topHoldings.some(h => h.sector) && (
+                    <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Sector</th>
+                  )}
+                  {topHoldings.some(h => h.creditRating) && (
+                    <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Rating</th>
+                  )}
+                  <th className="text-right py-1 font-medium text-blue-700 dark:text-blue-300">% Assets</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topHoldings.map((h, idx) => (
+                  <tr key={idx} className="border-b border-blue-100 dark:border-blue-800/50 last:border-0">
+                    <td className="py-1.5 pr-3 text-muted-foreground">{idx + 1}</td>
+                    <td className="py-1.5 pr-3 font-medium text-foreground">{h.companyName}</td>
+                    {topHoldings.some(hh => hh.sector) && (
+                      <td className="py-1.5 pr-3 text-muted-foreground">{h.sector || '—'}</td>
+                    )}
+                    {topHoldings.some(hh => hh.creditRating) && (
+                      <td className="py-1.5 pr-3">
+                        {h.creditRating ? (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                            {h.creditRating}
+                          </span>
+                        ) : '—'}
+                      </td>
+                    )}
+                    <td className="py-1.5 text-right font-semibold text-blue-700 dark:text-blue-300">
+                      {h.percentOfAssets.toFixed(2)}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="border-t border-blue-200 dark:border-blue-700">
+                  <td colSpan={2 + (topHoldings.some(h => h.sector) ? 1 : 0) + (topHoldings.some(h => h.creditRating) ? 1 : 0)}
+                    className="py-1.5 text-muted-foreground font-medium">
+                    Total ({topHoldings.length} holdings)
+                  </td>
+                  <td className="py-1.5 text-right font-bold text-blue-700 dark:text-blue-300">
+                    {topHoldings.reduce((s, h) => s + h.percentOfAssets, 0).toFixed(2)}%
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         </div>
       )}
