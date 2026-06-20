@@ -12,3 +12,9 @@ id = "0QX7_JJdTWkyNtJuGXbCH"
 uri = "file://FinFriend_Planner_PRD_v2.docx"
 type = "word_document"
 title = "FinFriend Planner — PRD v2 (50+ Pages, Fully Filled)"
+
+[[outputs]]
+id = "y2F_AF4NMUUD4WDjvL9_S"
+uri = "file://FinFriend_Updated_CSVs.zip"
+type = "unspecified"
+title = "FinFriend Updated CSVs (All 10 Files)"
