@@ -466,7 +466,15 @@ function loadTopHoldings(): TopHoldingsCache {
 export function getTopHoldings(schemeCode: string | number): TopHolding[] {
   const key = String(schemeCode).trim();
   const cache = loadTopHoldings();
-  return cache.byCode.get(key) ?? [];
+  const all = cache.byCode.get(key) ?? [];
+  // Deduplicate by company name — same fund can appear in multiple CSV files
+  const seen = new Set<string>();
+  return all.filter(h => {
+    const k = h.companyName.toLowerCase().trim();
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
 }
 
 export interface PortfolioGrowthInput {
