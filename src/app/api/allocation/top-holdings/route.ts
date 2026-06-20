@@ -10,7 +10,8 @@ export async function POST(req: NextRequest) {
     if (!schemeCode && schemeCode !== 0) {
       return NextResponse.json({ error: 'schemeCode is required' }, { status: 400 });
     }
-    const holdings = getTopHoldings(schemeCode);
+    const category = body?.category as string | undefined;
+    const holdings = getTopHoldings(schemeCode, category);
     return NextResponse.json({ holdings });
   } catch (err) {
     console.error('[/api/allocation/top-holdings] error:', err);

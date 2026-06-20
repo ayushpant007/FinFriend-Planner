@@ -390,22 +390,37 @@ export interface TopHolding {
 }
 
 interface TopHoldingsCache {
-  byCode: Map<string, TopHolding[]>;
+  // key: `${fileId}:${schemeCode}` — holdings per category-file per scheme
+  byCategoryAndCode: Map<string, TopHolding[]>;
 }
 
 let holdingsCache: TopHoldingsCache | null = null;
 
 const TOP_HOLDINGS_FILES = [
-  { file: 'Equity_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector', typeCol: null, instrCol: null, creditCol: null, pctCol: '% of Assets' },
-  { file: 'Hybrid_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector', typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
-  { file: 'Debt_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null, typeCol: null, instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
-  { file: 'Solution_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector', typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
-  { file: 'Commodities_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector', typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
+  { id: 'equity',      file: 'Equity_Top_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets' },
+  { id: 'hybrid',      file: 'Hybrid_Top_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
+  { id: 'debt',        file: 'Debt_Top_Holdings.csv',        codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,        typeCol: null,           instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
+  { id: 'solution',    file: 'Solution_Top_Holdings.csv',    codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
+  { id: 'commodities', file: 'Commodities_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
 ];
+
+/**
+ * Maps a raw fundCategory string (from the dropdown / fund-schemes-master.csv)
+ * to the TOP_HOLDINGS_FILES id so we read from the correct file only.
+ */
+function normalizeCategoryId(category: string): string {
+  const c = category.toLowerCase().trim();
+  if (c === 'equity' || c.startsWith('equity')) return 'equity';
+  if (c === 'debt'   || c.startsWith('debt'))   return 'debt';
+  if (c === 'hybrid' || c.startsWith('hybrid')) return 'hybrid';
+  if (c.includes('solution') || c.includes('children') || c.includes('retirement')) return 'solution';
+  if (c === 'commodity' || c.includes('commodit')) return 'commodities';
+  return c;
+}
 
 function loadTopHoldings(): TopHoldingsCache {
   if (holdingsCache) return holdingsCache;
-  const byCode = new Map<string, TopHolding[]>();
+  const byCategoryAndCode = new Map<string, TopHolding[]>();
   const baseDir = path.join(process.cwd(), 'Mutual Fund');
 
   for (const spec of TOP_HOLDINGS_FILES) {
@@ -454,27 +469,42 @@ function loadTopHoldings(): TopHoldingsCache {
         percentOfAssets: pct,
       };
 
-      if (!byCode.has(code)) byCode.set(code, []);
-      byCode.get(code)!.push(holding);
+      const mapKey = `${spec.id}:${code}`;
+      if (!byCategoryAndCode.has(mapKey)) byCategoryAndCode.set(mapKey, []);
+      byCategoryAndCode.get(mapKey)!.push(holding);
     }
   }
 
-  holdingsCache = { byCode };
+  holdingsCache = { byCategoryAndCode };
   return holdingsCache;
 }
 
-export function getTopHoldings(schemeCode: string | number): TopHolding[] {
-  const key = String(schemeCode).trim();
+/**
+ * Returns top holdings for a fund.
+ * @param schemeCode - the AMFI scheme code
+ * @param category   - the fund category string from the dropdown (e.g. "equity", "debt", "hybrid").
+ *                     When provided, only the matching CSV file is used, preventing cross-category pollution.
+ */
+export function getTopHoldings(schemeCode: string | number, category?: string): TopHolding[] {
+  const code = String(schemeCode).trim();
   const cache = loadTopHoldings();
-  const all = cache.byCode.get(key) ?? [];
-  // Deduplicate by company name — same fund can appear in multiple CSV files
+
+  if (category) {
+    const fileId = normalizeCategoryId(category);
+    return cache.byCategoryAndCode.get(`${fileId}:${code}`) ?? [];
+  }
+
+  // Fallback: search all files and deduplicate by company name
   const seen = new Set<string>();
-  return all.filter(h => {
-    const k = h.companyName.toLowerCase().trim();
-    if (seen.has(k)) return false;
-    seen.add(k);
-    return true;
-  });
+  const result: TopHolding[] = [];
+  for (const spec of TOP_HOLDINGS_FILES) {
+    const holdings = cache.byCategoryAndCode.get(`${spec.id}:${code}`) ?? [];
+    for (const h of holdings) {
+      const k = h.companyName.toLowerCase().trim();
+      if (!seen.has(k)) { seen.add(k); result.push(h); }
+    }
+  }
+  return result;
 }
 
 export interface PortfolioGrowthInput {

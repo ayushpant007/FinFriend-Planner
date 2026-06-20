@@ -263,7 +263,7 @@ export function FundAllocationItem({
       fetch('/api/allocation/top-holdings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ schemeCode: alloc.schemeCode }),
+        body: JSON.stringify({ schemeCode: alloc.schemeCode, category: alloc.fundCategory }),
       }).then(async (hRes) => {
         if (cancelled) return;
         if (hRes.ok) {
