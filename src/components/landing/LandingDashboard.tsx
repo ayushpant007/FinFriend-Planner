@@ -364,10 +364,16 @@ export function LandingDashboard() {
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <Button
+                onClick={() => router.push('/login')}
+                className="glass-button-outline hidden sm:flex items-center gap-2 font-semibold px-5"
+              >
+                Sign In
+              </Button>
+              <Button
                 onClick={handleOpenPlanner}
                 className="glass-button-primary hidden sm:flex items-center gap-2 text-primary-foreground font-semibold px-5"
               >
-                FinFriend Planner <ArrowRight className="h-4 w-4" />
+                Open Planner <ArrowRight className="h-4 w-4" />
               </Button>
               <button
                 className="md:hidden p-2 rounded-xl glass-button-outline"
