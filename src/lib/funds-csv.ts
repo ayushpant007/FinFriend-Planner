@@ -148,10 +148,24 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
   return cache;
 }
 
-export function getFundCsvRecord(schemeCode: string | number): FundCsvRecord | null {
+export function getFundCsvRecord(schemeCode: string | number, category?: string): FundCsvRecord | null {
   if (schemeCode === undefined || schemeCode === null || schemeCode === '') return null;
   const key = String(schemeCode).trim();
-  return loadAll().byCode.get(key) || null;
+  const { byCode, all } = loadAll();
+
+  // When category is provided and the flat map points to a different category,
+  // scan the full list to find the matching record.
+  if (category) {
+    const normCat = normalizeCategoryId(category);
+    const flat = byCode.get(key);
+    if (flat && normalizeCategoryId(flat.category) === normCat) {
+      return flat;
+    }
+    // Scan all records for the correct category match
+    return all.find(r => r.schemeCode === key && normalizeCategoryId(r.category) === normCat) || null;
+  }
+
+  return byCode.get(key) || null;
 }
 
 /**
@@ -166,10 +180,11 @@ export function getFundCsvRecordByName(
   if (!schemeName) return null;
   const { all } = loadAll();
   const norm = normalizeFundName(schemeName);
+  const normCat = category ? normalizeCategoryId(category) : null;
 
-  // Filter by category first if provided
-  const pool = category
-    ? all.filter(r => r.category.toLowerCase() === category.toLowerCase())
+  // Filter by category first if provided (fuzzy match)
+  const pool = normCat
+    ? all.filter(r => normalizeCategoryId(r.category) === normCat)
     : all;
 
   // Exact normalized name match (direct plan preferred)
@@ -586,7 +601,7 @@ export function buildPortfolioGrowth(
 
   // Resolve records and the available returns horizons per fund
   const resolved = funds.map(f => {
-    const rec = getFundCsvRecord(f.schemeCode);
+    const rec = getFundCsvRecord(f.schemeCode, csvCategory);
     if (!rec) return null;
     const data = buildAllocationFundData(rec);
     return { weight: f.weight / totalWeight, data };

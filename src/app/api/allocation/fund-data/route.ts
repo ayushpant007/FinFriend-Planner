@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'schemeCode is required' }, { status: 400 });
     }
 
-    // Primary lookup by scheme code (works for Direct plans stored in CSVs)
-    let record = getFundCsvRecord(schemeCode);
+    // Primary lookup by scheme code + category (same code can exist across CSVs)
+    let record = getFundCsvRecord(schemeCode, fundCategory);
 
     // Fallback: Regular-plan codes aren't in the CSV — try name-based lookup
     if (!record && schemeName) {
