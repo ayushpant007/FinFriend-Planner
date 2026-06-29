@@ -280,7 +280,11 @@ export function FundAllocationItem({
         const response = await fetch('/api/allocation/fund-data', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ schemeCode: alloc.schemeCode }),
+          body: JSON.stringify({
+            schemeCode: alloc.schemeCode,
+            schemeName: alloc.schemeName,
+            fundCategory: alloc.fundCategory,
+          }),
         });
 
         let foundInCsv = false;
@@ -725,7 +729,7 @@ export function FundAllocationItem({
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="h-5 w-5 text-indigo-600" />
             <h4 className="font-semibold text-indigo-800 dark:text-indigo-300">
-              10-Year Returns: Fund vs {benchmarkName}
+              Returns: Fund vs {benchmarkName}
             </h4>
           </div>
           <ResponsiveContainer width="100%" height={300}>
@@ -843,7 +847,7 @@ export function FundAllocationItem({
             )}
             {csvMetrics && csvMetrics.macaulayDuration !== null && (
               <div>
-                <p className="text-xs text-muted-foreground">Macaulay Duration</p>
+                <p className="text-xs text-muted-foreground">Modified Duration</p>
                 <p className="text-sm font-semibold text-amber-700 dark:text-amber-300">{csvMetrics.macaulayDuration.toFixed(2)} yrs</p>
               </div>
             )}

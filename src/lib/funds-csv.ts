@@ -154,6 +154,44 @@ export function getFundCsvRecord(schemeCode: string | number): FundCsvRecord | n
   return loadAll().byCode.get(key) || null;
 }
 
+/**
+ * Fallback lookup: when a Regular plan scheme code isn't in the CSV (which stores
+ * Direct plans), find the best matching Direct counterpart by normalized fund name.
+ * Strips plan/option suffixes so "ABSL Banking & PSU Debt Reg" matches the Direct entry.
+ */
+export function getFundCsvRecordByName(
+  schemeName: string,
+  category?: string,
+): FundCsvRecord | null {
+  if (!schemeName) return null;
+  const { all } = loadAll();
+  const norm = normalizeFundName(schemeName);
+
+  // Filter by category first if provided
+  const pool = category
+    ? all.filter(r => r.category.toLowerCase() === category.toLowerCase())
+    : all;
+
+  // Exact normalized name match (direct plan preferred)
+  let match = pool.find(r => normalizeFundName(r.schemeName) === norm && r.plan.toLowerCase() === 'direct');
+  if (match) return match;
+
+  // Any plan exact match
+  match = pool.find(r => normalizeFundName(r.schemeName) === norm);
+  if (match) return match;
+
+  // Substring / partial match — direct preferred
+  const partial = pool.filter(r => {
+    const n = normalizeFundName(r.schemeName);
+    return n.includes(norm) || norm.includes(n);
+  });
+  if (partial.length > 0) {
+    return partial.find(r => r.plan.toLowerCase() === 'direct') ?? partial[0];
+  }
+
+  return null;
+}
+
 export function getAllFundCsvRecords(): FundCsvRecord[] {
   return loadAll().all;
 }
@@ -310,7 +348,7 @@ export function buildAllocationFundData(record: FundCsvRecord): AllocationFundDa
     stdDev: toNum(pickFirst(r, ['Std Dev', 'Standard Deviation', 'Std Dev\n(%)', 'std_dev'])),
     meanReturn: toNum(pickFirst(r, ['Mean Return (%)', 'Mean Return', 'Mean Return\n(%)', 'mean_return'])),
     ytm: toNum(pickFirst(r, ['YTM (%)', 'YTM\n(%)', 'Yield to Maturity (%)', 'YTM', 'ytm'])),
-    macaulayDuration: toNum(pickFirst(r, ['Macaulay Dur (yrs)', 'Mac Dur\n(yrs)', 'Macaulay Duration (yrs)', 'Macaulay Duration', 'mac_duration'])),
+    macaulayDuration: toNum(pickFirst(r, ['Macaulay Dur (yrs)', 'Mac Dur\n(yrs)', 'Macaulay Duration (yrs)', 'Macaulay Duration', 'mac_duration', 'Modified Duration (yrs)', 'Modified Duration', 'mod_duration'])),
     avgMaturity: toNum(pickFirst(r, ['Avg Maturity (yrs)', 'Avg Mat\n(yrs)', 'Average Maturity (yrs)', 'Avg Maturity', 'avg_maturity'])),
     avgCreditRating: pickFirst(r, ['Avg Credit Rating', 'Avg Credit\nRating', 'avg_credit_rating']) ?? null,
     noOfStocks: toNum(pickFirst(r, ['No. of Stocks', 'No. of\nStocks', 'num_securities'])),

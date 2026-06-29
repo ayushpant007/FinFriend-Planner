@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getFundCsvRecord, buildAllocationFundData } from '@/lib/funds-csv';
+import { getFundCsvRecord, getFundCsvRecordByName, buildAllocationFundData } from '@/lib/funds-csv';
 
 export const runtime = 'nodejs';
 
@@ -7,11 +7,24 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const schemeCode = body?.schemeCode;
+    const schemeName: string | undefined = body?.schemeName;
+    const fundCategory: string | undefined = body?.fundCategory;
+
     if (!schemeCode && schemeCode !== 0) {
       return NextResponse.json({ error: 'schemeCode is required' }, { status: 400 });
     }
 
-    const record = getFundCsvRecord(schemeCode);
+    // Primary lookup by scheme code (works for Direct plans stored in CSVs)
+    let record = getFundCsvRecord(schemeCode);
+
+    // Fallback: Regular-plan codes aren't in the CSV — try name-based lookup
+    if (!record && schemeName) {
+      record = getFundCsvRecordByName(schemeName, fundCategory);
+      if (record) {
+        console.log(`[/api/allocation/fund-data] Scheme code ${schemeCode} not in CSV; matched by name "${schemeName}" → "${record.schemeName}" (${record.schemeCode})`);
+      }
+    }
+
     if (!record) {
       return NextResponse.json({ error: 'Fund not found in CSV', schemeCode }, { status: 404 });
     }
