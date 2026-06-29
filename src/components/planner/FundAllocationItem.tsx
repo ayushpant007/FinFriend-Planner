@@ -865,6 +865,14 @@ export function FundAllocationItem({
                 <p className="text-sm font-semibold text-amber-700 dark:text-amber-300">{csvMetrics.pbRatio.toFixed(2)}</p>
               </div>
             )}
+            {csvMetrics && csvMetrics.meanReturn !== null && (
+              <div>
+                <p className="text-xs text-muted-foreground">Mean Return</p>
+                <p className={`text-sm font-semibold ${csvMetrics.meanReturn >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                  {csvMetrics.meanReturn.toFixed(2)}%
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -887,7 +895,8 @@ export function FundAllocationItem({
               const hasSector     = topHoldings.some(h => h.sector);
               const hasInstrument = topHoldings.some(h => h.instrument);
               const hasRating     = topHoldings.some(h => h.creditRating);
-              const extraCols     = (hasSector ? 1 : 0) + (hasInstrument ? 1 : 0) + (hasRating ? 1 : 0);
+              const hasPeRatio    = topHoldings.some(h => h.peRatio !== null);
+              const extraCols     = (hasSector ? 1 : 0) + (hasInstrument ? 1 : 0) + (hasRating ? 1 : 0) + (hasPeRatio ? 1 : 0);
               return (
                 <table className="w-full text-xs">
                   <thead>
@@ -897,6 +906,7 @@ export function FundAllocationItem({
                       {hasSector     && <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Sector</th>}
                       {hasInstrument && <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Instrument</th>}
                       {hasRating     && <th className="text-left py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">Rating</th>}
+                      {hasPeRatio    && <th className="text-right py-1 pr-3 font-medium text-blue-700 dark:text-blue-300">P/E Ratio</th>}
                       <th className="text-right py-1 font-medium text-blue-700 dark:text-blue-300">% Assets</th>
                     </tr>
                   </thead>
@@ -914,6 +924,11 @@ export function FundAllocationItem({
                                 {h.creditRating}
                               </span>
                             ) : '—'}
+                          </td>
+                        )}
+                        {hasPeRatio && (
+                          <td className="py-1.5 pr-3 text-right text-muted-foreground">
+                            {h.peRatio !== null ? h.peRatio.toFixed(2) : '—'}
                           </td>
                         )}
                         <td className="py-1.5 text-right font-semibold text-blue-700 dark:text-blue-300">

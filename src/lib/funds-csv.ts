@@ -387,6 +387,7 @@ export interface TopHolding {
   instrument: string | null;
   creditRating: string | null;
   percentOfAssets: number;
+  peRatio: number | null;
 }
 
 interface TopHoldingsCache {
@@ -397,11 +398,11 @@ interface TopHoldingsCache {
 let holdingsCache: TopHoldingsCache | null = null;
 
 const TOP_HOLDINGS_FILES = [
-  { id: 'equity',      file: 'Equity_Top_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets' },
-  { id: 'hybrid',      file: 'Hybrid_Top_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
-  { id: 'debt',        file: 'Debt_Top_Holdings.csv',        codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,        typeCol: null,           instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
-  { id: 'solution',    file: 'Solution_Top_Holdings.csv',    codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
-  { id: 'commodities', file: 'Commodities_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holdings Type', instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets' },
+  { id: 'equity',      file: 'Equity_Top_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: 'P/E Ratio' },
+  { id: 'hybrid',      file: 'Hybrid_Top_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holding Type',  instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets', peCol: 'P/E Ratio' },
+  { id: 'debt',        file: 'Debt_Top_Holdings.csv',        codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,        typeCol: null,           instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets', peCol: null },
+  { id: 'solution',    file: 'Solution_Top_Holdings.csv',    codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: 'P/E Ratio' },
+  { id: 'commodities', file: 'Commodities_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,       typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: null },
 ];
 
 /**
@@ -446,6 +447,7 @@ function loadTopHoldings(): TopHoldingsCache {
     const instrIdx = colIdx(spec.instrCol);
     const creditIdx = colIdx(spec.creditCol);
     const pctIdx = colIdx(spec.pctCol);
+    const peIdx = colIdx(spec.peCol ?? null);
 
     if (codeIdx === -1 || companyIdx === -1 || pctIdx === -1) continue;
 
@@ -460,6 +462,13 @@ function loadTopHoldings(): TopHoldingsCache {
       const pct = parseFloat(pctRaw);
       if (!Number.isFinite(pct)) continue;
 
+      let peRatio: number | null = null;
+      if (peIdx >= 0) {
+        const peRaw = (row[peIdx] ?? '').trim().replace(/[%,\s]/g, '');
+        const peVal = parseFloat(peRaw);
+        if (Number.isFinite(peVal)) peRatio = peVal;
+      }
+
       const holding: TopHolding = {
         companyName: company,
         sector: sectorIdx >= 0 ? (row[sectorIdx] ?? '').trim() || null : null,
@@ -467,6 +476,7 @@ function loadTopHoldings(): TopHoldingsCache {
         instrument: instrIdx >= 0 ? (row[instrIdx] ?? '').trim() || null : null,
         creditRating: creditIdx >= 0 ? (row[creditIdx] ?? '').trim() || null : null,
         percentOfAssets: pct,
+        peRatio,
       };
 
       const mapKey = `${spec.id}:${code}`;
