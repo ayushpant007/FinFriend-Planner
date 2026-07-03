@@ -20,11 +20,11 @@ interface CsvFileSpec {
 }
 
 const FILES: CsvFileSpec[] = [
-  { category: 'Equity', file: 'Equity Funds.csv' },
+  { category: 'Equity', file: 'Equity_Funds.csv' },
   { category: 'Debt', file: 'Debt_Funds.csv' },
-  { category: 'Hybrid', file: 'Hybrid Funds.csv' },
-  { category: 'Solutions', file: 'Solution Funds.csv' },
-  { category: 'Commodities', file: 'Commodities Funds.csv' },
+  { category: 'Hybrid', file: 'Hybrid_Funds.csv' },
+  { category: 'Solutions', file: 'Solution_Oriented.csv' },
+  { category: 'Commodities', file: 'Commodities_Funds.csv' },
 ];
 
 let cache: { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] } | null = null;
@@ -451,11 +451,11 @@ interface TopHoldingsCache {
 let holdingsCache: TopHoldingsCache | null = null;
 
 const TOP_HOLDINGS_FILES = [
-  { id: 'equity',      file: 'Equity_Top_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: 'P/E Ratio' },
-  { id: 'hybrid',      file: 'Hybrid_Top_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holding Type',  instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets', peCol: 'P/E Ratio' },
-  { id: 'debt',        file: 'Debt_Top_Holdings.csv',        codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,        typeCol: null,           instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets', peCol: null },
-  { id: 'solution',    file: 'Solution_Top_Holdings.csv',    codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: 'P/E Ratio' },
-  { id: 'commodities', file: 'Commodities_Top_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,       typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: null },
+  { id: 'equity',      file: 'Equity_Funds_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: 'P/E Ratio' },
+  { id: 'hybrid',      file: 'Hybrid_Funds_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holding Type',  instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets', peCol: 'P/E Ratio' },
+  { id: 'debt',        file: 'Debt_Funds_Holdings.csv',        codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,        typeCol: null,           instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets', peCol: null },
+  { id: 'solution',    file: 'Solution_Oriented_Holdings.csv',    codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: 'P/E Ratio' },
+  { id: 'commodities', file: 'Commodities_Funds_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,       typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: null },
 ];
 
 /**

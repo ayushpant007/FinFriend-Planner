@@ -24,11 +24,11 @@ const AMC_NAMES = [
 export async function GET() {
   const fundsDir = path.join(process.cwd(), 'Mutual Fund');
   const files = [
-    { name: 'Equity Funds.csv', category: 'Equity Scheme' },
+    { name: 'Equity_Funds.csv', category: 'Equity Scheme' },
     { name: 'Debt_Funds.csv', category: 'Debt Scheme' },
-    { name: 'Hybrid Funds.csv', category: 'Hybrid Scheme' },
-    { name: 'Solution Funds.csv', category: 'Solution Oriented Scheme' },
-    { name: 'Commodities Funds.csv', category: 'Commodities' }
+    { name: 'Hybrid_Funds.csv', category: 'Hybrid Scheme' },
+    { name: 'Solution_Oriented.csv', category: 'Solution Oriented Scheme' },
+    { name: 'Commodities_Funds.csv', category: 'Commodities' }
   ];
 
   let allFunds: MutualFundScheme[] = [];
