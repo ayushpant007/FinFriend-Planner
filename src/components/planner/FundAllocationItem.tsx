@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Trash2, Loader2, AlertCircle, TrendingUp } from 'lucide-react';
 import type { FundAllocation, Goal, FundReturnsOutput, SipOptimizerGoal, RetirementCalculations } from '@/lib/types';
 import { loadMutualFundsFromCSV, MutualFundScheme, fetchNAV, NAVData } from '@/lib/load-funds';
-import { getFundReturns } from '@/ai/flows/fund-returns-flow';
 import { useToast } from '@/hooks/use-toast';
 import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -287,68 +286,47 @@ export function FundAllocationItem({
           }),
         });
 
-        let foundInCsv = false;
-
         if (response.ok) {
           const data = await response.json();
           if (cancelled) return;
-          foundInCsv = true;
 
           const yearlyComp = data.yearlyComparison || [];
           const bName = data.benchmarkName || 'Benchmark';
           setBenchmarkComparison(yearlyComp);
           setBenchmarkName(bName);
           const m = data.metrics || {};
-          const threeYearReturnNum = (() => {
-            const r = (data.flatReturns?.threeYearReturn ?? null) as string | null;
-            if (!r) return null;
-            const parsed = parseFloat(String(r).replace('%', ''));
-            return Number.isFinite(parsed) ? parsed : null;
-          })();
           const riskData: RiskMetrics = {
             sharpeRatio: m.sharpe ?? null,
             sortinoRatio: m.sortino ?? null,
             beta: m.beta ?? null,
             jensensAlpha: m.alpha ?? null,
             standardDeviation: m.stdDev ?? null,
-            threeYearRollingReturn: threeYearReturnNum,
-            threeYearCagr: threeYearReturnNum,
+            threeYearRollingReturn: null,
+            threeYearCagr: null,
           } as RiskMetrics;
 
-          // Check if CSV has any real risk metric values; if not, we'll fall through to live fetch
-          const csvHasRiskMetrics = (
-            m.sharpe !== null ||
-            m.sortino !== null ||
-            m.beta !== null ||
-            m.alpha !== null ||
-            m.stdDev !== null
-          );
-
-          if (csvHasRiskMetrics) {
-            setRiskMetrics(riskData);
-          }
+          setRiskMetrics(riskData);
           setCsvMetrics(m as FundMetricsView);
-          // Bubble benchmark data up to parent for caching
-          if (alloc.schemeCode && yearlyComp.length > 0) {
-            onBenchmarkData?.(alloc.schemeCode, { yearlyComparison: yearlyComp, benchmarkName: bName, riskMetrics: csvHasRiskMetrics ? riskData : null, csvMetrics: m as FundMetricsView });
-          }
+          setReturns(data.flatReturns || null);
 
-          // If CSV lacks risk metrics, treat as if not found so live MFAPI fetch kicks in
-          if (!csvHasRiskMetrics) {
-            foundInCsv = false;
-            console.log(`[Data Fetch] Fund ${alloc.schemeCode} found in CSV but missing risk metrics — will fetch live from MFAPI.`);
+          // Bubble CSV-derived data up to parent for caching
+          if (alloc.schemeCode) {
+            onBenchmarkData?.(alloc.schemeCode, { yearlyComparison: yearlyComp, benchmarkName: bName, riskMetrics: riskData, csvMetrics: m as FundMetricsView });
           }
-        } else if (response.status !== 404) {
+        } else if (response.status === 404) {
+          console.log(`[Data Fetch] Fund ${alloc.schemeCode} not found in CSV.`);
+          setBenchmarkComparison([]);
+          setBenchmarkName('');
+          setRiskMetrics(null);
+          setCsvMetrics(null);
+          setReturns(null);
+        } else {
           throw new Error(`Failed to load from CSV. Status: ${response.status}`);
         }
+        setIsLoadingReturns(false);
+        setIsLoadingBenchmark(false);
 
-        if (!foundInCsv) {
-          console.log(`[Data Fetch] Fund ${alloc.schemeCode} not found in CSV, falling back to mfapi...`);
-        } else {
-          console.log(`[Data Fetch] Fund ${alloc.schemeCode} found in CSV, but forcing live fetch for NAV and Returns...`);
-        }
-        
-        // 1. Fetch NAV (ALWAYS fetch live)
+        // NAV is always fetched live from mfapi.in
         try {
           const nav = await fetchNAV(alloc.schemeCode);
           if (!cancelled) {
@@ -362,71 +340,6 @@ export function FundAllocationItem({
           if (!cancelled) setNavError('NAV data currently unavailable. Please try again later.');
         } finally {
           if (!cancelled) setIsFetchingNAV(false);
-        }
-
-        // 2. Fetch Returns (ALWAYS fetch live)
-        try {
-          const schemeCodeNum = Number(alloc.schemeCode);
-          const result = await getFundReturns({ schemeCode: schemeCodeNum });
-          if (!cancelled) setReturns(result);
-        } catch (error) {
-          if (!cancelled) setReturns(null);
-        } finally {
-          if (!cancelled) setIsLoadingReturns(false);
-        }
-
-        // 3. Fetch Benchmark Comparison (ONLY if not found in CSV)
-        if (!foundInCsv) {
-          if (!alloc.schemeName) {
-            if (!cancelled) {
-              setBenchmarkComparison([]);
-              setBenchmarkName('');
-              setRiskMetrics(null);
-              setCsvMetrics(null);
-              setIsLoadingBenchmark(false);
-            }
-            return;
-          }
-
-          try {
-            const res = await fetch('/api/fund-benchmark-comparison', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                schemeCode: Number(alloc.schemeCode),
-                schemeName: alloc.schemeName,
-                fundCategory: alloc.fundCategory
-              })
-            });
-
-            if (!cancelled) {
-              if (res.ok) {
-                const bData = await res.json();
-                const yearlyComp2 = bData.yearlyComparison || [];
-                const bName2 = bData.benchmarkName || 'Benchmark';
-                setBenchmarkComparison(yearlyComp2);
-                setBenchmarkName(bName2);
-                setRiskMetrics(bData.riskMetrics || null);
-                // Bubble benchmark data up for caching
-                if (alloc.schemeCode && yearlyComp2.length > 0) {
-                  onBenchmarkData?.(alloc.schemeCode, { yearlyComparison: yearlyComp2, benchmarkName: bName2, riskMetrics: bData.riskMetrics || null });
-                }
-              } else {
-                setBenchmarkComparison([]);
-                setRiskMetrics(null);
-              }
-            }
-          } catch (error) {
-            if (!cancelled) {
-              setBenchmarkComparison([]);
-              setRiskMetrics(null);
-              setCsvMetrics(null);
-            }
-          } finally {
-            if (!cancelled) setIsLoadingBenchmark(false);
-          }
-        } else {
-          if (!cancelled) setIsLoadingBenchmark(false);
         }
 
       } catch (error) {
@@ -750,7 +663,7 @@ export function FundAllocationItem({
               />
               <Tooltip 
                 formatter={(value: number) => [`${value.toFixed(2)}%`, '']}
-                labelFormatter={(label) => `Year: ${label}`}
+                labelFormatter={(label) => `Period: ${label}`}
                 contentStyle={{
                   backgroundColor: 'rgba(255, 255, 255, 0.95)',
                   border: '1px solid #E5E7EB',
@@ -786,7 +699,7 @@ export function FundAllocationItem({
         <div className="mt-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
           <h4 className="font-semibold text-amber-800 dark:text-amber-300 mb-1">Risk & Return Metrics</h4>
           <p className="text-[10px] text-amber-700/70 dark:text-amber-300/70 mb-3">
-            Calculated from NAV history (last 10 years vs. benchmark)
+            Sourced from the fund's CSV data (Mutual Fund folder)
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {riskMetrics.jensensAlpha !== null && (
