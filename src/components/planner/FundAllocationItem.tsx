@@ -328,7 +328,7 @@ export function FundAllocationItem({
 
         // NAV is always fetched live from mfapi.in
         try {
-          const nav = await fetchNAV(alloc.schemeCode);
+          const nav = await fetchNAV(alloc.schemeCode, alloc.schemeName);
           if (!cancelled) {
             if (nav) {
               setNavData(nav);

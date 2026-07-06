@@ -116,9 +116,11 @@ export interface NAVData {
   date: string;
 }
 
-export async function fetchNAV(schemeCode: string): Promise<NAVData | null> {
+export async function fetchNAV(schemeCode: string, schemeName?: string): Promise<NAVData | null> {
   try {
-    const response = await fetch(`/api/nav?schemeCode=${schemeCode}`);
+    const params = new URLSearchParams({ schemeCode });
+    if (schemeName) params.set('schemeName', schemeName);
+    const response = await fetch(`/api/nav?${params.toString()}`);
     if (!response.ok) {
       console.warn(`NAV proxy error: ${response.status}`);
       return null;
