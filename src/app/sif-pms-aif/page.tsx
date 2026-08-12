@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { FileText, Plus, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { Input } from "@/components/ui/input";
 import {
@@ -41,9 +42,13 @@ const investmentOptions: Record<InvestmentCategory, string[]> = {
 };
 
 export default function SifPmsAifPage() {
+  const router = useRouter();
   const [selections, setSelections] = useState<InvestmentSelection[]>([
     { category: "", investment: "" },
   ]);
+  const hasCompleteSelection = selections.some(
+    (selection) => selection.category && selection.investment,
+  );
 
   return (
     <main className="min-h-screen">
@@ -208,6 +213,18 @@ export default function SifPmsAifPage() {
                       </div>
                     );
                   })}
+                  {hasCompleteSelection && (
+                    <div className="flex justify-end pt-1">
+                      <button
+                        type="button"
+                        onClick={() => router.push("/sif-pms-aif/report")}
+                        className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 glass-button-primary"
+                      >
+                        <FileText className="h-4 w-4" />
+                        <span>Generate Report</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
