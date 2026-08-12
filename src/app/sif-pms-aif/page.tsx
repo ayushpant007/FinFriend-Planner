@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { Input } from "@/components/ui/input";
 import {
@@ -117,12 +117,29 @@ export default function SifPmsAifPage() {
                     return (
                       <div key={index} className="space-y-5">
                         <div className="space-y-2">
-                          <label
-                            htmlFor={`investment-category-${index}`}
-                            className="text-sm font-medium"
-                          >
-                            Choose Investment Category
-                          </label>
+                          <div className="flex items-center justify-between gap-3">
+                            <label
+                              htmlFor={`investment-category-${index}`}
+                              className="text-sm font-medium"
+                            >
+                              Choose Investment Category
+                            </label>
+                            {index > 0 && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setSelections((current) =>
+                                    current.filter((_, currentIndex) => currentIndex !== index),
+                                  )
+                                }
+                                className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium text-destructive transition-colors hover:bg-destructive/10"
+                                aria-label={`Delete investment selection ${index + 1}`}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            )}
+                          </div>
                           <Select
                             value={selection.category}
                             onValueChange={(value) => {
