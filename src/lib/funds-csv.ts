@@ -458,6 +458,13 @@ const TOP_HOLDINGS_FILES = [
   { id: 'commodities', file: 'Commodities_Funds_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,       typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: null },
 ];
 
+// Existing holdings files still contain these obsolete codes for two rows
+// whose primary fund records now point to the active scheme codes.
+const LEGACY_HOLDINGS_CODES: Record<string, string[]> = {
+  '102528': ['102530'],
+  '120377': ['108845'],
+};
+
 /**
  * Maps a raw fundCategory string (from the dropdown / fund-schemes-master.csv)
  * to the TOP_HOLDINGS_FILES id so we read from the correct file only.
@@ -551,17 +558,24 @@ function loadTopHoldings(): TopHoldingsCache {
 export function getTopHoldings(schemeCode: string | number, category?: string): TopHolding[] {
   const code = String(schemeCode).trim();
   const cache = loadTopHoldings();
+  const codesToTry = [code, ...(LEGACY_HOLDINGS_CODES[code] ?? [])];
 
   if (category) {
     const fileId = normalizeCategoryId(category);
-    return cache.byCategoryAndCode.get(`${fileId}:${code}`) ?? [];
+    for (const candidateCode of codesToTry) {
+      const holdings = cache.byCategoryAndCode.get(`${fileId}:${candidateCode}`);
+      if (holdings?.length) return holdings;
+    }
+    return [];
   }
 
   // Fallback: search all files and deduplicate by company name
   const seen = new Set<string>();
   const result: TopHolding[] = [];
   for (const spec of TOP_HOLDINGS_FILES) {
-    const holdings = cache.byCategoryAndCode.get(`${spec.id}:${code}`) ?? [];
+    const holdings = codesToTry.flatMap(candidateCode =>
+      cache.byCategoryAndCode.get(`${spec.id}:${candidateCode}`) ?? [],
+    );
     for (const h of holdings) {
       const k = h.companyName.toLowerCase().trim();
       if (!seen.has(k)) { seen.add(k); result.push(h); }

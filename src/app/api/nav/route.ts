@@ -1,71 +1,41 @@
 import { NextResponse } from 'next/server';
 
-/** Normalise a scheme name for fuzzy comparison */
-function normaliseName(name: string): string {
+function normaliseSchemeName(name: string): string[] {
   return name
     .toLowerCase()
+    .replace(/\babsl\b/g, 'aditya birla sun life')
+    .replace(/\bicici\s+pru\b/g, 'icici prudential')
     .replace(/[^a-z0-9\s]/g, ' ')
     .replace(
-      /\b(fund|scheme|plan|regular|direct|growth|idcw|dividend|reinvestment|payout|option|ret|dir|reg|formerly|known|as)\b/g,
+      /\b(fund|scheme|plan|regular|direct|growth|idcw|dividend|reinvestment|payout|option|ret|dir|reg|formerly|known|as|mutual)\b/g,
       '',
     )
-    .replace(/\s+/g, ' ')
-    .trim();
+    .split(/\s+/)
+    .filter(word => word.length > 2);
 }
 
-/** Return how many words from `needle` appear in `haystack` */
-function wordOverlap(needle: string, haystack: string): number {
-  const needleWords = normaliseName(needle).split(' ').filter(Boolean);
-  const haystackNorm = normaliseName(haystack);
-  return needleWords.filter(w => w.length > 2 && haystackNorm.includes(w)).length;
+function hasPlanMismatch(selectedName: string, selectedPlan: string, returnedName: string): boolean {
+  const selected = `${selectedName} ${selectedPlan}`.toLowerCase();
+  const returned = returnedName.toLowerCase();
+  const selectedIsDirect = /\b(direct|dir)\b/.test(selected);
+  const selectedIsRegular = /\b(regular|reg|ret)\b/.test(selected);
+  const returnedIsDirect = /\b(direct|dir)\b/.test(returned);
+
+  if (selectedIsDirect !== returnedIsDirect) return true;
+  if (selectedIsRegular && returnedIsDirect) return true;
+  if (!/\binstitutional\b/.test(selected) && /\binstitutional\b/.test(returned)) return true;
+  if (!/\b(idcw|dividend|payout|reinvestment)\b/.test(selected) &&
+      /\b(idcw|dividend|payout|reinvestment)\b/.test(returned)) return true;
+  return false;
 }
 
-/** Determine plan type from a scheme name: 'direct', 'regular', or 'unknown' */
-function planType(name: string): 'direct' | 'regular' | 'unknown' {
-  const lower = name.toLowerCase();
-  if (/\b(direct|dir)\b/.test(lower)) return 'direct';
-  if (/\b(regular|reg|ret)\b/.test(lower)) return 'regular';
-  return 'unknown';
-}
-
-/** Search mfapi.in for the best-matching scheme code for a given name.
- *  Prefers Growth plans and respects direct/regular distinction. */
-async function searchCorrectSchemeCode(schemeName: string): Promise<string | null> {
-  try {
-    const query = encodeURIComponent(schemeName.split(' ').slice(0, 4).join(' '));
-    const res = await fetch(`https://api.mfapi.in/mf/search?q=${query}`, {
-      headers: { 'Accept': 'application/json' },
-      cache: 'no-store',
-    });
-    if (!res.ok) return null;
-    const results: { schemeCode: string; schemeName: string }[] = await res.json();
-    if (!results || results.length === 0) return null;
-
-    const expectedPlan = planType(schemeName);
-
-    let best: { schemeCode: string; score: number } | null = null;
-    for (const r of results) {
-      const lower = r.schemeName.toLowerCase();
-      // Exclude IDCW / dividend plans — we always want Growth
-      if (/\b(idcw|dividend|quarterly|monthly|weekly|annual|bonus)\b/.test(lower)) continue;
-
-      let score = wordOverlap(schemeName, r.schemeName);
-
-      // Boost for matching plan type (direct vs regular)
-      const rPlan = planType(r.schemeName);
-      if (expectedPlan !== 'unknown' && rPlan === expectedPlan) score += 0.5;
-
-      // Boost for explicit "growth" in name
-      if (/\bgrowth\b/.test(lower)) score += 0.3;
-
-      if (!best || score > best.score) {
-        best = { schemeCode: r.schemeCode, score };
-      }
-    }
-    return best && best.score > 0 ? best.schemeCode : null;
-  } catch {
-    return null;
-  }
+function isSameScheme(selectedName: string, selectedPlan: string, returnedName: string): boolean {
+  if (hasPlanMismatch(selectedName, selectedPlan, returnedName)) return false;
+  const expected = new Set(normaliseSchemeName(selectedName));
+  const actual = new Set(normaliseSchemeName(returnedName));
+  if (expected.size === 0 || actual.size === 0) return false;
+  const overlap = [...expected].filter(word => actual.has(word)).length;
+  return overlap / expected.size >= 0.6;
 }
 
 /** Fetch NAV from mfapi.in for a given schemeCode, return parsed data or null */
@@ -99,61 +69,29 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const schemeCode = searchParams.get('schemeCode');
   const schemeName = searchParams.get('schemeName') || '';
+  const plan = searchParams.get('plan') || '';
 
   if (!schemeCode) {
     return NextResponse.json({ error: 'schemeCode is required' }, { status: 400 });
   }
 
-  // Step 1: Fetch with the CSV-provided scheme code
-  let data = await fetchFromMFAPI(schemeCode);
+  // The selected scheme row is the source of truth. Do not replace its code
+  // using a fuzzy name search: similarly named funds and plan variants can
+  // otherwise return another fund's NAV.
+  const data = await fetchFromMFAPI(schemeCode);
 
-  // Step 2: If we have a scheme name, validate the returned fund name matches.
-  //         If it doesn't (i.e. the CSV had a wrong/shared scheme code for a
-  //         completely different fund), search mfapi.in for the correct code.
-  //         We do NOT switch codes just because the data is old — stale data
-  //         from mfapi.in for the correct fund is still the correct fund's data.
   if (data && schemeName) {
-    const returnedName: string =
-      (data as Record<string, unknown> & { meta?: { scheme_name?: string } }).meta
-        ?.scheme_name || '';
-    const overlap = wordOverlap(schemeName, returnedName);
-    const needleWords = normaliseName(schemeName).split(' ').filter(w => w.length > 2);
-    const matchRatio = needleWords.length > 0 ? overlap / needleWords.length : 1;
-
-    if (matchRatio < 0.4) {
+    const returnedName =
+      (data as Record<string, unknown> & { meta?: { scheme_name?: string } }).meta?.scheme_name || '';
+    if (returnedName && !isSameScheme(schemeName, plan, returnedName)) {
       console.warn(
-        `[NAV] Scheme code ${schemeCode} returned "${returnedName}" but expected "${schemeName}" ` +
-        `(overlap ${overlap}/${needleWords.length}). Searching for correct code…`,
+        `[NAV] Row "${schemeName}" used scheme code ${schemeCode}; provider returned "${returnedName}". ` +
+        'Rejecting the response because the row code does not identify the selected scheme.',
       );
-      const correctCode = await searchCorrectSchemeCode(schemeName);
-      if (correctCode && correctCode !== schemeCode) {
-        console.log(`[NAV] Found corrected scheme code: ${correctCode} for "${schemeName}"`);
-        const correctedData = await fetchFromMFAPI(correctCode);
-        if (correctedData) {
-          const correctedName: string =
-            (correctedData as Record<string, unknown> & { meta?: { scheme_name?: string } }).meta
-              ?.scheme_name || '';
-          const correctedOverlap = wordOverlap(schemeName, correctedName);
-          const correctedRatio = needleWords.length > 0 ? correctedOverlap / needleWords.length : 0;
-          if (correctedRatio >= 0.3) {
-            data = correctedData;
-          } else {
-            console.warn(
-              `[NAV] Corrected code ${correctCode} returned "${correctedName}" — ` +
-              `still doesn't match "${schemeName}" (ratio ${correctedRatio.toFixed(2)}). Keeping original.`,
-            );
-          }
-        }
-      }
-    }
-  }
-
-  if (!data && schemeName) {
-    // fetchFromMFAPI returned nothing — try searching by name as last resort
-    console.warn(`[NAV] No data for scheme code ${schemeCode}. Trying name search for "${schemeName}"…`);
-    const correctCode = await searchCorrectSchemeCode(schemeName);
-    if (correctCode) {
-      data = await fetchFromMFAPI(correctCode);
+      return NextResponse.json(
+        { error: `Scheme code ${schemeCode} does not match selected scheme "${schemeName}"` },
+        { status: 409 },
+      );
     }
   }
 

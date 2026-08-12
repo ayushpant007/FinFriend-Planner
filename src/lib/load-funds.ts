@@ -9,6 +9,7 @@ export interface MutualFundScheme {
   fundName: string;
   schemeName: string;
   schemeCode: string;
+  plan: string;
   primaryBenchmark: string;
 }
 
@@ -116,10 +117,11 @@ export interface NAVData {
   date: string;
 }
 
-export async function fetchNAV(schemeCode: string, schemeName?: string): Promise<NAVData | null> {
+export async function fetchNAV(schemeCode: string, schemeName?: string, plan?: string): Promise<NAVData | null> {
   try {
     const params = new URLSearchParams({ schemeCode });
     if (schemeName) params.set('schemeName', schemeName);
+    if (plan) params.set('plan', plan);
     const response = await fetch(`/api/nav?${params.toString()}`);
     if (!response.ok) {
       console.warn(`NAV proxy error: ${response.status}`);

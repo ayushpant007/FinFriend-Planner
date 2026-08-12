@@ -1,0 +1,1 @@
+- [NAV row integrity](nav-row-integrity.md) — NAV must use the selected fund row's scheme code and reject provider responses for a different scheme or plan.

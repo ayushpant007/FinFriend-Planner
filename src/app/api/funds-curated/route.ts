@@ -9,6 +9,7 @@ interface MutualFundScheme {
   fundName: string;
   schemeName: string;
   schemeCode: string;
+  plan: string;
   primaryBenchmark: string;
 }
 
@@ -66,6 +67,7 @@ export async function GET() {
               fundName: fundName,
               schemeName: schemeName,
               schemeCode: schemeCode,
+              plan: row['Plan'] || row['plan'] || '',
               primaryBenchmark: row['Benchmark_Name'] || row['bm'] || ''
             });
           }

@@ -102,7 +102,11 @@ export function CascadingFundSelector({
       setNavError(null);
 
       try {
-        const nav = await fetchNAV(selectedSchemeData.schemeCode, selectedSchemeData.schemeName);
+        const nav = await fetchNAV(
+          selectedSchemeData.schemeCode,
+          selectedSchemeData.schemeName,
+          selectedSchemeData.plan,
+        );
         if (nav) {
           setNavData(nav);
         } else {
