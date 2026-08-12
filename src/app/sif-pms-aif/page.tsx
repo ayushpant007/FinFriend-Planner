@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { Input } from "@/components/ui/input";
 import {
@@ -91,7 +92,22 @@ export default function SifPmsAifPage() {
               </div>
 
               <div className="border-t border-border pt-6">
-                <h2 className="text-lg font-semibold">Choose Investment Category</h2>
+                <div className="flex items-center justify-between gap-4">
+                  <h2 className="text-lg font-semibold">Choose Investment Category</h2>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSelections((current) => [
+                        ...current,
+                        { category: "", investment: "" },
+                      ])
+                    }
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 glass-button-outline"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Add More</span>
+                  </button>
+                </div>
                 <div className="mt-5 space-y-5">
                   {selections.map((selection, index) => {
                     const categoryLabel = selection.category
@@ -110,14 +126,6 @@ export default function SifPmsAifPage() {
                           <Select
                             value={selection.category}
                             onValueChange={(value) => {
-                              if (value === "ADD_MORE") {
-                                setSelections((current) => [
-                                  ...current,
-                                  { category: "", investment: "" },
-                                ]);
-                                return;
-                              }
-
                               setSelections((current) =>
                                 current.map((currentSelection, currentIndex) =>
                                   currentIndex === index
@@ -140,7 +148,6 @@ export default function SifPmsAifPage() {
                               <SelectItem value="PMS">PMS</SelectItem>
                               <SelectItem value="AIF">AIF</SelectItem>
                               <SelectItem value="SIF">SIF</SelectItem>
-                              <SelectItem value="ADD_MORE">+ Add More</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
