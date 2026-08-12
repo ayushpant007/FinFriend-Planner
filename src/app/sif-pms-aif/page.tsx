@@ -12,6 +12,10 @@ import {
 } from "@/components/ui/select";
 
 type InvestmentCategory = "PMS" | "AIF" | "SIF";
+type InvestmentSelection = {
+  category: InvestmentCategory | "";
+  investment: string;
+};
 
 const investmentOptions: Record<InvestmentCategory, string[]> = {
   SIF: [
@@ -36,10 +40,9 @@ const investmentOptions: Record<InvestmentCategory, string[]> = {
 };
 
 export default function SifPmsAifPage() {
-  const [category, setCategory] = useState<InvestmentCategory | "">("");
-  const [investment, setInvestment] = useState("");
-
-  const investmentLabel = category ? `Choose ${category}` : "Choose Investment";
+  const [selections, setSelections] = useState<InvestmentSelection[]>([
+    { category: "", investment: "" },
+  ]);
 
   return (
     <main className="min-h-screen">
@@ -90,47 +93,97 @@ export default function SifPmsAifPage() {
               <div className="border-t border-border pt-6">
                 <h2 className="text-lg font-semibold">Choose Investment Category</h2>
                 <div className="mt-5 space-y-5">
-                  <div className="space-y-2">
-                    <label htmlFor="investment-category" className="text-sm font-medium">
-                      Choose Investment Category
-                    </label>
-                    <Select
-                      value={category}
-                      onValueChange={(value) => {
-                        setCategory(value as InvestmentCategory);
-                        setInvestment("");
-                      }}
-                    >
-                      <SelectTrigger id="investment-category" aria-label="Choose Investment Category">
-                        <SelectValue placeholder="Choose Investment Category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="PMS">PMS</SelectItem>
-                        <SelectItem value="AIF">AIF</SelectItem>
-                        <SelectItem value="SIF">SIF</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {selections.map((selection, index) => {
+                    const categoryLabel = selection.category
+                      ? `Choose ${selection.category}`
+                      : "Choose Investment";
 
-                  {category && (
-                    <div className="space-y-2">
-                      <label htmlFor="investment-selection" className="text-sm font-medium">
-                        {investmentLabel}
-                      </label>
-                      <Select value={investment} onValueChange={setInvestment}>
-                        <SelectTrigger id="investment-selection" aria-label={investmentLabel}>
-                          <SelectValue placeholder={investmentLabel} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {investmentOptions[category].map((option) => (
-                            <SelectItem key={option} value={option}>
-                              {option}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
+                    return (
+                      <div key={index} className="space-y-5">
+                        <div className="space-y-2">
+                          <label
+                            htmlFor={`investment-category-${index}`}
+                            className="text-sm font-medium"
+                          >
+                            Choose Investment Category
+                          </label>
+                          <Select
+                            value={selection.category}
+                            onValueChange={(value) => {
+                              if (value === "ADD_MORE") {
+                                setSelections((current) => [
+                                  ...current,
+                                  { category: "", investment: "" },
+                                ]);
+                                return;
+                              }
+
+                              setSelections((current) =>
+                                current.map((currentSelection, currentIndex) =>
+                                  currentIndex === index
+                                    ? {
+                                        category: value as InvestmentCategory,
+                                        investment: "",
+                                      }
+                                    : currentSelection,
+                                ),
+                              );
+                            }}
+                          >
+                            <SelectTrigger
+                              id={`investment-category-${index}`}
+                              aria-label="Choose Investment Category"
+                            >
+                              <SelectValue placeholder="Choose Investment Category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="PMS">PMS</SelectItem>
+                              <SelectItem value="AIF">AIF</SelectItem>
+                              <SelectItem value="SIF">SIF</SelectItem>
+                              <SelectItem value="ADD_MORE">+ Add More</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {selection.category && (
+                          <div className="space-y-2">
+                            <label
+                              htmlFor={`investment-selection-${index}`}
+                              className="text-sm font-medium"
+                            >
+                              {categoryLabel}
+                            </label>
+                            <Select
+                              value={selection.investment}
+                              onValueChange={(value) =>
+                                setSelections((current) =>
+                                  current.map((currentSelection, currentIndex) =>
+                                    currentIndex === index
+                                      ? { ...currentSelection, investment: value }
+                                      : currentSelection,
+                                  ),
+                                )
+                              }
+                            >
+                              <SelectTrigger
+                                id={`investment-selection-${index}`}
+                                aria-label={categoryLabel}
+                              >
+                                <SelectValue placeholder={categoryLabel} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {investmentOptions[selection.category].map((option) => (
+                                  <SelectItem key={option} value={option}>
+                                    {option}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
