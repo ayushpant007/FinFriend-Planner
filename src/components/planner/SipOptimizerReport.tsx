@@ -56,6 +56,38 @@ const formatYears = (years: number) => {
     return '0M';
 }
 
+type AllocationReturns = {
+    oneYearReturn: string | null;
+    threeYearReturn: string | null;
+    fiveYearReturn: string | null;
+    sevenYearReturn: string | null;
+    tenYearReturn: string | null;
+    currentNav: string | null;
+};
+
+const fetchAllocationReturns = async (alloc: FundAllocation): Promise<AllocationReturns | null> => {
+    if (!alloc.schemeCode) return null;
+
+    try {
+        const response = await fetch('/api/allocation/fund-data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                schemeCode: alloc.schemeCode,
+                schemeName: alloc.schemeName,
+                fundCategory: alloc.fundCategory,
+            }),
+        });
+
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.flatReturns ?? null;
+    } catch (error) {
+        console.error(`Failed to load CSV returns for ${alloc.schemeName}`, error);
+        return null;
+    }
+};
+
 const DetailItem = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: string | number }) => (
     <div className="flex items-start gap-3 print:gap-2">
         <div className="bg-pink-50 rounded-full p-1.5 print:bg-pink-50">
@@ -215,7 +247,7 @@ const RetirementAnalysisCard = ({ calcs }: { calcs: RetirementCalculations }) =>
 );
 
 const FundAllocationRow = ({ alloc, goalName, data }: { alloc: FundAllocation, goalName: string, data: SipOptimizerReportData & { goalsWithCalculations: GoalWithCalculations[] } }) => {
-    const [returns, setReturns] = useState<{ threeYearReturn: string | null; fiveYearReturn: string | null; tenYearReturn: string | null; } | null>(null);
+    const [returns, setReturns] = useState<AllocationReturns | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const shortenedSchemeName = useMemo(() => {
@@ -231,20 +263,27 @@ const FundAllocationRow = ({ alloc, goalName, data }: { alloc: FundAllocation, g
     }, [alloc.schemeName]);
 
     useEffect(() => {
-        const fetchReturns = async () => {
-            if (alloc.schemeCode) {
-                setIsLoading(true);
-                try {
-                    const result = await getFundReturns({ schemeCode: Number(alloc.schemeCode) });
-                    setReturns(result);
-                } catch (error) {
-                    console.error(`Failed to fetch returns for ${alloc.schemeName}`, error);
-                } finally {
-                    setIsLoading(false);
-                }
+        let cancelled = false;
+
+        const loadReturns = async () => {
+            if (!alloc.schemeCode) {
+                setReturns(null);
+                setIsLoading(false);
+                return;
+            }
+
+            setIsLoading(true);
+            const result = await fetchAllocationReturns(alloc);
+            if (!cancelled) {
+                setReturns(result);
+                setIsLoading(false);
             }
         };
-        fetchReturns();
+
+        loadReturns();
+        return () => {
+            cancelled = true;
+        };
     }, [alloc.schemeCode, alloc.schemeName]);
 
     const getGoalDisplayName = (goalId: string) => {
@@ -336,12 +375,22 @@ const FundDetailCard = ({
       if (!alloc.schemeCode) return;
       
       setIsLoading(true);
+      const csvReturns = await fetchAllocationReturns(alloc);
+      let liveReturns: FundReturnsOutput | null = null;
+
       try {
-        const returnsResult = await getFundReturns({ schemeCode: Number(alloc.schemeCode) });
-        setReturns(returnsResult);
+        // Keep the live lookup for current NAV, but prefer the same CSV-backed
+        // CAGR values already shown in the fund allocation form.
+        liveReturns = await getFundReturns({ schemeCode: Number(alloc.schemeCode) });
       } catch (error) {
-        console.error(`Failed to fetch returns for ${alloc.schemeName}`, error);
+        console.error(`Failed to fetch live NAV for ${alloc.schemeName}`, error);
       } finally {
+        setReturns({
+          threeYearReturn: csvReturns?.threeYearReturn ?? liveReturns?.threeYearReturn ?? null,
+          fiveYearReturn: csvReturns?.fiveYearReturn ?? liveReturns?.fiveYearReturn ?? null,
+          tenYearReturn: csvReturns?.tenYearReturn ?? liveReturns?.tenYearReturn ?? null,
+          currentNav: liveReturns?.currentNav ?? csvReturns?.currentNav ?? null,
+        });
         setIsLoading(false);
       }
 
