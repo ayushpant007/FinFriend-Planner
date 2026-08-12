@@ -2,7 +2,7 @@
 
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useRouter, usePathname } from "next/navigation";
-import { PieChart, LayoutDashboard } from "lucide-react";
+import { PieChart, LayoutDashboard, Construction } from "lucide-react";
 import Image from "next/image";
 
 const logoUrl = "/finfriend-planner-logo.png";
@@ -50,6 +50,14 @@ export function AppHeader() {
               <span>Fund Allocation</span>
             </button>
           )}
+          <button
+            onClick={() => router.push("/sif-pms-aif")}
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 glass-button-outline"
+            title="Go to SIF/PMS/AIF"
+          >
+            <Construction className="h-4 w-4" />
+            <span>SIF/PMS/AIF</span>
+          </button>
           <ThemeToggle />
         </div>
       </div>
