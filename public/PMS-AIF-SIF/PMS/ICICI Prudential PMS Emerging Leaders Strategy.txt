@@ -1,0 +1,674 @@
+{
+  "schema_version": "1.0",
+  "product_type": "PMS",
+  "product_category": "Equity PMS",
+
+  "strategy": {
+    "id": "icici-prudential-emerging-leaders",
+    "name": "ICICI Prudential PMS Emerging Leaders Strategy",
+    "short_name": "Emerging Leaders Strategy",
+
+    "provider": {
+      "name": "ICICI Prudential Asset Management Company Limited",
+      "brand": "ICICI Prudential Alternate Investments",
+      "registration_number": "INP000000373",
+      "registration_type": "SEBI Registered Portfolio Manager"
+    },
+
+    "strategy_type": "Equity",
+    "category": "Mid & Small Cap Equity",
+    "sub_category": "Mid Cap Focused Equity",
+    "service_type": "Discretionary PMS",
+    "status": "Active",
+
+    "inception_date": "2024-02-20",
+    "investment_horizon": "4 years and above",
+
+    "benchmark": {
+      "name": "BSE 500 TRI",
+      "type": "Total Return Index"
+    },
+
+    "valueresearch_url": null,
+    "official_url": "https://www.iciciprualternates.com/"
+  },
+
+  "investment_objective": {
+    "objective": "To provide long-term capital appreciation and generate returns by investing predominantly in mid-cap companies.",
+    "primary_asset_class": "Equity",
+    "secondary_asset_classes": [
+      "Debt",
+      "Money Market Instruments",
+      "Debt Mutual Funds",
+      "Debt ETFs"
+    ],
+
+    "target_universe": [
+      "Mid Cap Companies",
+      "Small Cap Companies"
+    ],
+
+    "investment_style": [
+      "Growth Investing",
+      "Fundamental Investing",
+      "Top-Down Analysis",
+      "Bottom-Up Stock Selection",
+      "Long-Term Investing"
+    ]
+  },
+
+  "investment_strategy": {
+    "description": "The strategy predominantly invests in mid-cap companies and may also invest in small-cap companies. Stock selection combines top-down analysis of macroeconomic and sectoral themes with bottom-up identification of attractive companies across industries and market conditions.",
+
+    "approach": {
+      "top_down": {
+        "enabled": true,
+        "focus": [
+          "Macroeconomic trends",
+          "Sectoral themes",
+          "Industry dynamics",
+          "Structural opportunities"
+        ]
+      },
+
+      "bottom_up": {
+        "enabled": true,
+        "focus": [
+          "Company fundamentals",
+          "Earnings growth",
+          "Business quality",
+          "Competitive advantage",
+          "Management quality",
+          "Capital allocation",
+          "Valuation"
+        ]
+      }
+    },
+
+    "stock_selection_framework": {
+      "name": "BMV Framework",
+      "full_name": "Business - Management - Valuation",
+
+      "business": {
+        "objective": "Identify businesses with meaningful earnings growth and sustainable competitive advantages.",
+        "factors": [
+          "Earnings growth",
+          "Sustainable competitive advantage",
+          "Growth potential",
+          "Market opportunity",
+          "Industry structure",
+          "Growth moats"
+        ]
+      },
+
+      "management": {
+        "objective": "Identify companies with competent management and strong governance.",
+        "factors": [
+          "Management quality",
+          "Corporate governance",
+          "Capital allocation",
+          "Shareholder alignment",
+          "Strategic execution"
+        ]
+      },
+
+      "valuation": {
+        "objective": "Identify companies trading at reasonable valuations with an appropriate margin of safety.",
+        "factors": [
+          "Valuation multiples",
+          "Margin of safety",
+          "Earnings potential",
+          "Return on equity",
+          "Capital efficiency"
+        ]
+      }
+    },
+
+    "growth_moats": {
+      "focus": [
+        "Cost advantage",
+        "Brand franchise",
+        "Distribution advantage",
+        "Industry structure",
+        "Technology",
+        "Patents",
+        "Licenses",
+        "Market concentration"
+      ],
+
+      "market_structure_analysis": {
+        "enabled": true,
+        "metric": "HHI",
+        "full_name": "Herfindahl-Hirschman Index"
+      }
+    },
+
+    "research_process": {
+      "initial_screening_universe": 2500,
+      "active_research_universe": 680,
+      "post_bmv_universe": "170-190",
+      "strategy_filter_universe": "60-65",
+      "target_portfolio_size": "35-40",
+
+      "process": [
+        "Initial in-house screening",
+        "Active company coverage",
+        "BMV filtration",
+        "Business and growth check",
+        "Quality check",
+        "Valuation check",
+        "Strategy-level filter",
+        "Portfolio construction"
+      ]
+    }
+  },
+
+  "portfolio_construction": {
+    "target_number_of_companies": {
+      "min": 25,
+      "max": 35
+    },
+
+    "focus": [
+      "Mid Cap",
+      "Small Cap"
+    ],
+
+    "concentration": "High conviction",
+
+    "allocation_method": "Active stock selection and position sizing",
+
+    "position_sizing": {
+      "dynamic": true,
+      "based_on": [
+        "Business quality",
+        "Growth potential",
+        "Valuation",
+        "Risk",
+        "Liquidity",
+        "Portfolio construction"
+      ]
+    }
+  },
+
+  "asset_allocation": {
+    "primary": {
+      "asset": "Listed Equity and Equity Related Securities",
+      "description": "Predominant allocation to equity and equity-related securities."
+    },
+
+    "secondary": [
+      {
+        "asset": "Debt",
+        "purpose": [
+          "Liquidity",
+          "Defensive positioning",
+          "Pending deployment"
+        ]
+      },
+      {
+        "asset": "Money Market Instruments",
+        "purpose": [
+          "Liquidity",
+          "Defensive positioning",
+          "Pending deployment"
+        ]
+      },
+      {
+        "asset": "Debt Mutual Funds",
+        "purpose": [
+          "Liquidity",
+          "Defensive positioning"
+        ]
+      },
+      {
+        "asset": "Debt ETFs",
+        "purpose": [
+          "Liquidity",
+          "Defensive positioning"
+        ]
+      }
+    ],
+
+    "derivatives": {
+      "allowed": true,
+      "purpose": [
+        "Hedging"
+      ],
+      "short_exposure": false,
+      "speculative_derivative_strategy": false
+    }
+  },
+
+  "screening_framework": {
+    "business_quality": [
+      "Meaningful earnings growth",
+      "Sustainable competitive advantage",
+      "Growth moat",
+      "Structural growth",
+      "Industry growth above GDP"
+    ],
+
+    "management_quality": [
+      "Prudent capital allocation",
+      "Improving ROE",
+      "Fair corporate governance",
+      "Shareholder alignment"
+    ],
+
+    "valuation_quality": [
+      "Reasonable valuation",
+      "Margin of safety",
+      "Earnings potential"
+    ],
+
+    "positive_change_identifiers": [
+      "Industry consolidation",
+      "Easing competition",
+      "Market-share gains",
+      "New products",
+      "Innovation",
+      "Market expansion",
+      "Structural demand"
+    ]
+  },
+
+  "research_capability": {
+    "analyst_count": "20+",
+    "combined_analyst_experience_years": "70+",
+    "companies_covered": 680,
+    "sectors_covered": "20+",
+
+    "research_sectors": [
+      "Agriculture & Agriculture Input",
+      "Chemicals",
+      "Healthcare Services",
+      "Media & Entertainment",
+      "Real Estate",
+      "Auto & Auto Ancillaries",
+      "Commercial Services",
+      "Pharmaceuticals",
+      "Metals & Mining",
+      "Retail",
+      "Banks & Finance",
+      "Construction",
+      "Hotels & Leisure",
+      "Oil & Gas",
+      "Telecom",
+      "Building Materials",
+      "Consumer Durables",
+      "Industrial Products & Capital Goods",
+      "Internet",
+      "Textiles",
+      "Cement",
+      "Consumer Non-Durables",
+      "IT",
+      "Power & Utilities",
+      "Transportation"
+    ]
+  },
+
+  "scheme_details": {
+    "minimum_investment": {
+      "value": 5000000,
+      "currency": "INR",
+      "display": "₹50 Lakh"
+    },
+
+    "minimum_additional_investment": null,
+
+    "entry_load": null,
+
+    "exit_load": null,
+
+    "lock_in_period": null,
+
+    "redemption_frequency": null,
+
+    "fee_structure": {
+      "fixed_fee": null,
+      "variable_fee": null,
+      "performance_fee": null,
+      "hurdle_rate": null,
+      "high_water_mark": null,
+      "note": "Fee structure should be populated from the client-specific PMS agreement or latest official fee schedule rather than inferred from third-party sources."
+    }
+  },
+
+  "current_data": {
+    "as_of": "2026-06-30",
+
+    "aum": {
+      "value": 239.85,
+      "currency": "INR",
+      "unit": "Crore"
+    },
+
+    "client_count": null,
+
+    "portfolio_count": null,
+
+    "risk_level": "High",
+
+    "valueresearch_rating": null
+  },
+
+  "performance": {
+    "as_of": "2026-06-30",
+
+    "returns": {
+      "1_month": 1.09,
+      "3_month": 12.86,
+      "6_month": 1.97,
+      "1_year": 7.81,
+      "2_year": 5.44,
+      "3_year": null,
+      "4_year": null,
+      "5_year": null,
+      "since_inception": 9.46
+    },
+
+    "benchmark": {
+      "name": "BSE 500 TRI",
+
+      "returns": {
+        "1_month": 1.73,
+        "3_month": 12.10,
+        "6_month": -3.53,
+        "1_year": -1.96,
+        "2_year": 1.52,
+        "3_year": null,
+        "4_year": null,
+        "5_year": null,
+        "since_inception": 6.22
+      }
+    },
+
+    "excess_return": {
+      "1_month": -0.64,
+      "3_month": 0.76,
+      "6_month": 5.50,
+      "1_year": 9.77,
+      "2_year": 3.92,
+      "since_inception": 3.24
+    },
+
+    "performance_context": {
+      "source": "APMI",
+      "calculation": "PMS strategy returns vs BSE 500 TRI benchmark",
+      "individual_client_variation": true,
+      "note": "Individual client portfolio returns may vary because of timing of investments/redemptions, client mandates, portfolio construction and other client-specific constraints."
+    }
+  },
+
+  "risk_metrics": {
+    "as_of": null,
+
+    "standard_deviation": null,
+    "beta": null,
+    "alpha": null,
+    "sharpe_ratio": null,
+    "sortino_ratio": null,
+    "maximum_drawdown": null,
+
+    "risk_metric_context": {
+      "available": false,
+      "message": "These metrics were not directly disclosed in the supplied July 2026 strategy presentation or the APMI summary."
+    }
+  },
+
+  "portfolio": {
+    "as_of": null,
+
+    "total_holdings": null,
+
+    "market_cap": {
+      "large_cap": null,
+      "mid_cap": null,
+      "small_cap": null,
+      "other": null
+    },
+
+    "sector_allocation": [],
+
+    "top_holdings": [],
+
+    "long_positions": [],
+
+    "short_positions": [],
+
+    "portfolio_note": "The July 2026 strategy presentation describes the intended portfolio construction and cites Jindal Stainless and Bharat Forge as case studies. These securities should not be treated as confirmed current holdings because the AMC explicitly states that cited stocks may or may not form part of the portfolio in future."
+  },
+
+  "case_studies": [
+    {
+      "company": "Jindal Stainless Ltd",
+      "type": "Illustrative Investment Case",
+      "key_thesis": [
+        "Company sales volume outgrowing industry",
+        "Industry growth exceeding GDP growth",
+        "Capacity aligned with demand",
+        "Structural demand from metro rail",
+        "Auto, urbanisation, defence and aerospace demand"
+      ],
+      "reported_metrics": {
+        "india_gdp_cagr_fy2021_fy2025": 7.20,
+        "india_stainless_steel_consumption_cagr_fy2021_fy2025": 13.00,
+        "company_sales_volume_cagr_fy2021_fy2025": 15.40,
+        "pat_cagr_fy2023_fy2026": 15.00
+      }
+    },
+
+    {
+      "company": "Bharat Forge Ltd",
+      "type": "Illustrative Investment Case",
+      "key_thesis": [
+        "Portfolio re-engineering toward higher-growth verticals",
+        "Aerospace opportunity",
+        "Defence opportunity",
+        "Strong order book",
+        "Improving profitability"
+      ],
+      "reported_metrics": {
+        "defence_order_book_fy2026": 10961,
+        "defence_order_book_unit": "INR Crore",
+        "fy2026_revenue": 16812,
+        "fy2026_revenue_unit": "INR Crore",
+        "fy2026_ebitda": 2921,
+        "fy2026_ebitda_unit": "INR Crore",
+        "fy2023_fy2026_pat_cagr": 29.00
+      }
+    }
+  ],
+
+  "fund_managers": [
+    {
+      "name": "Anand Shah",
+      "role": "CIO - PMS & AIF",
+      "strategy_role": "Portfolio Management Oversight",
+      "experience_years": 20,
+      "education": [
+        "PGDM - IIM Lucknow",
+        "B.E. - Regional Engineering College, Surat"
+      ]
+    }
+  ],
+
+  "investment_team": {
+    "cio_pms_aif": {
+      "name": "Anand Shah",
+      "experience_years": 20
+    },
+
+    "pms_equity_team": [
+      {
+        "name": "Chockalingam Narayanan",
+        "role": "Head Equities - PMS & AIF (Long Only)"
+      },
+      {
+        "name": "Sandip Santdasani",
+        "role": "PMS Equity"
+      }
+    ],
+
+    "support_team": [
+      {
+        "name": "Ankur Pandey",
+        "role": "Fund Manager - AIF"
+      },
+      {
+        "name": "Prem Khurana",
+        "role": "Quantitative Specialist"
+      }
+    ],
+
+    "research_team": {
+      "analysts": "20+",
+      "combined_experience": "70+ years",
+      "companies_covered": 680,
+      "sectors_covered": "20+"
+    }
+  },
+
+  "former_team_members": [
+    {
+      "name": "Geetika Gupta",
+      "role": "Portfolio Manager",
+      "status": "Ceased to be Portfolio Manager",
+      "effective_date": "2026-07-03"
+    }
+  ],
+
+  "risk_flags": [
+    {
+      "type": "mid_cap_risk",
+      "severity": "high",
+      "message": "The strategy predominantly invests in mid-cap companies, which can be more volatile and less liquid than large-cap companies."
+    },
+    {
+      "type": "small_cap_risk",
+      "severity": "high",
+      "message": "The strategy may also invest in small-cap companies, which can have lower liquidity, less management depth and greater business-cycle sensitivity."
+    },
+    {
+      "type": "liquidity_risk",
+      "severity": "high",
+      "message": "Mid- and small-cap securities may have lower trading liquidity, particularly during stressed market conditions."
+    },
+    {
+      "type": "corporate_governance_risk",
+      "severity": "medium",
+      "message": "Smaller companies can have comparatively weaker governance and disclosure frameworks."
+    },
+    {
+      "type": "derivative_risk",
+      "severity": "medium",
+      "message": "Exchange-traded derivatives may be used for hedging."
+    },
+    {
+      "type": "equity_market_risk",
+      "severity": "high",
+      "message": "Portfolio value is exposed to equity-market movements and can fluctuate significantly."
+    },
+    {
+      "type": "individual_portfolio_variation",
+      "severity": "medium",
+      "message": "Actual returns for individual PMS clients can differ from strategy-level reported returns due to client-specific timing, mandates and portfolio construction."
+    },
+    {
+      "type": "long_horizon",
+      "severity": "medium",
+      "message": "The recommended investment horizon is 4 years and above."
+    }
+  ],
+
+  "investment_highlights": [
+    {
+      "title": "Mid-Cap Focus",
+      "description": "The strategy predominantly invests in mid-cap companies while retaining flexibility to invest in small caps."
+    },
+    {
+      "title": "BMV Framework",
+      "description": "Stocks are evaluated through Business, Management and Valuation filters."
+    },
+    {
+      "title": "Top-Down + Bottom-Up",
+      "description": "Macro and sector themes are combined with detailed company-level research."
+    },
+    {
+      "title": "High-Conviction Portfolio",
+      "description": "The strategy aims to construct a concentrated portfolio of approximately 25–35 companies."
+    },
+    {
+      "title": "Growth Moats",
+      "description": "The strategy seeks companies with sustainable competitive advantages, structural growth and positive changes in industry dynamics."
+    },
+    {
+      "title": "Deep Research Coverage",
+      "description": "The investment team is supported by a common research platform covering around 680 companies across 20+ sectors."
+    },
+    {
+      "title": "Long-Term Approach",
+      "description": "The strategy is designed for investors with a 4-year-and-above investment horizon."
+    }
+  ],
+
+  "application_display": {
+    "hero": {
+      "title": "ICICI Prudential PMS Emerging Leaders Strategy",
+      "subtitle": "Mid & Small Cap | High Conviction Equity",
+      "benchmark": "BSE 500 TRI",
+      "investment_horizon": "4+ Years",
+      "minimum_investment": "₹50 Lakh",
+      "aum": "₹239.85 Cr",
+      "aum_as_of": "30-Jun-2026"
+    },
+
+    "key_metrics": [
+      "AUM",
+      "Minimum Investment",
+      "1 Year Return",
+      "2 Year Return",
+      "Since Inception Return",
+      "Benchmark",
+      "Investment Horizon",
+      "Portfolio Size"
+    ],
+
+    "sections": [
+      "Strategy Overview",
+      "Investment Objective",
+      "Investment Philosophy",
+      "BMV Framework",
+      "Research Process",
+      "Portfolio Construction",
+      "Asset Allocation",
+      "Performance",
+      "Benchmark Comparison",
+      "Risk Metrics",
+      "Investment Team",
+      "Research Capability",
+      "Investment Highlights",
+      "Risk Factors",
+      "Case Studies"
+    ]
+  },
+
+  "data_metadata": {
+    "primary_source": "ICICI Prudential Asset Management Company Limited",
+    "primary_document": "ICICI Prudential PMS Emerging Leaders Strategy Presentation - July 2026",
+    "primary_document_date": "2026-07",
+    "secondary_sources": [
+      "APMI India",
+      "PMS AIF World"
+    ],
+    "last_verified": "2026-08-12",
+
+    "aum_data_as_of": "2026-06-30",
+    "performance_data_as_of": "2026-06-30",
+
+    "important_data_rule": "Strategy-level PMS performance should not be represented as an exact individual-client return.",
+    "missing_data_rule": "Use null when a field is not reliably available.",
+    "case_study_rule": "Case-study securities should not automatically be treated as current portfolio holdings."
+  }
+}

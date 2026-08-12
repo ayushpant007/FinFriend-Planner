@@ -1,0 +1,413 @@
+{
+  "schema_version": "1.0",
+  "product_type": "SIF",
+  "product_category": "Equity SIF",
+
+  "fund": {
+    "id": "dynasif-equity-ex-top-100-long-short",
+    "name": "DynaSIF Equity Ex-Top 100 Long-Short Fund",
+    "short_name": "DynaSIF Ex-Top 100 Long-Short",
+    "amc": "360 ONE Mutual Fund",
+    "asset_management_company": "360 ONE Asset Management Limited",
+    "trustee": "360 ONE Asset Trustee Limited",
+    "category": "Equity - Ex Top 100 Long Short",
+    "sub_category": "Equity SIF",
+    "strategy_type": "Open Ended",
+    "status": "Active",
+    "launch_date": "2026-06-05",
+    "allotment_date": "2026-06-24",
+    "benchmark": "BSE 500 TRI",
+    "risk_level": "High",
+    "risk_score": 5,
+    "valueresearch_url": "https://www.valueresearchonline.com/sif/dynasif-equity-ex-top-100-long-short-fund-direct-plan-5000178/",
+    "official_url": "https://www.360.one/dyna-sif"
+  },
+
+  "investment_objective": {
+    "objective": "To generate long-term capital appreciation using structural, cyclical and tactical investing opportunities primarily in mid and small cap equities with optionality of hedging and shorting.",
+    "investment_horizon": "Long Term",
+    "primary_asset_class": "Equity",
+    "target_universe": "Companies outside the top 100 by market capitalisation",
+    "strategy_style": [
+      "Structural investing",
+      "Cyclical investing",
+      "Tactical investing",
+      "Long investing",
+      "Selective short exposure",
+      "Hedging"
+    ]
+  },
+
+  "investment_strategy": {
+    "description": "The strategy primarily seeks opportunities in mid-cap and small-cap companies outside the top 100 listed companies, while retaining flexibility to use derivatives for limited short exposure and hedging.",
+    "core_approach": [
+      "Bottom-up equity research",
+      "Structural opportunities",
+      "Cyclical opportunities",
+      "Tactical opportunities",
+      "Valuation-driven positioning",
+      "Risk management through selective short positions"
+    ],
+    "long_short_strategy": {
+      "enabled": true,
+      "long_exposure": true,
+      "short_exposure": true,
+      "short_instrument": "Equity derivatives",
+      "maximum_unhedged_short_exposure_percent": 25
+    }
+  },
+
+  "asset_allocation": {
+    "allocation_rules": [
+      {
+        "asset": "Ex-Top 100 Equity",
+        "min_percent": 65,
+        "max_percent": 100,
+        "description": "Primary investment universe comprising companies outside the top 100 by market capitalisation."
+      },
+      {
+        "asset": "Large Cap Equity",
+        "min_percent": 0,
+        "max_percent": 35,
+        "description": "May be used when attractive opportunities or valuations are identified."
+      },
+      {
+        "asset": "Debt and Money Market Instruments",
+        "min_percent": 0,
+        "max_percent": 25,
+        "description": "May be used for defensive positioning and liquidity management."
+      },
+      {
+        "asset": "InvITs",
+        "min_percent": 0,
+        "max_percent": 20,
+        "description": "Infrastructure Investment Trust exposure."
+      }
+    ],
+    "derivatives": {
+      "allowed": true,
+      "purpose": [
+        "Hedging",
+        "Short exposure",
+        "Tactical positioning"
+      ]
+    }
+  },
+
+  "scheme_details": {
+    "minimum_initial_investment": 1000000,
+    "minimum_additional_investment": 20000,
+    "minimum_sip": 20000,
+    "accredited_investor_minimum": 100000,
+    "entry_load": 0,
+    "exit_load": {
+      "percent": 0.5,
+      "period": "3 months",
+      "condition": "Applicable if redeemed within 3 months from the date of allotment",
+      "after_period": "Nil"
+    },
+    "lock_in_period": null,
+    "open_ended": true
+  },
+
+  "plans": [
+    {
+      "plan": "Direct",
+      "option": "Growth",
+      "isin": "INF579M30166",
+      "scheme_code": "5000178",
+      "status": "Active"
+    },
+    {
+      "plan": "Direct",
+      "option": "IDCW Payout",
+      "isin": "INF579M30174",
+      "scheme_code": null,
+      "status": "Active"
+    },
+    {
+      "plan": "Direct",
+      "option": "IDCW Reinvestment",
+      "isin": "INF579M30182",
+      "scheme_code": null,
+      "status": "Active"
+    },
+    {
+      "plan": "Regular",
+      "option": "Growth",
+      "isin": "INF579M30133",
+      "scheme_code": null,
+      "status": "Active"
+    },
+    {
+      "plan": "Regular",
+      "option": "IDCW Payout",
+      "isin": "INF579M30141",
+      "scheme_code": null,
+      "status": "Active"
+    },
+    {
+      "plan": "Regular",
+      "option": "IDCW Reinvestment",
+      "isin": "INF579M30158",
+      "scheme_code": null,
+      "status": "Active"
+    }
+  ],
+
+  "current_data": {
+    "as_of": "2026-07-27",
+    "nav": {
+      "value": 10.23,
+      "currency": "INR",
+      "plan": "Direct Growth"
+    },
+    "aum": {
+      "value": null,
+      "currency": "INR",
+      "unit": "Crore"
+    },
+    "expense_ratio": {
+      "value": 0.40,
+      "unit": "percent",
+      "inclusive_of_gst": true
+    },
+    "risk_rating": "High",
+    "valueresearch_rating": null
+  },
+
+  "performance": {
+    "as_of": null,
+    "returns": {
+      "1_month": null,
+      "3_month": null,
+      "6_month": null,
+      "1_year": null,
+      "3_year": null,
+      "5_year": null,
+      "since_inception": null
+    },
+    "benchmark_returns": {
+      "1_month": null,
+      "3_month": null,
+      "6_month": null,
+      "1_year": null,
+      "3_year": null,
+      "5_year": null,
+      "since_inception": null
+    },
+    "category_average": {
+      "1_month": null,
+      "3_month": null,
+      "6_month": null,
+      "1_year": null,
+      "3_year": null,
+      "5_year": null
+    }
+  },
+
+  "risk_metrics": {
+    "as_of": null,
+    "standard_deviation": null,
+    "beta": null,
+    "alpha": null,
+    "sharpe_ratio": null,
+    "sortino_ratio": null,
+    "treynor_ratio": null,
+    "downside_deviation": null,
+    "maximum_drawdown": null
+  },
+
+  "portfolio": {
+    "as_of": null,
+    "total_holdings": null,
+    "equity_percent": null,
+    "debt_percent": null,
+    "cash_percent": null,
+    "derivatives_percent": null,
+
+    "market_cap": {
+      "large_cap": null,
+      "mid_cap": null,
+      "small_cap": null,
+      "other": null
+    },
+
+    "sector_allocation": [],
+
+    "top_holdings": [],
+
+    "long_positions": [],
+
+    "short_positions": []
+  },
+
+  "fund_managers": [
+    {
+      "name": "Mayur Patel",
+      "role": "Fund Manager",
+      "since": "2026-06"
+    },
+    {
+      "name": "Harsh Agarwal",
+      "role": "Fund Manager",
+      "since": "2026-06"
+    },
+    {
+      "name": "Milan Mody",
+      "role": "Fund Manager",
+      "since": "2026-06"
+    },
+    {
+      "name": "Pranav Mise",
+      "role": "Co-Fund Manager",
+      "since": "2026-06"
+    }
+  ],
+
+  "fund_manager_details": [
+    {
+      "name": "Mayur Patel",
+      "education": [
+        "Chartered Accountant",
+        "CFA"
+      ],
+      "experience_summary": "Experience across equity portfolio management, research and investment management."
+    },
+    {
+      "name": "Harsh Agarwal",
+      "education": [
+        "MBA",
+        "Certified Portfolio Manager",
+        "Certified Treasury Manager",
+        "B.Com",
+        "NISM Series XIX-C"
+      ],
+      "experience_summary": "Previously associated with Tata AMC."
+    },
+    {
+      "name": "Milan Mody",
+      "education": [
+        "B.Com",
+        "MBA in Finance"
+      ],
+      "experience_summary": "Previously associated with ITI Mutual Fund, ZyFin Research, Sahara India Life Insurance, Darashaw and BRICS Securities."
+    },
+    {
+      "name": "Pranav Mise",
+      "education": [
+        "MMS in Finance",
+        "BE in Information Technology"
+      ],
+      "experience_summary": "Previously associated with Tata Asset Management and Daiwa Portfolio Advisory India."
+    }
+  ],
+
+  "fund_house": {
+    "name": "360 ONE Mutual Fund",
+    "asset_manager": "360 ONE Asset Management Limited",
+    "website": "https://www.360.one/dyna-sif",
+    "registered_office": "360 ONE Centre, Kamala City, S.B. Marg, Lower Parel, Mumbai, Maharashtra, India",
+    "registrar": "Computer Age Management Services (CAMS)",
+    "contact_email": "dnyasifservices@360.one"
+  },
+
+  "nfo_details": {
+    "nfo_start_date": "2026-06-05",
+    "nfo_end_date": "2026-06-19",
+    "allotment_date": "2026-06-24",
+    "reopening_date": "2026-06-29",
+    "initial_nav": 10
+  },
+
+  "investment_highlights": [
+    {
+      "title": "Beyond Top 100",
+      "description": "Focuses primarily on opportunities outside India's top 100 companies by market capitalisation."
+    },
+    {
+      "title": "Mid & Small Cap Focus",
+      "description": "Targets structural, cyclical and tactical opportunities primarily across mid- and small-cap companies."
+    },
+    {
+      "title": "Long-Short Flexibility",
+      "description": "Can use derivatives to take limited short exposure in eligible stocks."
+    },
+    {
+      "title": "Active Risk Management",
+      "description": "Short positions and hedging can be used as part of the portfolio risk-management framework."
+    },
+    {
+      "title": "Flexible Allocation",
+      "description": "The strategy can dynamically allocate across eligible equity, debt, money-market and infrastructure-related instruments."
+    }
+  ],
+
+  "risk_flags": [
+    {
+      "type": "high_risk",
+      "severity": "high",
+      "message": "The strategy carries high investment risk due to its equity-focused and mid/small-cap exposure."
+    },
+    {
+      "type": "short_exposure",
+      "severity": "high",
+      "message": "The strategy can take limited unhedged short exposure through derivatives."
+    },
+    {
+      "type": "market_risk",
+      "severity": "high",
+      "message": "Returns may be significantly affected by movements in mid- and small-cap markets."
+    },
+    {
+      "type": "new_strategy",
+      "severity": "medium",
+      "message": "The strategy has a short live performance history because it launched in June 2026."
+    }
+  ],
+
+  "application_display": {
+    "hero": {
+      "title": "DynaSIF Equity Ex-Top 100 Long-Short Fund",
+      "subtitle": "Mid & Small Cap | Long-Short Strategy",
+      "risk_label": "High Risk",
+      "benchmark": "BSE 500 TRI"
+    },
+
+    "key_metrics": [
+      "NAV",
+      "AUM",
+      "Expense Ratio",
+      "Minimum Investment",
+      "Exit Load",
+      "Risk Level"
+    ],
+
+    "sections": [
+      "Fund Overview",
+      "Investment Objective",
+      "Investment Strategy",
+      "Asset Allocation",
+      "Performance",
+      "Risk Metrics",
+      "Portfolio",
+      "Fund Managers",
+      "Investment Highlights",
+      "Risk Flags"
+    ]
+  },
+
+  "data_metadata": {
+    "primary_source": "Value Research Online",
+    "secondary_sources": [
+      "SEBI",
+      "360 ONE Mutual Fund",
+      "NSE",
+      "Groww",
+      "Financial Express"
+    ],
+    "last_verified": "2026-08-12",
+    "fields_with_null": "Data not available or not reliably extractable at the time of collection",
+    "use_null_for_missing_data": true
+  }
+}

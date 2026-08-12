@@ -1,0 +1,650 @@
+{
+  "schema_version": "1.0",
+
+  "product_type": "AIF",
+  "product_category": "Alternative Investment Fund",
+
+  "fund": {
+    "id": "helios-india-emerging-star-fund",
+    "name": "Helios India Emerging Star Fund",
+    "short_name": "Emerging Star Fund",
+
+    "fund_house": {
+      "name": "Helios Capital Asset Management (India) Private Limited",
+      "brand": "Helios",
+      "role": "Investment Manager"
+    },
+
+    "registration": {
+      "aif_registration_number": "IN/AIF3/19-20/0773",
+      "category": "Category III AIF"
+    },
+
+    "fund_type": {
+      "category": "Category III",
+      "sub_category": "Equity Oriented",
+      "structure": "Closed Ended",
+      "asset_class": "Equity",
+      "geography": "India",
+      "status": "Active"
+    },
+
+    "inception": {
+      "date": "2026-07-01",
+      "display": "01 July 2026"
+    },
+
+    "document": {
+      "document_name": "Helios India Emerging Star Fund Product Note",
+      "document_date": "2026-06",
+      "document_type": "Product Note",
+      "confidentiality": "Private / Intended Audience Only"
+    }
+  },
+
+  "investment_objective": {
+    "objective": "To achieve and preserve long-term capital appreciation for Contributors in a risk-controlled manner by predominantly investing in a diversified portfolio of equity and equity-related securities.",
+
+    "primary_focus": [
+      "Mid Cap",
+      "Small Cap"
+    ],
+
+    "target_company_profile": [
+      "Potential sector leaders",
+      "Potential market leaders",
+      "Potential future disruptors",
+      "Companies undergoing special situations",
+      "Companies in unfavorable business cycles"
+    ],
+
+    "investment_universe": "Indian listed equity universe",
+
+    "control": {
+      "management_control_of_investments": false,
+      "legal_control_of_investments": false,
+      "description": "The fund will not take legal or management control of underlying investments."
+    }
+  },
+
+  "investment_thesis": {
+    "theme": "Emerging Leaders",
+
+    "core_belief": "Mid and small-cap companies can provide access to businesses earlier in their growth journeys, with potential to become future sector or market leaders.",
+
+    "why_mid_small_caps": [
+      {
+        "id": "earnings_growth",
+        "title": "Higher Earnings Growth Potential",
+        "description": "Earlier-stage businesses can have greater room for earnings growth."
+      },
+      {
+        "id": "future_leaders",
+        "title": "Early Access to Future Leaders",
+        "description": "The strategy seeks companies that can potentially evolve into sector or market leaders."
+      },
+      {
+        "id": "structural_tailwinds",
+        "title": "Structural Tailwinds",
+        "description": "The fund seeks to benefit from structural changes across the Indian economy."
+      },
+      {
+        "id": "alpha",
+        "title": "Alpha Creation Opportunity",
+        "description": "A broader mid and small-cap opportunity set can create opportunities for differentiated stock selection."
+      },
+      {
+        "id": "wealth_creation",
+        "title": "Long-Term Wealth Creation Potential",
+        "description": "The strategy targets long-term capital appreciation."
+      }
+    ],
+
+    "structural_themes": [
+      "Changing consumer aspirations",
+      "Economic transformation",
+      "New consumption patterns",
+      "Formalization",
+      "Digital adoption",
+      "Manufacturing growth",
+      "Increasing private sector participation"
+    ]
+  },
+
+  "investment_philosophy": {
+    "name": "Elimination Investing",
+    "trademark": "Elimination Investing®",
+
+    "core_principle": "Reject potentially poor businesses first using fundamental elimination factors, and then select companies that cannot be rejected on those factors.",
+
+    "process": "Reject bad businesses first, then select from the remaining companies.",
+
+    "elimination_factors": [
+      {
+        "id": 1,
+        "name": "Bad Theme",
+        "description": "Size of opportunity"
+      },
+      {
+        "id": 2,
+        "name": "Unfavourable Industry Dynamics",
+        "description": "Industry structure and dynamics"
+      },
+      {
+        "id": 3,
+        "name": "Potential for Disruption",
+        "description": "Risk of disruption to the business"
+      },
+      {
+        "id": 4,
+        "name": "Weak Management / Background / Strategy",
+        "description": "Management quality, background and strategic concerns"
+      },
+      {
+        "id": 5,
+        "name": "Poor Corporate Governance",
+        "description": "Governance concerns"
+      },
+      {
+        "id": 6,
+        "name": "Low Quality Accounting",
+        "description": "Accounting quality concerns"
+      },
+      {
+        "id": 7,
+        "name": "Negative Medium-Term Positive Triggers",
+        "description": "Negative medium-term outlook, including projected financial performance"
+      },
+      {
+        "id": 8,
+        "name": "Unreasonably High Valuations",
+        "description": "Excessive valuation"
+      }
+    ]
+  },
+
+  "investment_process": {
+    "stage_1": {
+      "name": "Indian Listed Equity Universe",
+      "description": "Initial universe of Indian listed equities."
+    },
+
+    "stage_2": {
+      "name": "Helios Universe",
+      "criteria": [
+        "Sufficient liquidity",
+        "Supportive growth dynamics",
+        "Supportive sector dynamics"
+      ]
+    },
+
+    "stage_3": {
+      "name": "Initial Buy List",
+      "process": "Apply the first six elimination factors.",
+      "selection_rule": "Companies that cannot be eliminated on the first six factors.",
+      "rejected_companies": "Not Willing to Buy List"
+    },
+
+    "stage_4": {
+      "name": "Core Buy List",
+      "process": "Apply elimination factors seven and eight.",
+      "selection_rule": "Companies rated 'Not Bad' or 'Good' on all eight factors.",
+      "portfolio_role": "Selection pool for the long portfolio",
+      "rejected_companies": "Not Willing to Buy Now List"
+    },
+
+    "process_summary": [
+      "Indian Listed Equity Universe",
+      "Helios Universe",
+      "Initial Buy List",
+      "Core Buy List"
+    ]
+  },
+
+  "portfolio_construction": {
+    "portfolio_type": "Diversified Equity",
+
+    "primary_market_cap_focus": [
+      "Mid Cap",
+      "Small Cap"
+    ],
+
+    "target_holdings": null,
+
+    "sector_allocation": "Flexible",
+
+    "investment_style": [
+      "Fundamental",
+      "Bottom-Up",
+      "Elimination-Based",
+      "Growth-Oriented",
+      "Long-Term",
+      "Risk-Controlled"
+    ],
+
+    "special_situations": true,
+
+    "unfavorable_business_cycle_opportunities": true,
+
+    "future_disruptors": true
+  },
+
+  "asset_allocation": {
+    "listed_equity": {
+      "primary": true,
+      "description": "Predominantly Indian listed equity and equity-related securities."
+    },
+
+    "mid_cap": null,
+    "small_cap": null,
+    "large_cap": null,
+    "cash_and_equivalents": null,
+
+    "unlisted_equity": {
+      "allowed": null,
+      "maximum_percent": null,
+      "note": "Not specified in the supplied product note."
+    },
+
+    "derivatives": {
+      "allowed": null,
+      "current_exposure": null,
+      "note": "Not specified in the supplied product note."
+    }
+  },
+
+  "scheme_details": {
+    "structure": "Closed Ended Category III AIF",
+
+    "minimum_commitments": {
+      "currency": "INR",
+
+      "classes": [
+        {
+          "class": "B1",
+          "minimum_commitment_crore": 1.00,
+          "management_fee_percent_pa": 2.50,
+          "performance_fee": false
+        },
+        {
+          "class": "B2",
+          "minimum_commitment_crore": 5.00,
+          "management_fee_percent_pa": 2.00,
+          "performance_fee": false
+        },
+        {
+          "class": "B3",
+          "minimum_commitment_crore": 10.00,
+          "management_fee_percent_pa": 1.75,
+          "performance_fee": false
+        },
+        {
+          "class": "C1",
+          "minimum_commitment_crore": 1.00,
+          "management_fee_percent_pa": 1.50,
+          "performance_fee": true
+        },
+        {
+          "class": "C2",
+          "minimum_commitment_crore": 5.00,
+          "management_fee_percent_pa": 1.25,
+          "performance_fee": true
+        },
+        {
+          "class": "C3",
+          "minimum_commitment_crore": 10.00,
+          "management_fee_percent_pa": 1.00,
+          "performance_fee": true
+        }
+      ]
+    },
+
+    "minimum_commitment": {
+      "lowest_crore": 1.00,
+      "highest_crore": 10.00,
+      "display": "₹1 Crore minimum"
+    },
+
+    "entry_load": {
+      "applicable": false,
+      "value": null,
+      "display": "Not Applicable"
+    },
+
+    "exit_load": {
+      "applicable": true,
+
+      "condition": "Redemption request received within 12 months from expiry of Lock-in Period",
+
+      "charge_percent": 1.00,
+
+      "basis": "Exit Proceeds",
+
+      "display": "1% of Exit Proceeds"
+    }
+  },
+
+  "performance_fee": {
+    "applicable": true,
+
+    "eligible_classes": [
+      "C1",
+      "C2",
+      "C3"
+    ],
+
+    "not_applicable_classes": [
+      "B1",
+      "B2",
+      "B3"
+    ],
+
+    "performance_fee_percent": 15,
+
+    "fee_basis": "Incremental NAV above Hurdle Rate",
+
+    "hurdle_rate": {
+      "percent_pa": 8,
+      "type": "XIRR",
+      "tax_basis": "Pre-Tax"
+    },
+
+    "performance_period": "At the end of each Performance Period",
+
+    "high_water_mark": null,
+
+    "description": "Performance fee of 15% is payable on the incremental NAV of eligible C-class units over and above the 8% per annum pre-tax XIRR hurdle rate."
+  },
+
+  "fund_term": {
+    "initial_term_years": 7,
+
+    "term_start_reference": "Date of First Closing",
+
+    "extension": {
+      "allowed": true,
+      "maximum_extension_years": 2,
+      "approval_required": "Two-Third Majority of Contributors"
+    },
+
+    "maximum_possible_term_years": 9,
+
+    "first_closing_date": null
+  },
+
+  "lock_in": {
+    "enabled": true,
+
+    "start_reference": "Date of signing of respective Contribution Agreement",
+
+    "end_reference": "Date of Final Closing",
+
+    "description": "Lock-in period commences from the date of signing of the respective Contribution Agreement and continues until the date of Final Closing.",
+
+    "duration_years": null
+  },
+
+  "drawdown": {
+    "enabled": true,
+
+    "drawdown_period": true,
+
+    "schedule": null,
+
+    "details": "The supplied product note references the Lock-in/Drawdown Period but does not provide a specific percentage-based drawdown schedule."
+  },
+
+  "nav": {
+    "calculation_frequency": null,
+    "disclosure_frequency": null,
+    "current_nav": null,
+    "nav_date": null,
+    "note": "NAV frequency and current NAV are not specified in the supplied product note."
+  },
+
+  "performance": {
+    "current_fund_performance": {
+      "available": false,
+
+      "returns": {
+        "1_month": null,
+        "3_months": null,
+        "6_months": null,
+        "1_year": null,
+        "2_years": null,
+        "3_years": null,
+        "5_years": null,
+        "since_inception": null
+      },
+
+      "as_of": null,
+
+      "note": "The June 2026 product note does not provide historical or current fund performance figures."
+    },
+
+    "benchmark": {
+      "name": null,
+      "returns": null,
+      "note": "No fund performance benchmark is provided in the supplied product note."
+    },
+
+    "return_methodology": {
+      "available": false
+    }
+  },
+
+  "portfolio": {
+    "current": {
+      "available": false,
+
+      "as_of": null,
+
+      "market_cap": {
+        "large_cap": null,
+        "mid_cap": null,
+        "small_cap": null,
+        "cash_and_others": null
+      },
+
+      "sector_allocation": [],
+
+      "top_holdings": [],
+
+      "total_holdings": null
+    },
+
+    "portfolio_disclosure_note": "The product note describes the investment philosophy and portfolio-selection process but does not provide current holdings or allocation percentages."
+  },
+
+  "fund_manager": {
+    "primary": {
+      "name": "Dharmendra Grover",
+      "role": "Fund Manager"
+    },
+
+    "team": [
+      {
+        "name": "Dharmendra Grover",
+        "role": "Fund Manager"
+      }
+    ]
+  },
+
+  "investment_highlights": [
+    {
+      "title": "Emerging Leaders",
+      "description": "Focuses on mid- and small-cap companies that could evolve into future sector or market leaders."
+    },
+    {
+      "title": "Elimination Investing",
+      "description": "Uses eight fundamental elimination factors to remove potentially weak businesses before selecting investments."
+    },
+    {
+      "title": "Future Disruptors",
+      "description": "Seeks companies that have potential to become future disruptors."
+    },
+    {
+      "title": "Special Situations",
+      "description": "Can invest in companies undergoing special situations or unfavorable business cycles."
+    },
+    {
+      "title": "Structural Growth",
+      "description": "Targets themes including formalization, digital adoption, manufacturing growth, changing consumption and increasing private-sector participation."
+    },
+    {
+      "title": "Long-Term Wealth Creation",
+      "description": "The fund aims for long-term capital appreciation."
+    },
+    {
+      "title": "Risk-Controlled Approach",
+      "description": "The stated objective is to pursue long-term capital appreciation in a risk-controlled manner."
+    }
+  ],
+
+  "risk_profile": {
+    "risk_level": "High",
+
+    "risk_flags": [
+      {
+        "type": "mid_small_cap_risk",
+        "severity": "high",
+        "description": "The fund predominantly invests in the mid- and small-cap segment."
+      },
+      {
+        "type": "market_risk",
+        "severity": "high",
+        "description": "Equity investments are exposed to market volatility and changes in economic and financial conditions."
+      },
+      {
+        "type": "liquidity_risk",
+        "severity": "high",
+        "description": "Mid- and small-cap securities can have higher liquidity risk."
+      },
+      {
+        "type": "valuation_risk",
+        "severity": "high",
+        "description": "Unreasonably high valuations are specifically included as an elimination factor."
+      },
+      {
+        "type": "governance_risk",
+        "severity": "high",
+        "description": "Poor corporate governance is specifically screened out through the elimination framework."
+      },
+      {
+        "type": "business_model_risk",
+        "severity": "medium",
+        "description": "Unfavourable industry dynamics, disruption risk and weak strategy are explicitly considered in the screening process."
+      },
+      {
+        "type": "closed_end_risk",
+        "severity": "high",
+        "description": "The fund is closed ended with a seven-year initial term."
+      },
+      {
+        "type": "lock_in_risk",
+        "severity": "high",
+        "description": "Capital is subject to a lock-in period extending from the Contribution Agreement signing date to Final Closing."
+      },
+      {
+        "type": "exit_charge",
+        "severity": "medium",
+        "description": "A 1% exit charge applies to redemption requests received within 12 months after expiry of the Lock-in Period."
+      },
+      {
+        "type": "performance_fee",
+        "severity": "medium",
+        "description": "C-class investors are subject to a 15% performance fee above an 8% pre-tax XIRR hurdle."
+      }
+    ]
+  },
+
+  "application_display": {
+    "hero": {
+      "title": "Helios India Emerging Star Fund",
+      "subtitle": "Category III AIF | Closed Ended | Mid & Small Cap",
+      "fund_type": "Category III AIF",
+      "structure": "Closed Ended",
+      "minimum_commitment": "₹1 Crore",
+      "term": "7 Years + up to 2 Years Extension",
+      "investment_style": "Elimination Investing"
+    },
+
+    "key_metrics": [
+      "Minimum Commitment",
+      "Management Fee",
+      "Performance Fee",
+      "Hurdle Rate",
+      "Fund Term",
+      "Lock-in",
+      "Exit Charge",
+      "Fund Manager",
+      "AIF Registration Number",
+      "Market Cap Focus"
+    ],
+
+    "strategy_badges": [
+      "Mid Cap",
+      "Small Cap",
+      "Future Leaders",
+      "Future Disruptors",
+      "Special Situations",
+      "Elimination Investing",
+      "Long Term",
+      "Fundamental Research"
+    ],
+
+    "sections": [
+      "Fund Overview",
+      "Investment Objective",
+      "Investment Thesis",
+      "Why Mid & Small Caps",
+      "Investment Philosophy",
+      "8-Point Elimination Framework",
+      "Investment Process",
+      "Portfolio Construction",
+      "Fee Structure",
+      "Performance Fee",
+      "Fund Term",
+      "Lock-in",
+      "Drawdown",
+      "Fund Manager",
+      "Performance",
+      "Portfolio",
+      "Risk Factors",
+      "Disclaimer"
+    ],
+
+    "data_display_rules": [
+      "Do not display performance figures because they are not provided in the source.",
+      "Do not display portfolio weights because they are not provided in the source.",
+      "Show class-wise management fees separately.",
+      "Show C-class performance fee separately from B-class fees.",
+      "Show the 8% hurdle rate clearly wherever performance fee is displayed.",
+      "Show lock-in and exit charge as separate fields.",
+      "Show source date alongside all future performance or portfolio data."
+    ]
+  },
+
+  "data_metadata": {
+    "primary_source": "Helios India Emerging Star Fund Product Note – June 2026",
+
+    "source_type": "Official Fund Product Note",
+
+    "document_date": "2026-06",
+
+    "last_verified": "2026-08-12",
+
+    "aif_registration_number": "IN/AIF3/19-20/0773",
+
+    "important_data_rules": [
+      "Use null for unavailable performance data.",
+      "Use null for unavailable current portfolio data.",
+      "Do not infer historical returns from other Helios funds.",
+      "Do not infer current holdings from the investment philosophy.",
+      "Refer to the PPM for additional share-class details.",
+      "The product note states that its information may change and is not guaranteed to be updated."
+    ],
+
+    "use_null_for_missing_data": true
+  }
+}

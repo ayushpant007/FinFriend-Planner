@@ -1,0 +1,715 @@
+{
+  "schema_version": "1.0",
+  "product_type": "PMS",
+  "product_category": "Equity PMS",
+
+  "strategy": {
+    "id": "abakkus-emerging-opportunities-approach",
+    "name": "Abakkus Emerging Opportunities Approach",
+    "short_name": "Abakkus Emerging Opportunities",
+    
+    "provider": {
+      "name": "Abakkus Asset Manager Private Limited",
+      "brand": "Abakkus",
+      "registration_number": "INP000009959",
+      "registration_type": "SEBI Registered Portfolio Manager",
+      "registration_date": "2026-04-24"
+    },
+
+    "strategy_type": "Equity",
+    "category": "Multi-Cap Equity",
+    "sub_category": "Mid & Small Cap Biased",
+    "service_type": "PMS",
+    "asset_class": "Equity - Long Only",
+    "geography": "Indian Equities",
+    "status": "Active",
+
+    "inception_date": "2020-08-26",
+
+    "investment_horizon": {
+      "minimum_years": 3,
+      "maximum_years": 5,
+      "display": "3–5 Years"
+    },
+
+    "benchmark": {
+      "name": "BSE 500 TRI",
+      "type": "Total Return Index",
+      "benchmark_style": "Benchmark Agnostic"
+    },
+
+    "official_url": "https://abakkusinvest.com/en/our-products/abakkus-emerging-opportunities-approach"
+  },
+
+  "investment_objective": {
+    "objective": "To generate alpha and risk-adjusted returns by investing in a benchmark-agnostic diversified multi-cap portfolio with a bias towards mid- and small-cap companies.",
+    
+    "primary_asset_class": "Indian Equity",
+    
+    "target_universe": [
+      "Mid Cap Companies",
+      "Small Cap Companies",
+      "Select Large Cap Companies"
+    ],
+
+    "investment_style": [
+      "Fundamental Investing",
+      "Bottom-Up Stock Selection",
+      "Value Conscious Investing",
+      "Growth Investing",
+      "High Conviction Investing",
+      "Contrarian Investing"
+    ]
+  },
+
+  "investment_strategy": {
+    "description": "The strategy follows fundamental, bottom-up investing with a bias towards mid- and small-cap companies. It seeks companies that satisfy the 15:15:15 discipline and generally prefers second- or third-largest players within an industry when they are available at a meaningful valuation discount to the market leader.",
+
+    "approach": {
+      "type": "Bottom-Up",
+      "top_down": false,
+      "bottom_up": true,
+      "fundamental_research": true
+    },
+
+    "core_principles": [
+      "Fundamental research",
+      "Risk-adjusted return focus",
+      "Value-conscious investing",
+      "Avoid chasing momentum",
+      "Invest in differentiated opportunities",
+      "Long-term ownership mindset",
+      "High-conviction stock selection"
+    ],
+
+    "market_cap_bias": {
+      "large_cap": "Limited",
+      "mid_cap": "Positive Bias",
+      "small_cap": "Strong Bias"
+    },
+
+    "competitive_positioning": {
+      "preferred_company_position": [
+        "Second player",
+        "Third player"
+      ],
+      "condition": "Significant valuation discount to the industry leader"
+    }
+  },
+
+  "selection_framework": {
+    "primary_framework": "15:15:15",
+
+    "fifteen_fifteen_fifteen": {
+      "description": "Companies are predominantly considered when they qualify in at least two of the three criteria.",
+      
+      "criteria": [
+        {
+          "metric": "ROE",
+          "operator": ">",
+          "threshold": 15,
+          "unit": "percent",
+          "display": ">15% ROE"
+        },
+        {
+          "metric": "Earnings Growth",
+          "operator": ">",
+          "threshold": 15,
+          "unit": "percent",
+          "display": ">15% Earnings Growth"
+        },
+        {
+          "metric": "P/E Ratio",
+          "operator": "<",
+          "threshold": 15,
+          "unit": "x",
+          "display": "<15x P/E"
+        }
+      ],
+
+      "minimum_criteria_required": 2
+    },
+
+    "secondary_framework": {
+      "name": "MEETS",
+      "components": [
+        {
+          "code": "M",
+          "name": "Management",
+          "focus": [
+            "Management quality",
+            "Capability",
+            "Track record",
+            "Capital allocation",
+            "Capital distribution",
+            "Minority shareholder fairness"
+          ]
+        },
+        {
+          "code": "E",
+          "name": "Earnings",
+          "focus": [
+            "Quality of earnings",
+            "Actual vs expected earnings",
+            "Cyclical vs structural earnings",
+            "Profit growth potential"
+          ]
+        },
+        {
+          "code": "E",
+          "name": "Events & Trends",
+          "focus": [
+            "Corporate events",
+            "Industry events",
+            "Disruptive trends",
+            "New themes",
+            "Potential catalysts"
+          ]
+        },
+        {
+          "code": "T",
+          "name": "Timing",
+          "focus": [
+            "Entry valuation",
+            "Price already discounted",
+            "Investment timeframe",
+            "Mean reversion"
+          ]
+        },
+        {
+          "code": "S",
+          "name": "Structural",
+          "focus": [
+            "Size of opportunity",
+            "Competitive positioning",
+            "Moat",
+            "Consistent profit growth"
+          ]
+        }
+      ]
+    }
+  },
+
+  "portfolio_construction": {
+    "target_portfolio_style": "Diversified High Conviction",
+    "target_number_of_companies": {
+      "min": 30,
+      "max": 40
+    },
+
+    "holding_period": {
+      "typical_minimum_years": 3,
+      "typical_maximum_years": 5
+    },
+
+    "position_sizing": {
+      "method": "Conviction and risk based",
+      "single_stock_maximum_percent": null,
+      "sector_maximum_percent": null
+    },
+
+    "portfolio_philosophy": [
+      "Diversification",
+      "High conviction",
+      "Risk-adjusted return",
+      "Value-conscious position sizing",
+      "Long-term ownership"
+    ]
+  },
+
+  "asset_allocation": {
+    "primary": {
+      "asset": "Indian Equity",
+      "type": "Listed Equity and Equity Related Securities"
+    },
+
+    "allocation": {
+      "large_cap": 15.32,
+      "mid_cap": 23.41,
+      "small_cap": 55.70,
+      "cash_and_cash_equivalent": 5.57
+    },
+
+    "derivatives": {
+      "enabled": false,
+      "purpose": null,
+      "short_exposure": false
+    },
+
+    "debt": {
+      "enabled": false,
+      "allocation_percent": null
+    }
+  },
+
+  "research_capability": {
+    "research_approach": "Fundamental Research",
+
+    "research_universe": {
+      "companies_covered": null,
+      "sectors_covered": null
+    },
+
+    "research_inputs": [
+      "Company fundamentals",
+      "Financial statements",
+      "Earnings growth",
+      "ROE",
+      "Valuation",
+      "Management quality",
+      "Industry structure",
+      "Competitive positioning",
+      "Events and trends"
+    ]
+  },
+
+  "scheme_details": {
+    "minimum_investment": {
+      "value": 5000000,
+      "currency": "INR",
+      "display": "₹50 Lakh"
+    },
+
+    "minimum_additional_investment": null,
+
+    "entry_load": null,
+
+    "exit_load": null,
+
+    "lock_in_period": null,
+
+    "fee_structure": {
+      "fixed_fee": null,
+      "variable_fee": null,
+      "performance_fee": null,
+      "hurdle_rate": null,
+      "high_water_mark": null,
+      "note": "Current public sources do not disclose the client-specific fee structure. Fee terms should be taken from the client's PMS agreement."
+    },
+
+    "redemption_frequency": null,
+
+    "client_specific_terms": true
+  },
+
+  "current_data": {
+    "as_of": "2026-07-31",
+
+    "aum": {
+      "total_assets": {
+        "value": 5997,
+        "currency": "INR",
+        "unit": "Crore"
+      },
+
+      "monthly_average_aum": {
+        "value": 6027,
+        "currency": "INR",
+        "unit": "Crore"
+      }
+    },
+
+    "weighted_average_market_cap": {
+      "value": 42547,
+      "currency": "INR",
+      "unit": "Crore"
+    },
+
+    "risk_level": "High",
+
+    "valueresearch_rating": null
+  },
+
+  "performance": {
+    "as_of": "2026-07-31",
+
+    "methodology": "TWRR",
+
+    "returns": {
+      "1_month": 0.83,
+      "3_month": 3.75,
+      "6_month": 7.44,
+      "1_year": 1.89,
+      "2_year": 3.21,
+      "3_year": 13.08,
+      "4_year": 19.96,
+      "5_year": 14.21,
+      "since_inception": 26.18
+    },
+
+    "benchmark": {
+      "name": "BSE 500 TRI",
+
+      "returns": {
+        "1_month": 2.19,
+        "3_month": 3.78,
+        "6_month": 1.99,
+        "1_year": 2.98,
+        "2_year": 0.42,
+        "3_year": 11.89,
+        "4_year": 13.25,
+        "5_year": 12.35,
+        "since_inception": 17.53
+      }
+    },
+
+    "excess_return": {
+      "1_month": -1.36,
+      "3_month": -0.03,
+      "6_month": 5.45,
+      "1_year": -1.09,
+      "2_year": 2.79,
+      "3_year": 1.19,
+      "4_year": 6.71,
+      "5_year": 1.86,
+      "since_inception": 8.65
+    },
+
+    "performance_context": {
+      "source": "Abakkus Official Factsheet",
+      "return_type": "TWRR",
+      "fees_included": true,
+      "operational_taxes_included": true,
+      "investor_income_tax_excluded": true,
+      "individual_client_variation": true,
+      "note": "Reported strategy performance is net of fees and operational taxes but excludes investor-level income tax. Individual client returns can differ based on investment timing, flows and fee structure."
+    }
+  },
+
+  "risk_metrics": {
+    "as_of": null,
+
+    "standard_deviation": null,
+    "beta": null,
+    "alpha": null,
+    "sharpe_ratio": null,
+    "sortino_ratio": null,
+    "maximum_drawdown": null,
+
+    "risk_metric_context": {
+      "available": false,
+      "message": "These metrics were not disclosed in the July 2026 factsheet."
+    }
+  },
+
+  "portfolio": {
+    "as_of": "2026-07-31",
+
+    "total_holdings": null,
+
+    "market_cap": {
+      "large_cap": 15.32,
+      "mid_cap": 23.41,
+      "small_cap": 55.70,
+      "cash_and_cash_equivalent": 5.57
+    },
+
+    "sector_allocation": [
+      {
+        "sector": "NBFC",
+        "weight_percent": 14.65
+      },
+      {
+        "sector": "Banks",
+        "weight_percent": 14.31
+      },
+      {
+        "sector": "Health Care",
+        "weight_percent": 10.74
+      },
+      {
+        "sector": "Commodities",
+        "weight_percent": 9.53
+      },
+      {
+        "sector": "Industrials",
+        "weight_percent": 8.43
+      },
+      {
+        "sector": "Consumer Durables",
+        "weight_percent": 5.81
+      },
+      {
+        "sector": "Industrial Manufacturing",
+        "weight_percent": 5.56
+      },
+      {
+        "sector": "Insurance",
+        "weight_percent": 4.08
+      },
+      {
+        "sector": "Consumer Discretionary",
+        "weight_percent": 3.76
+      },
+      {
+        "sector": "Food Products",
+        "weight_percent": 3.45
+      }
+    ],
+
+    "top_holdings": [
+      {
+        "rank": 1,
+        "name": "Federal Bank Limited",
+        "weight_percent": 6.02,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 2,
+        "name": "IIFL Finance Limited",
+        "weight_percent": 5.24,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 3,
+        "name": "Sarda Energy and Minerals Limited",
+        "weight_percent": 4.97,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 4,
+        "name": "PNB Housing Finance Limited",
+        "weight_percent": 4.78,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 5,
+        "name": "Axis Bank Limited",
+        "weight_percent": 4.62,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 6,
+        "name": "The Anup Engineering Limited",
+        "weight_percent": 4.21,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 7,
+        "name": "Max Financial Services Limited",
+        "weight_percent": 4.08,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 8,
+        "name": "Stylam Industries Limited",
+        "weight_percent": 3.93,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 9,
+        "name": "Time Technoplast Limited",
+        "weight_percent": 3.77,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 10,
+        "name": "Canara Bank",
+        "weight_percent": 3.67,
+        "instrument_type": "Equity"
+      }
+    ],
+
+    "long_positions": [],
+
+    "short_positions": [],
+
+    "portfolio_changes": {
+      "entries": [
+        {
+          "name": "One97 Communications Limited",
+          "reason": "Accelerating growth and improving competitive position through market-share gains."
+        }
+      ],
+
+      "exits": [
+        {
+          "name": "Emami Limited",
+          "reason": "Weak monsoon conditions and evolving consumer preferences reduced near-term growth prospects."
+        }
+      ]
+    },
+
+    "portfolio_note": "The factsheet states that current holdings may or may not form part of future portfolios and may not be present in every client portfolio."
+  },
+
+  "fund_managers": [
+    {
+      "name": "Aman Chowhan",
+      "role": "Fund Manager",
+      "experience_years": 22,
+      "email": "aman.chowhan@abakkusinvest.com"
+    }
+  ],
+
+  "fund_manager_details": [
+    {
+      "name": "Aman Chowhan",
+      "role": "Fund Manager",
+      "experience_years": 22,
+      "education": [],
+      "experience_summary": "Investment professional with more than 22 years of experience in Indian equities and responsible for the Abakkus Emerging Opportunities Approach."
+    }
+  ],
+
+  "fund_house": {
+    "name": "Abakkus Asset Manager Private Limited",
+    "brand": "Abakkus",
+    "website": "https://abakkusinvest.com/",
+    "pms_registration_number": "INP000009959",
+    "pms_registration_date": "2026-04-24",
+    "principal_officer": {
+      "name": "Aman Chowhan",
+      "phone": "022-68846600"
+    },
+    "compliance_officer": {
+      "name": "Kiran Loke",
+      "phone": "022-68846600"
+    },
+    "contact_email": "info@abakkusinvest.com",
+    "pms_service_email": "service@abakkusinvest.com",
+    "registered_office": "6th Floor, Param House, Shanti Nagar, Near Grand Hyatt, Off Santacruz Chembur Link Road, Santacruz East, Mumbai - 400055"
+  },
+
+  "investment_highlights": [
+    {
+      "title": "15:15:15 Discipline",
+      "description": "The strategy predominantly considers companies that qualify in at least two of three criteria: ROE above 15%, earnings growth above 15%, and P/E below 15x."
+    },
+    {
+      "title": "Mid & Small Cap Bias",
+      "description": "The portfolio has a strong bias towards mid- and small-cap companies."
+    },
+    {
+      "title": "Value Conscious",
+      "description": "The strategy prefers second- or third-ranked industry players when available at a significant discount to the market leader."
+    },
+    {
+      "title": "MEETS Framework",
+      "description": "Management, Earnings, Events & Trends, Timing and Structural factors are evaluated as part of the investment process."
+    },
+    {
+      "title": "Bottom-Up Research",
+      "description": "The strategy relies primarily on fundamental, bottom-up company research rather than index or benchmark positioning."
+    },
+    {
+      "title": "Long-Term Ownership",
+      "description": "The strategy generally seeks to hold investments for 3–5 years."
+    },
+    {
+      "title": "Benchmark Agnostic",
+      "description": "Portfolio construction is not designed around matching the benchmark and instead focuses on generating alpha."
+    }
+  ],
+
+  "risk_flags": [
+    {
+      "type": "mid_small_cap_risk",
+      "severity": "high",
+      "message": "The portfolio has a substantial allocation to mid- and small-cap companies, which can experience higher volatility and lower liquidity."
+    },
+    {
+      "type": "small_cap_concentration",
+      "severity": "high",
+      "message": "Small-cap exposure was 55.70% as of 31-Jul-2026."
+    },
+    {
+      "type": "sector_concentration",
+      "severity": "medium",
+      "message": "NBFCs and Banks together represented approximately 28.96% of the portfolio based on internal sector classification."
+    },
+    {
+      "type": "equity_market_risk",
+      "severity": "high",
+      "message": "The strategy is a long-only equity PMS and remains exposed to broad equity-market movements."
+    },
+    {
+      "type": "liquidity_risk",
+      "severity": "high",
+      "message": "Smaller companies can have lower trading liquidity, especially during stressed market conditions."
+    },
+    {
+      "type": "individual_portfolio_variation",
+      "severity": "medium",
+      "message": "Current holdings may not be present in every client portfolio and individual client returns can differ from strategy-level returns."
+    },
+    {
+      "type": "long_horizon",
+      "severity": "medium",
+      "message": "The strategy is designed around a typical 3–5 year investment horizon."
+    }
+  ],
+
+  "application_display": {
+    "hero": {
+      "title": "Abakkus Emerging Opportunities Approach",
+      "subtitle": "Mid & Small Cap | Fundamental | Long Only",
+      "benchmark": "BSE 500 TRI",
+      "investment_horizon": "3–5 Years",
+      "minimum_investment": "₹50 Lakh",
+      "aum": "₹5,997 Cr",
+      "aum_as_of": "31-Jul-2026"
+    },
+
+    "key_metrics": [
+      "AUM",
+      "Minimum Investment",
+      "1 Year Return",
+      "3 Year Return",
+      "5 Year Return",
+      "Since Inception Return",
+      "Benchmark",
+      "Investment Horizon",
+      "Small Cap Allocation",
+      "Mid Cap Allocation"
+    ],
+
+    "sections": [
+      "Strategy Overview",
+      "Investment Objective",
+      "Investment Philosophy",
+      "15:15:15 Framework",
+      "MEETS Framework",
+      "Portfolio Construction",
+      "Market Cap Allocation",
+      "Sector Allocation",
+      "Performance",
+      "Benchmark Comparison",
+      "Top Holdings",
+      "Portfolio Changes",
+      "Fund Manager",
+      "Investment Highlights",
+      "Risk Factors"
+    ]
+  },
+
+  "data_metadata": {
+    "primary_source": "Abakkus Asset Manager Private Limited",
+    "primary_document": "Abakkus Emerging Opportunities Approach PMS Factsheet - July 2026",
+    "primary_document_date": "2026-07",
+
+    "secondary_sources": [
+      "APMI India",
+      "Abakkus Official Product Page"
+    ],
+
+    "last_verified": "2026-08-12",
+
+    "aum_data_as_of": "2026-07-31",
+    "portfolio_data_as_of": "2026-07-31",
+    "performance_data_as_of": "2026-07-31",
+
+    "performance_methodology": "TWRR",
+
+    "data_quality_notes": [
+      "Performance is unaudited and is not verified by a regulatory authority.",
+      "Performance shown is strategy-level performance and not a guarantee of individual client returns.",
+      "Current holdings may differ across client portfolios.",
+      "Current holdings may change in the future.",
+      "Fee structure should be sourced from the client-specific PMS agreement.",
+      "Risk metrics such as Alpha, Beta and Sharpe are null because they were not disclosed in the supplied factsheet."
+    ],
+
+    "use_null_for_missing_data": true
+  }
+}

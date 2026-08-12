@@ -1,0 +1,469 @@
+{
+  "schema_version": "1.0",
+  "product_type": "SIF",
+  "product_category": "Equity SIF",
+
+  "fund": {
+    "id": "isif-equity-ex-top-100-long-short",
+    "name": "iSIF Equity Ex-Top 100 Long-Short Fund",
+    "short_name": "iSIF Ex-Top 100 Long-Short",
+    "amc": "ICICI Prudential Mutual Fund",
+    "asset_management_company": "ICICI Prudential Asset Management Company Limited",
+    "trustee": "ICICI Prudential Trust Limited",
+    "category": "Equity Ex-Top 100 Long-Short",
+    "sub_category": "Equity SIF",
+    "strategy_type": "Open Ended",
+    "status": "Active",
+    "launch_date": "2026-01-16",
+    "allotment_date": "2026-02-04",
+    "benchmark": "NIFTY 500 TRI",
+    "risk_level": "Very High",
+    "risk_score": 6,
+    "valueresearch_url": "https://www.valueresearchonline.com/sif/isif-equity-ex-top-100-long-short-fund-regular-plan-5000067/",
+    "official_url": "https://isif.icicipruamc.com/"
+  },
+
+  "investment_objective": {
+    "objective": "To generate long-term capital appreciation by predominantly investing in equity and equity-related securities of Ex-Top 100 companies.",
+    "investment_horizon": "Long Term",
+    "primary_asset_class": "Equity",
+    "target_universe": "Companies other than the top 100 listed companies by market capitalisation",
+    "strategy_style": [
+      "Fundamental investing",
+      "Technical analysis",
+      "Macro-driven investing",
+      "Mid-cap investing",
+      "Small-cap investing",
+      "Long equity",
+      "Short equity derivatives",
+      "Risk management"
+    ]
+  },
+
+  "investment_strategy": {
+    "description": "The strategy predominantly invests in companies outside the top 100 by market capitalisation, with flexibility to invest in other equity securities and use derivatives including limited unhedged short exposure.",
+    "core_approach": [
+      "Ex-Top 100 universe",
+      "Mid-cap opportunities",
+      "Small-cap opportunities",
+      "Fundamental analysis",
+      "Technical analysis",
+      "Macro analysis",
+      "Valuation analysis",
+      "Earnings revision analysis",
+      "Liquidity analysis",
+      "Long-short positioning",
+      "Portfolio hedging"
+    ],
+
+    "long_short_strategy": {
+      "enabled": true,
+      "long_exposure": true,
+      "short_exposure": true,
+      "short_instrument": "Equity derivatives",
+      "maximum_unhedged_short_exposure_percent": 25,
+      "maximum_derivatives_exposure_percent": 100
+    }
+  },
+
+  "asset_allocation": {
+    "allocation_rules": [
+      {
+        "asset": "Ex-Top 100 Equity",
+        "min_percent": 65,
+        "max_percent": 100,
+        "description": "Primary investment universe comprising companies outside the top 100 by market capitalisation."
+      },
+      {
+        "asset": "Other Equity and Equity Related Securities",
+        "min_percent": 0,
+        "max_percent": 35,
+        "description": "Other permitted equity and equity-related securities."
+      },
+      {
+        "asset": "Debt and Money Market Instruments",
+        "min_percent": 0,
+        "max_percent": 35,
+        "description": "May be used for liquidity and portfolio management."
+      },
+      {
+        "asset": "InvITs",
+        "min_percent": 0,
+        "max_percent": 20,
+        "description": "Permitted investment in infrastructure investment trusts."
+      }
+    ],
+
+    "derivatives": {
+      "allowed": true,
+      "maximum_derivatives_exposure_percent": 100,
+      "maximum_unhedged_short_exposure_percent": 25,
+      "purpose": [
+        "Hedging",
+        "Short exposure",
+        "Tactical positioning",
+        "Risk management"
+      ]
+    }
+  },
+
+  "investment_parameters": {
+    "fundamental_factors": [
+      "Valuations",
+      "Earnings Revision",
+      "Liquidity"
+    ],
+    "technical_factors": [
+      "Market Trend"
+    ],
+    "macro_factors": [
+      "Real Effective Exchange Rate"
+    ]
+  },
+
+  "scheme_details": {
+    "minimum_initial_investment": 1000000,
+    "minimum_additional_investment": 10000,
+    "minimum_sip": 5000,
+    "accredited_investor_minimum": 100000,
+    "entry_load": 0,
+    "exit_load": {
+      "percent": 1,
+      "period": "12 months",
+      "condition": "Applicable if redeemed or switched out on or before completion of 12 months from the date of allotment",
+      "after_period": "Nil"
+    },
+    "lock_in_period": null,
+    "open_ended": true,
+    "redemption_frequency": "Daily"
+  },
+
+  "plans": [
+    {
+      "plan": "Direct",
+      "option": "Growth",
+      "isin": "INF109K30042",
+      "scheme_code": null,
+      "status": "Active"
+    },
+    {
+      "plan": "Regular",
+      "option": "Growth",
+      "isin": "INF109K30034",
+      "scheme_code": "5000067",
+      "status": "Active"
+    }
+  ],
+
+  "current_data": {
+    "as_of": "2026-07-24",
+
+    "nav": {
+      "value": 10.17,
+      "currency": "INR",
+      "plan": "Regular Growth"
+    },
+
+    "aum": {
+      "value": 1913,
+      "currency": "INR",
+      "unit": "Crore",
+      "as_of": "2026-07-24"
+    },
+
+    "expense_ratio": {
+      "regular": {
+        "value": 2.74,
+        "unit": "percent",
+        "as_of": "2026-07-24"
+      },
+      "direct": {
+        "value": 1.35,
+        "unit": "percent",
+        "as_of": "2026-07-24"
+      }
+    },
+
+    "risk_rating": "Very High",
+
+    "valueresearch_rating": null
+  },
+
+  "performance": {
+    "as_of": "2026-07-24",
+
+    "returns": {
+      "1_day": null,
+      "1_week": null,
+      "1_month": 1.69,
+      "3_month": 4.27,
+      "6_month": 2.60,
+      "1_year": null,
+      "2_year": null,
+      "3_year": null,
+      "5_year": null,
+      "since_inception": 2.60
+    },
+
+    "benchmark_returns": {
+      "1_day": null,
+      "1_week": null,
+      "1_month": null,
+      "3_month": null,
+      "6_month": null,
+      "1_year": null,
+      "2_year": null,
+      "3_year": null,
+      "5_year": null,
+      "since_inception": 12.09
+    },
+
+    "category_average": {
+      "1_month": null,
+      "3_month": null,
+      "6_month": null,
+      "1_year": null,
+      "3_year": null,
+      "5_year": null
+    },
+
+    "performance_context": {
+      "fund_age_limitation": true,
+      "message": "The strategy launched in January 2026 and therefore does not yet have meaningful 1-year, 3-year or 5-year live performance history."
+    }
+  },
+
+  "risk_metrics": {
+    "as_of": null,
+    "standard_deviation": null,
+    "beta": null,
+    "alpha": null,
+    "sharpe_ratio": null,
+    "sortino_ratio": null,
+    "treynor_ratio": null,
+    "downside_deviation": null,
+    "maximum_drawdown": null
+  },
+
+  "portfolio": {
+    "as_of": "2026-05-31",
+
+    "total_holdings": 115,
+
+    "allocation": {
+      "equity_percent": null,
+      "debt_percent": null,
+      "cash_percent": null,
+      "derivatives_percent": null,
+      "other_percent": null
+    },
+
+    "market_cap": {
+      "large_cap": null,
+      "mid_cap": null,
+      "small_cap": null,
+      "other": null
+    },
+
+    "valuation_metrics": {
+      "portfolio_pe": null,
+      "portfolio_pb": null
+    },
+
+    "sector_allocation": [],
+
+    "top_holdings": [
+      {
+        "rank": 1,
+        "name": "TREPS",
+        "weight_percent": 18.46,
+        "instrument_type": "Cash / TREPS"
+      },
+      {
+        "rank": 2,
+        "name": "Info Edge (India) Ltd.",
+        "weight_percent": 2.69,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 3,
+        "name": "Marico Ltd.",
+        "weight_percent": 2.57,
+        "instrument_type": "Equity"
+      },
+      {
+        "rank": 4,
+        "name": "Cash Margin - Derivatives",
+        "weight_percent": 2.46,
+        "instrument_type": "Derivative Margin"
+      },
+      {
+        "rank": 5,
+        "name": "LIC Housing Finance Ltd.",
+        "weight_percent": 2.45,
+        "instrument_type": "Equity"
+      }
+    ],
+
+    "long_positions": [],
+
+    "short_positions": [],
+
+    "portfolio_note": "The latest publicly available bi-monthly portfolio contains 115 positions. Detailed long/short derivative positions should be populated from the latest official portfolio disclosure when available."
+  },
+
+  "fund_managers": [
+    {
+      "name": "Sankaran Naren",
+      "role": "Fund Manager",
+      "experience_years": null
+    }
+  ],
+
+  "fund_manager_details": [
+    {
+      "name": "Sankaran Naren",
+      "role": "Fund Manager",
+      "education": [],
+      "experience_years": null,
+      "experience_summary": "Senior investment professional at ICICI Prudential Asset Management Company with extensive experience in equity investing and portfolio management."
+    }
+  ],
+
+  "fund_house": {
+    "name": "ICICI Prudential Mutual Fund",
+    "asset_manager": "ICICI Prudential Asset Management Company Limited",
+    "trustee": "ICICI Prudential Trust Limited",
+    "website": "https://isif.icicipruamc.com/",
+    "registrar": null,
+    "contact_email": null,
+    "contact_phone": null
+  },
+
+  "nfo_details": {
+    "nfo_start_date": "2026-01-16",
+    "nfo_end_date": "2026-01-30",
+    "allotment_date": "2026-02-04",
+    "reopening_date": "2026-02-05",
+    "initial_nav": 10
+  },
+
+  "investment_highlights": [
+    {
+      "title": "Beyond Top 100",
+      "description": "The strategy focuses primarily on companies outside India's top 100 listed companies by market capitalisation."
+    },
+    {
+      "title": "Mid & Small Cap Opportunity",
+      "description": "The fund seeks opportunities across mid- and small-cap companies outside the large-cap universe."
+    },
+    {
+      "title": "Long-Short Flexibility",
+      "description": "The strategy can use derivatives to create limited unhedged short exposure of up to 25%."
+    },
+    {
+      "title": "Risk-Adjusted Returns",
+      "description": "The investment philosophy aims to generate capital appreciation with lower volatility through active risk management."
+    },
+    {
+      "title": "Multi-Factor Research",
+      "description": "Investment decisions can incorporate fundamental, technical and macroeconomic factors."
+    },
+    {
+      "title": "Valuation Focus",
+      "description": "The strategy aims to take long positions in attractive mid- and small-cap stocks and short positions in overvalued opportunities."
+    }
+  ],
+
+  "risk_flags": [
+    {
+      "type": "very_high_risk",
+      "severity": "high",
+      "message": "The strategy is classified as Very High Risk and can experience significant volatility."
+    },
+    {
+      "type": "mid_small_cap_risk",
+      "severity": "high",
+      "message": "The strategy focuses on companies outside the top 100, which can have higher volatility and lower liquidity than large-cap companies."
+    },
+    {
+      "type": "derivative_risk",
+      "severity": "high",
+      "message": "The strategy can use derivatives with total derivatives exposure of up to 100%."
+    },
+    {
+      "type": "short_exposure",
+      "severity": "high",
+      "message": "Unhedged short exposure through derivatives can be up to 25% of net assets."
+    },
+    {
+      "type": "new_strategy",
+      "severity": "medium",
+      "message": "The strategy launched in January 2026 and therefore has a limited live performance history."
+    },
+    {
+      "type": "high_minimum_investment",
+      "severity": "medium",
+      "message": "The normal minimum investment is ₹10 lakh."
+    },
+    {
+      "type": "high_regular_expense_ratio",
+      "severity": "medium",
+      "message": "The regular plan expense ratio is materially higher than the direct plan expense ratio."
+    }
+  ],
+
+  "application_display": {
+    "hero": {
+      "title": "iSIF Equity Ex-Top 100 Long-Short Fund",
+      "subtitle": "Ex-Top 100 Equity | Long-Short Strategy",
+      "risk_label": "Very High Risk",
+      "benchmark": "NIFTY 500 TRI",
+      "nav": "₹10.17",
+      "nav_as_of": "24-Jul-2026",
+      "plan": "Regular Growth"
+    },
+
+    "key_metrics": [
+      "NAV",
+      "AUM",
+      "Expense Ratio",
+      "Minimum Investment",
+      "Exit Load",
+      "Risk Level",
+      "1 Month Return",
+      "3 Month Return",
+      "6 Month Return"
+    ],
+
+    "sections": [
+      "Fund Overview",
+      "Investment Objective",
+      "Investment Strategy",
+      "Asset Allocation",
+      "Performance",
+      "Risk Metrics",
+      "Portfolio",
+      "Top Holdings",
+      "Fund Managers",
+      "Investment Highlights",
+      "Risk Flags"
+    ]
+  },
+
+  "data_metadata": {
+    "primary_source": "ICICI Prudential Asset Management Company",
+    "secondary_sources": [
+      "AMFI",
+      "Value Research Online",
+      "NSE",
+      "SIFscan",
+      "The Financial Express"
+    ],
+    "last_verified": "2026-08-12",
+    "nav_data_as_of": "2026-07-24",
+    "portfolio_data_as_of": "2026-05-31",
+    "use_null_for_missing_data": true,
+    "data_quality_note": "Some portfolio and risk fields are unavailable in currently accessible public disclosures and are intentionally represented as null."
+  }
+}

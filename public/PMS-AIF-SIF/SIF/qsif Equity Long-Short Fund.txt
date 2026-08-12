@@ -1,0 +1,551 @@
+{
+  "schema_version": "1.0",
+  "product_type": "SIF",
+  "product_category": "Equity SIF",
+
+  "fund": {
+    "id": "qsif-equity-long-short",
+    "name": "qsif Equity Long-Short Fund",
+    "short_name": "qsif Equity Long-Short",
+    "amc": "Quant Mutual Fund",
+    "asset_management_company": "quant Money Managers Limited",
+    "trustee": null,
+    "category": "Equity Long-Short",
+    "sub_category": "Equity SIF",
+    "strategy_type": "Open Ended",
+    "status": "Active",
+    "launch_date": "2025-09-17",
+    "inception_date": "2025-09-17",
+    "benchmark": "NIFTY 500 Total Return Index (TRI)",
+    "risk_level": "Very High",
+    "risk_score": 5,
+    "valueresearch_url": "https://www.valueresearchonline.com/sif/qsif-equity-long-short-fund-regular-plan-5000001/",
+    "official_url": "https://www.qsif.com/equity/quant-logn-short-fund"
+  },
+
+  "investment_objective": {
+    "objective": "To generate long-term capital appreciation by investing in a diversified portfolio of equity and equity-related instruments while employing limited short exposure through derivatives to enhance returns and manage risk efficiently.",
+    "investment_horizon": "Long Term",
+    "primary_asset_class": "Equity",
+    "target_universe": "Listed equity and equity-related instruments",
+    "strategy_style": [
+      "Fundamental investing",
+      "Opportunistic investing",
+      "Long equity",
+      "Short derivatives",
+      "Tactical hedging",
+      "Risk management"
+    ]
+  },
+
+  "investment_strategy": {
+    "description": "The strategy combines long-term equity investments with tactical short exposure through derivatives. The objective is to capture upside potential while mitigating downside risk across different market conditions.",
+    "core_approach": [
+      "Fundamental analysis",
+      "Growth-oriented stock selection",
+      "Valuation-based stock selection",
+      "Tactical short positions",
+      "Market hedging",
+      "Portfolio diversification",
+      "Liquidity management"
+    ],
+    "long_short_strategy": {
+      "enabled": true,
+      "long_exposure": true,
+      "short_exposure": true,
+      "short_instrument": "Equity derivatives",
+      "maximum_unhedged_short_exposure_percent": 25,
+      "additional_hedging_allowed_percent": 100
+    }
+  },
+
+  "asset_allocation": {
+    "allocation_rules": [
+      {
+        "asset": "Equity and Equity Related Instruments",
+        "min_percent": 80,
+        "max_percent": 100,
+        "description": "Core portfolio allocation including listed equity and equity-related instruments."
+      },
+      {
+        "asset": "Debt and Money Market Instruments",
+        "min_percent": 0,
+        "max_percent": 20,
+        "description": "Used for liquidity, fixed-return generation and meeting margin or redemption requirements."
+      },
+      {
+        "asset": "REITs and InvITs",
+        "min_percent": 0,
+        "max_percent": 20,
+        "description": "Permitted allocation to REITs and InvITs."
+      }
+    ],
+    "derivatives": {
+      "allowed": true,
+      "maximum_unhedged_short_exposure_percent": 25,
+      "additional_hedging_percent": 100,
+      "purpose": [
+        "Short exposure",
+        "Downside protection",
+        "Market hedging",
+        "Tactical positioning"
+      ]
+    }
+  },
+
+  "scheme_details": {
+    "minimum_initial_investment": 1000000,
+    "minimum_additional_investment": 1000,
+    "minimum_sip": 10000,
+    "accredited_investor_minimum": 100000,
+    "entry_load": 0,
+    "exit_load": {
+      "percent": 1,
+      "period": "15 days",
+      "condition": "Applicable if redeemed or switched out on or before completion of 15 days from the date of allotment",
+      "after_period": "Nil"
+    },
+    "lock_in_period": null,
+    "open_ended": true
+  },
+
+  "plans": [
+    {
+      "plan": "Direct",
+      "option": "Growth",
+      "isin": null,
+      "scheme_code": null,
+      "status": "Active"
+    },
+    {
+      "plan": "Direct",
+      "option": "IDCW Payout",
+      "isin": null,
+      "scheme_code": null,
+      "status": "Active"
+    },
+    {
+      "plan": "Direct",
+      "option": "IDCW Reinvestment",
+      "isin": null,
+      "scheme_code": null,
+      "status": "Active"
+    },
+    {
+      "plan": "Regular",
+      "option": "Growth",
+      "isin": null,
+      "scheme_code": "5000001",
+      "status": "Active"
+    },
+    {
+      "plan": "Regular",
+      "option": "IDCW Payout",
+      "isin": null,
+      "scheme_code": null,
+      "status": "Active"
+    },
+    {
+      "plan": "Regular",
+      "option": "IDCW Reinvestment",
+      "isin": null,
+      "scheme_code": null,
+      "status": "Active"
+    }
+  ],
+
+  "current_data": {
+    "as_of": "2026-08-11",
+    "nav": {
+      "value": 11.12,
+      "currency": "INR",
+      "plan": "Growth"
+    },
+    "aum": {
+      "value": 592.08,
+      "currency": "INR",
+      "unit": "Crore",
+      "as_of": "2026-08-10"
+    },
+    "expense_ratio": {
+      "value": null,
+      "unit": "percent"
+    },
+    "risk_rating": "Very High",
+    "valueresearch_rating": null
+  },
+
+  "performance": {
+    "as_of": "2026-08-10",
+
+    "returns": {
+      "1_day": -0.2643,
+      "1_month": 2.1150,
+      "3_month": 8.4620,
+      "6_month": null,
+      "1_year": null,
+      "2_year": null,
+      "3_year": null,
+      "5_year": null,
+      "since_inception": null
+    },
+
+    "benchmark_returns": {
+      "1_day": 0.70,
+      "1_month": 4.23,
+      "3_month": null,
+      "6_month": null,
+      "1_year": null,
+      "2_year": null,
+      "3_year": null,
+      "5_year": null,
+      "since_inception": null
+    },
+
+    "category_average": {
+      "1_day": 0.21,
+      "1_month": -0.49,
+      "3_month": 0.29,
+      "6_month": null,
+      "1_year": 2.30,
+      "2_year": 2.76,
+      "3_year": 9.92,
+      "5_year": 8.85
+    },
+
+    "performance_context": {
+      "fund_age_limitation": true,
+      "message": "The strategy was launched in September 2025 and therefore does not yet have sufficient history for 1-year, 3-year or 5-year performance periods."
+    }
+  },
+
+  "risk_metrics": {
+    "as_of": "2026-08-10",
+    "standard_deviation": 0.90,
+    "beta": 0.65,
+    "alpha": 0.06,
+    "sharpe_ratio": 0.06,
+    "sortino_ratio": 0.05,
+    "treynor_ratio": null,
+    "downside_deviation": null,
+    "maximum_drawdown": null,
+    "fama": 0.65
+  },
+
+  "portfolio": {
+    "as_of": "2026-05-31",
+
+    "total_holdings": null,
+
+    "allocation": {
+      "equity_percent": 74.53,
+      "debt_percent": null,
+      "cash_percent": 16.31,
+      "others_percent": 18.10
+    },
+
+    "market_cap": {
+      "large_cap": null,
+      "mid_cap": null,
+      "small_cap": null,
+      "other": null
+    },
+
+    "valuation_metrics": {
+      "portfolio_pe": 33.43,
+      "portfolio_pb": 4.20
+    },
+
+    "sector_allocation": [],
+
+    "top_holdings": [
+      {
+        "name": "TREPS",
+        "weight_percent": 15.64
+      },
+      {
+        "name": "Bharti Airtel Limited",
+        "weight_percent": 8.66
+      },
+      {
+        "name": "Reliance Industries Limited",
+        "weight_percent": 7.86
+      },
+      {
+        "name": "Adani Enterprises Limited",
+        "weight_percent": 6.64
+      },
+      {
+        "name": "Indus Towers Limited",
+        "weight_percent": 6.36
+      },
+      {
+        "name": "Tech Mahindra Limited",
+        "weight_percent": 6.27
+      },
+      {
+        "name": "YES Bank Ltd",
+        "weight_percent": 6.01
+      },
+      {
+        "name": "Manappuram Finance Ltd",
+        "weight_percent": 5.97
+      },
+      {
+        "name": "Adani Wilmar Limited",
+        "weight_percent": 3.74
+      },
+      {
+        "name": "AU Small Finance Bank Ltd",
+        "weight_percent": 3.47
+      },
+      {
+        "name": "Capri Global Capital Limited",
+        "weight_percent": 3.33
+      },
+      {
+        "name": "Samvardhana Motherson International Ltd",
+        "weight_percent": 3.07
+      },
+      {
+        "name": "Sona BLW Precision Forgings Limited",
+        "weight_percent": 2.98
+      },
+      {
+        "name": "Tata Chemicals Ltd",
+        "weight_percent": 2.72
+      },
+      {
+        "name": "ICICI Bank Limited",
+        "weight_percent": 2.52
+      },
+      {
+        "name": "Aurobindo Pharma Limited",
+        "weight_percent": 2.35
+      },
+      {
+        "name": "INOX INDIA LIMITED",
+        "weight_percent": 2.23
+      },
+      {
+        "name": "PTC India Limited",
+        "weight_percent": 1.98
+      },
+      {
+        "name": "Adani Green Energy Limited",
+        "weight_percent": 1.84
+      },
+      {
+        "name": "United Breweries Limited",
+        "weight_percent": 1.68
+      }
+    ],
+
+    "negative_positions": [
+      {
+        "name": "Laurus Labs Ltd",
+        "weight_percent": -1.91
+      },
+      {
+        "name": "Hindalco Industries Limited",
+        "weight_percent": -3.29
+      }
+    ],
+
+    "long_positions": [],
+    "short_positions": []
+  },
+
+  "fund_managers": [
+    {
+      "name": "Sandeep Tandon",
+      "role": "Fund Manager",
+      "experience_years": 23
+    },
+    {
+      "name": "Lokesh Garg",
+      "role": "Fund Manager",
+      "experience_years": null
+    },
+    {
+      "name": "Sameer Kate",
+      "role": "Fund Manager",
+      "experience_years": 20
+    },
+    {
+      "name": "Ankit Pande",
+      "role": "Fund Manager",
+      "experience_years": 11
+    },
+    {
+      "name": "Sanjeev Sharma",
+      "role": "Fund Manager",
+      "experience_years": null
+    }
+  ],
+
+  "fund_manager_details": [
+    {
+      "name": "Sandeep Tandon",
+      "education": [
+        "MBA"
+      ],
+      "experience_years": 23,
+      "experience_summary": "Founder of the quant group with extensive experience in financial services. Previously held a key role in setting up the equity derivatives desk at ICICI Securities and worked with IDBI Asset Management."
+    },
+    {
+      "name": "Sameer Kate",
+      "education": [
+        "Bachelor of Computer Science",
+        "MBA"
+      ],
+      "experience_years": 20,
+      "experience_summary": "Over two decades of experience in Indian equities and derivatives. Previously worked as a Senior Sales Trader at Investec Capital and for more than 16 years at Kotak Securities."
+    },
+    {
+      "name": "Ankit Pande",
+      "education": [
+        "CFA",
+        "MBA"
+      ],
+      "experience_years": 11,
+      "experience_summary": "Experience across Indian equities and software products. Previously worked in equity research and has experience across multiple Quant investment strategies."
+    },
+    {
+      "name": "Lokesh Garg",
+      "education": [],
+      "experience_years": null,
+      "experience_summary": null
+    },
+    {
+      "name": "Sanjeev Sharma",
+      "education": [],
+      "experience_years": null,
+      "experience_summary": null
+    }
+  ],
+
+  "fund_house": {
+    "name": "Quant Mutual Fund",
+    "asset_manager": "quant Money Managers Limited",
+    "sponsor": "quant Capital Finance & Investments Private Limited",
+    "website": "https://www.qsif.com/",
+    "contact_email": "contact@qsif.com",
+    "contact_phone": "022-6295-5005",
+    "registrar": null
+  },
+
+  "nfo_details": {
+    "nfo_start_date": null,
+    "nfo_end_date": null,
+    "allotment_date": "2025-09-17",
+    "reopening_date": null,
+    "initial_nav": 10
+  },
+
+  "investment_highlights": [
+    {
+      "title": "Long-Short Strategy",
+      "description": "Combines long equity positions with tactical short exposure through derivatives."
+    },
+    {
+      "title": "Downside Management",
+      "description": "Short positions can be used to benefit from declining prices and hedge against broader market corrections."
+    },
+    {
+      "title": "High Equity Allocation",
+      "description": "The strategy normally maintains 80% to 100% allocation to equity and equity-related instruments."
+    },
+    {
+      "title": "Flexible Hedging",
+      "description": "The strategy can hedge up to 100% of the remaining long equity exposure using derivatives."
+    },
+    {
+      "title": "Liquidity Buffer",
+      "description": "Up to 20% may be allocated to debt and money-market instruments to support liquidity and derivative margin requirements."
+    },
+    {
+      "title": "Experienced Management",
+      "description": "The strategy is managed by a multi-manager team with experience across equities and derivatives."
+    }
+  ],
+
+  "risk_flags": [
+    {
+      "type": "very_high_risk",
+      "severity": "high",
+      "message": "The strategy carries very high market risk and can experience significant fluctuations."
+    },
+    {
+      "type": "derivative_risk",
+      "severity": "high",
+      "message": "The strategy uses derivatives for short exposure and hedging, creating additional derivative-related risks."
+    },
+    {
+      "type": "short_exposure",
+      "severity": "high",
+      "message": "The strategy can take unhedged short exposure of up to 25% through derivatives."
+    },
+    {
+      "type": "new_strategy",
+      "severity": "medium",
+      "message": "The strategy launched in September 2025 and therefore has a limited live performance history."
+    },
+    {
+      "type": "high_minimum_investment",
+      "severity": "medium",
+      "message": "The normal minimum investment is ₹10 lakh, making the strategy targeted toward sophisticated investors."
+    }
+  ],
+
+  "application_display": {
+    "hero": {
+      "title": "qsif Equity Long-Short Fund",
+      "subtitle": "Equity | Long-Short Strategy",
+      "risk_label": "Very High Risk",
+      "benchmark": "NIFTY 500 TRI",
+      "nav": "₹11.12",
+      "nav_as_of": "11-Aug-2026"
+    },
+
+    "key_metrics": [
+      "NAV",
+      "AUM",
+      "Expense Ratio",
+      "Minimum Investment",
+      "Exit Load",
+      "Risk Level",
+      "Alpha",
+      "Beta",
+      "Sharpe Ratio"
+    ],
+
+    "sections": [
+      "Fund Overview",
+      "Investment Objective",
+      "Investment Strategy",
+      "Asset Allocation",
+      "Performance",
+      "Risk Metrics",
+      "Portfolio",
+      "Top Holdings",
+      "Fund Managers",
+      "Investment Highlights",
+      "Risk Flags"
+    ]
+  },
+
+  "data_metadata": {
+    "primary_source": "Quant SIF Official Website",
+    "secondary_sources": [
+      "Value Research Online",
+      "Quant SIF Factsheet",
+      "InvestOnline"
+    ],
+    "last_verified": "2026-08-12",
+    "portfolio_data_as_of": "2026-05-31",
+    "performance_data_as_of": "2026-08-10",
+    "nav_data_as_of": "2026-08-11",
+    "use_null_for_missing_data": true
+  }
+}

@@ -12,33 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { InvestmentCategory, investmentOptions } from "@/lib/sif-pms-aif";
 
-type InvestmentCategory = "PMS" | "AIF" | "SIF";
 type InvestmentSelection = {
   category: InvestmentCategory | "";
   investment: string;
-};
-
-const investmentOptions: Record<InvestmentCategory, string[]> = {
-  SIF: [
-    "DynaSIF Equity Ex-Top 100 Long-Short Fund",
-    "QSIF Equity Ex-Top 100 Long-Short Fund",
-    "iSIF Equity Ex-Top 100 Long-Short Fund",
-    "Arudha Equity Long-Short Fund",
-    "Summit Equity Long-Short Fund",
-  ],
-  PMS: [
-    "ICICI Prudential Emerging Leaders PMS",
-    "Abakkus Emerging Opportunities PMS",
-    "Helios India Rising Portfolio",
-    "Motilal Oswal Founders Strategy PMS",
-    "ABSL Select Sector Portfolio PMS",
-  ],
-  AIF: [
-    "ICICI Prudential Emerging Leaders Fund — Series III",
-    "Helios India Emerging Star Fund",
-    "ABSL Select Sector Fund — AIF Category III — Mid & Small Cap Growth Opportunity",
-  ],
 };
 
 export default function SifPmsAifPage() {
@@ -202,8 +180,8 @@ export default function SifPmsAifPage() {
                               </SelectTrigger>
                               <SelectContent>
                                 {investmentOptions[selection.category].map((option) => (
-                                  <SelectItem key={option} value={option}>
-                                    {option}
+                                  <SelectItem key={option.label} value={option.label}>
+                                    {option.label}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -217,7 +195,18 @@ export default function SifPmsAifPage() {
                     <div className="flex justify-end pt-1">
                       <button
                         type="button"
-                        onClick={() => router.push("/sif-pms-aif/report")}
+                        onClick={() => {
+                          const selection = selections.find(
+                            (currentSelection) =>
+                              currentSelection.category && currentSelection.investment,
+                          );
+                          if (!selection) return;
+                          const query = new URLSearchParams({
+                            category: selection.category,
+                            product: selection.investment,
+                          });
+                          router.push(`/sif-pms-aif/report?${query.toString()}`);
+                        }}
                         className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 glass-button-primary"
                       >
                         <FileText className="h-4 w-4" />
