@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import {
   ArrowLeft,
   BarChart3,
@@ -21,6 +22,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
+import financialFriendLogo from "../../../../attached_assets/images-removebg-preview_1786696645447.png";
 import {
   getInvestmentProduct,
   isInvestmentCategory,
@@ -366,6 +368,12 @@ function formatReportReturn(value: unknown) {
   return `${amount >= 0 ? "+" : ""}${amount.toFixed(2)}%`;
 }
 
+function formatFinancialFriendBranding(value: unknown) {
+  return String(value ?? "")
+    .replace(/SIFscan/gi, "Financial Friend")
+    .replace(/sifscan\.com/gi, "financialfriend.in");
+}
+
 function formatIsoDate(value: unknown) {
   if (!hasValue(value)) return "—";
   const stringValue = String(value);
@@ -464,13 +472,13 @@ function SifResearchReport({
 
   return (
     <main className="sif-report-page min-h-screen bg-[#f7f7f5] text-[#101522] dark:bg-slate-950 dark:text-slate-100">
-      <div className="no-print border-b border-[#d8b76f] bg-[#0b1e3a] px-5 py-3 text-white sm:px-8">
+      <div className="no-print border-b border-[#d8b76f] bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-5 py-3 text-white sm:px-8">
         <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4">
           <button type="button" onClick={() => router.push("/sif-pms-aif")} className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-300 transition hover:text-white">
             ← Back to selection
           </button>
           <div className="flex items-center gap-3">
-            <span className="hidden text-[11px] text-slate-400 sm:inline">SIF research pack</span>
+            <span className="hidden text-[11px] tracking-[0.03em] text-slate-400 sm:inline">Financial Friend · SIF research pack</span>
             <button type="button" onClick={() => window.print()} className="rounded border border-white/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition hover:border-[#d8b76f] hover:text-[#e5c886]">
               <Download className="mr-1.5 inline h-3.5 w-3.5" /> Print / PDF
             </button>
@@ -480,20 +488,31 @@ function SifResearchReport({
 
       <div className="mx-auto max-w-[1180px] bg-white shadow-[0_20px_70px_rgba(16,21,34,0.08)] dark:bg-slate-900 dark:shadow-none">
         <header className="relative border-b border-[#e0e2e4] bg-white dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex h-12 items-center justify-between bg-[#0b1e3a] px-8 text-[11px] text-slate-300 sm:px-12">
+          <div className="flex h-14 items-center justify-between bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-8 text-[11px] text-slate-300 sm:px-12">
             <div className="flex items-center gap-3">
-              <span className="font-heading text-[16px] font-semibold tracking-[-0.04em] text-white">SIF<span className="text-[#d8b76f]">scan</span></span>
+              <div className="relative h-10 w-[142px] overflow-hidden rounded bg-white/95 shadow-[0_3px_12px_rgba(0,0,0,0.12)]">
+                <Image
+                  src={financialFriendLogo}
+                  alt="Financial Friend"
+                  width={132}
+                  height={132}
+                  priority
+                  className="absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2"
+                />
+              </div>
               <span className="h-4 w-px bg-white/30" />
               <span>Research</span>
             </div>
             <span>{formatDate(new Date().toISOString())}</span>
           </div>
           <div className="h-1 bg-[#d8b76f]" />
-          <div className="px-8 pb-8 pt-9 sm:px-12 sm:pb-10">
+          <div className="relative overflow-hidden px-8 pb-8 pt-9 sm:px-12 sm:pb-10">
+            <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full border-[24px] border-[#c9ad70]/[0.08]" />
+            <div className="pointer-events-none absolute -right-4 top-8 h-28 w-28 rounded-full border border-[#c9ad70]/[0.12]" />
             <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b39a66]">Fund research pack</p>
-            <h1 className="mt-5 max-w-4xl font-serif text-3xl font-bold leading-tight tracking-[-0.035em] text-[#101522] sm:text-[40px] dark:text-white">{title}</h1>
-            <p className="mt-2 text-[15px] text-[#53606c] dark:text-slate-400">{String(fundHouse ?? "Data Not Available")}</p>
-            <p className="mt-3 text-[12px] text-[#7c858e] dark:text-slate-500">{categoryLabel}</p>
+            <h1 className="relative mt-5 max-w-4xl font-serif text-3xl font-bold leading-tight tracking-[-0.035em] text-[#101522] sm:text-[40px] dark:text-white">{title}</h1>
+            <p className="relative mt-2 text-[15px] text-[#53606c] dark:text-slate-400">{String(fundHouse ?? "Data Not Available")}</p>
+            <p className="relative mt-3 text-[12px] text-[#7c858e] dark:text-slate-500">{categoryLabel}</p>
           </div>
         </header>
 
@@ -566,16 +585,25 @@ function SifResearchReport({
           <section className="border-l-[3px] border-[#0b1e3a] bg-[#fdfcf9] px-5 py-5 dark:bg-slate-800/50">
             <h2 className="font-serif text-[14px] font-bold uppercase tracking-[0.08em]">Important disclosures</h2>
             <div className="mt-4 space-y-3 text-[11px] leading-5 text-[#6e7882] dark:text-slate-400">
-              <p>{hasValue(disclosure) ? String(disclosure) : "This document is generated for informational and research purposes only. It does not constitute investment advice, a solicitation, or an offer to buy or sell any security."}</p>
+              <p>{hasValue(disclosure) ? formatFinancialFriendBranding(disclosure) : "This document is generated for informational and research purposes only. It does not constitute investment advice, a solicitation, or an offer to buy or sell any security."}</p>
               <p>Data is sourced from publicly available SEBI and AMFI disclosures. NAV, AUM, and portfolio data may not reflect the most recent disclosures. Past performance and current data do not guarantee future results.</p>
               <p>Specialised Investment Funds are SEBI-regulated vehicles with specific eligibility and risk requirements. Investors should consult a SEBI-registered investment advisor before making any investment decision.</p>
             </div>
           </section>
         </div>
 
-        <footer className="flex flex-col items-center justify-center gap-1 border-t border-[#e0e2e4] px-8 py-8 text-center text-[11px] text-[#7d858d] dark:border-slate-800 dark:text-slate-500">
-          <p>Generated by SIFscan Research on {formatDate(new Date().toISOString())}</p>
-          <p className="font-medium">sifscan.com</p>
+        <footer className="flex flex-col items-center justify-center gap-2 border-t border-[#e0e2e4] px-8 py-8 text-center text-[11px] text-[#7d858d] dark:border-slate-800 dark:text-slate-500">
+          <div className="relative h-10 w-[142px] overflow-hidden rounded bg-white dark:bg-slate-100">
+            <Image
+              src={financialFriendLogo}
+              alt="Financial Friend"
+              width={132}
+              height={132}
+              className="absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2"
+            />
+          </div>
+          <p>Generated by Financial Friend Research on {formatDate(new Date().toISOString())}</p>
+          <p className="font-medium text-[#b08e4e]">financialfriend.in</p>
         </footer>
       </div>
     </main>
