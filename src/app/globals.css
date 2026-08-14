@@ -107,6 +107,33 @@ body {
   background-color: hsl(var(--background));
 }
 
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .sif-report-page {
+    min-height: auto !important;
+    background: #ffffff !important;
+  }
+
+  .sif-report-page > div {
+    max-width: none !important;
+    box-shadow: none !important;
+  }
+
+  .sif-report-page section,
+  .sif-report-page header,
+  .sif-report-page footer {
+    break-inside: avoid;
+  }
+}
+
 /* =========================================
    CARD / SURFACE UTILITY CLASSES
    ========================================= */

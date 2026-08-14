@@ -214,6 +214,24 @@ function parseRiskProfile(lines: string[]) {
   };
 }
 
+function parseNavHistory(lines: string[]) {
+  const start = findIndex(lines, "NAV HISTORY");
+  if (start === -1) return null;
+  const end = findIndex(lines, "PERFORMANCE RETURNS", start + 1);
+  const section = lines.slice(start + 1, end === -1 ? lines.length : end);
+  const dates = section.filter((line) => /^\d{4}-\d{2}-\d{2}$/.test(line));
+  const lowLine = section.find((line) => /^Low:/i.test(line));
+  const highLine = section.find((line) => /^High:/i.test(line));
+  return {
+    start_date: dates[0] ?? null,
+    end_date: dates[1] ?? null,
+    low: numberFrom(lowLine ?? null),
+    low_raw: lowLine?.replace(/^Low:\s*/i, "") ?? null,
+    high: numberFrom(highLine ?? null),
+    high_raw: highLine?.replace(/^High:\s*/i, "") ?? null,
+  };
+}
+
 function parseHoldings(lines: string[]) {
   const start = findIndex(lines, /^PORTFOLIO HOLDINGS/);
   if (start === -1) return { total: null, holdings: [] };
@@ -246,6 +264,7 @@ export function parseSifPdf(text: string, product: InvestmentProduct, fileName: 
   const category = lines[titleIndex + 3] ?? "Specialised Investment Fund";
   const { nav, aum, expenseRatio, minimumInvestment } = parseTopMetrics(lines);
   const returns = parsePerformance(lines);
+  const navHistory = parseNavHistory(lines);
   const objective = collectSection(lines, "INVESTMENT OBJECTIVE");
   const strategyParameters = parseStrategyParameters(lines);
   const riskProfile = parseRiskProfile(lines);
@@ -303,6 +322,7 @@ export function parseSifPdf(text: string, product: InvestmentProduct, fileName: 
       returns,
       performance_context: { message: "Values are extracted from the selected PDF research pack." },
     },
+    nav_history: navHistory,
     benchmark: { primary_benchmark: { name: benchmark } },
     risk_metrics: {
       risk_band: riskBand,

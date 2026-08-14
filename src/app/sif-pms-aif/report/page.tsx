@@ -290,19 +290,19 @@ function SectionHeading({
   description?: string;
 }) {
   return (
-    <div className="mb-6 flex items-start gap-4">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e4f1ef] text-[#0b7772]">
-        <Icon className="h-5 w-5" />
-      </div>
-      <div>
-        <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.2em] text-[#0b7772]">
+    <div className="mb-5 border-b-2 border-[#c7a25f] pb-3">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <Icon className="h-3.5 w-3.5 shrink-0 text-[#0b7772]" />
+          <p className="truncate font-heading text-[15px] font-semibold uppercase tracking-[0.12em] text-[#14263d] dark:text-slate-100">
+            {title}
+          </p>
+        </div>
+        <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
           {number}
-        </p>
-        <h2 className="font-heading text-2xl font-semibold tracking-tight text-[#14263d] dark:text-slate-100">
-          {title}
-        </h2>
-        {description && <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>}
+        </span>
       </div>
+      {description && <p className="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">{description}</p>}
     </div>
   );
 }
@@ -323,10 +323,262 @@ function ReportSection({
   className?: string;
 }) {
   return (
-    <section className={`rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_12px_40px_rgba(20,38,61,0.05)] sm:p-8 dark:border-slate-800 dark:bg-slate-900 ${className}`}>
+    <section className={`rounded-[2px] border border-slate-200/90 bg-white p-6 shadow-[0_10px_30px_rgba(20,38,61,0.03)] sm:p-8 dark:border-slate-800 dark:bg-slate-900 ${className}`}>
       <SectionHeading number={number} icon={icon} title={title} description={description} />
       {children}
     </section>
+  );
+}
+
+function SifSectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-5 border-b-2 border-[#c9ad70] pb-2">
+      <h2 className="font-serif text-[15px] font-bold uppercase tracking-[0.08em] text-[#101522] dark:text-slate-100">
+        {children}
+      </h2>
+    </div>
+  );
+}
+
+function SifMetric({
+  label,
+  value,
+  detail,
+}: {
+  label: React.ReactNode;
+  value: string;
+  detail?: string;
+}) {
+  return (
+    <div className="min-w-0 border-l border-[#e1e3e6] px-4 first:border-l-0 first:pl-0 last:pr-0 dark:border-slate-700">
+      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#6d7782] dark:text-slate-400">{label}</p>
+      <p className={`mt-2 text-[20px] font-bold leading-none tracking-tight ${value === "—" ? "text-[#8a929a]" : "text-[#101522] dark:text-white"}`}>
+        {value}
+      </p>
+      {detail && <p className="mt-1 text-[10px] leading-4 text-[#7d858d] dark:text-slate-500">{detail}</p>}
+    </div>
+  );
+}
+
+function formatReportReturn(value: unknown) {
+  const amount = numberValue(value);
+  if (amount === null) return "—";
+  return `${amount >= 0 ? "+" : ""}${amount.toFixed(2)}%`;
+}
+
+function formatIsoDate(value: unknown) {
+  if (!hasValue(value)) return "—";
+  const stringValue = String(value);
+  return /^\d{4}-\d{2}-\d{2}$/.test(stringValue) ? stringValue : formatDate(value);
+}
+
+function getSifStrategyParameters(data: JsonRecord) {
+  const metadata = isRecord(data.data_metadata) ? data.data_metadata : {};
+  const parameters = isRecord(metadata.strategy_parameters) ? metadata.strategy_parameters : {};
+  const fields = [
+    ["Lock-in Period", "lock_in_period"],
+    ["Redemption Frequency", "redemption_frequency"],
+    ["Derivatives", "derivatives"],
+    ["Short Selling", "short_selling"],
+    ["Gross Exposure", "gross_exposure"],
+    ["Net Exposure", "net_exposure"],
+    ["Risk Band", "risk_band"],
+    ["Complexity", "complexity"],
+    ["Benchmark", "benchmark"],
+  ] as const;
+  return fields.map(([label, key]) => ({
+    label,
+    value: hasValue(parameters[key]) ? String(parameters[key]) : "—",
+  }));
+}
+
+function SifNavRange({ data }: { data: JsonRecord }) {
+  const history = isRecord(data.nav_history) ? data.nav_history : {};
+  const low = numberValue(history.low);
+  const high = numberValue(history.high);
+  const lowText = hasValue(history.low_raw) ? String(history.low_raw) : low === null ? "—" : `₹${low.toFixed(2)}`;
+  const highText = hasValue(history.high_raw) ? String(history.high_raw) : high === null ? "—" : `₹${high.toFixed(2)}`;
+  const startDate = formatIsoDate(history.start_date);
+  const endDate = formatIsoDate(history.end_date);
+  const range = low !== null && high !== null ? Math.max(high - low, 0.01) : 1;
+  const progress = low !== null && high !== null ? Math.min(Math.max((high - low) / range, 0), 1) : 0.72;
+
+  return (
+    <div className="rounded-[4px] border border-[#e0e2e4] bg-[#fdfcf9] px-4 pb-4 pt-3 dark:border-slate-700 dark:bg-slate-900">
+      <div className="flex items-center justify-between text-[10px] text-[#707984] dark:text-slate-400">
+        <span>{startDate}</span>
+        <span>{endDate}</span>
+      </div>
+      <svg viewBox="0 0 640 112" className="mt-2 h-28 w-full" role="img" aria-label={`NAV range from ${lowText} to ${highText}`}>
+        <defs>
+          <linearGradient id="sif-nav-fill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#d7c18d" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="#d7c18d" stopOpacity="0.08" />
+          </linearGradient>
+        </defs>
+        <path d={`M 12 86 L ${progress > 0 ? 628 : 320} ${progress > 0 ? 18 : 54} L 628 94 L 12 94 Z`} fill="url(#sif-nav-fill)" />
+        <path d={`M 12 86 L ${progress > 0 ? 628 : 320} ${progress > 0 ? 18 : 54}`} fill="none" stroke="#c8ac6d" strokeWidth="2.2" />
+        <circle cx={progress > 0 ? "628" : "320"} cy={progress > 0 ? "18" : "54"} r="4" fill="#c8ac6d" />
+        <line x1="12" x2="628" y1="94" y2="94" stroke="#e7e3d9" strokeWidth="1" />
+      </svg>
+      <div className="flex items-center justify-between text-[10px] text-[#8a929a] dark:text-slate-500">
+        <span>Low: {lowText}</span>
+        <span>High: {highText}</span>
+      </div>
+    </div>
+  );
+}
+
+function SifResearchReport({
+  data,
+  title,
+  category,
+  router,
+}: {
+  data: JsonRecord;
+  title: string;
+  category: InvestmentCategory | null;
+  router: ReturnType<typeof useRouter>;
+}) {
+  const current = isRecord(data.current_data) ? data.current_data : {};
+  const nav = isRecord(current.nav) ? current.nav : {};
+  const aum = isRecord(current.aum) ? current.aum : {};
+  const expense = isRecord(current.expense_ratio) ? current.expense_ratio : {};
+  const metadata = isRecord(data.data_metadata) ? data.data_metadata : {};
+  const fundHouse = getFundHouse(data);
+  const categoryLabel = String(data.product_category ?? data.product_type ?? category ?? "Specialised Investment Fund");
+  const asOf = firstValue(current, ["as_of"]) ?? firstValue(data.performance, ["as_of"]);
+  const returns = findReturns(data);
+  const strategyRows = getSifStrategyParameters(data);
+  const riskMetrics = isRecord(data.risk_metrics) ? data.risk_metrics : {};
+  const riskBand = firstValue(riskMetrics, ["risk_band"]) ?? getRiskLabel(data);
+  const complexity = firstValue(riskMetrics, ["complexity"]);
+  const disclosure = firstValue(metadata, ["disclosure"]);
+  const performanceRows = [
+    ["1 Month", "1_month"],
+    ["3 Months", "3_month"],
+    ["6 Months", "6_month"],
+    ["1 Year", "1_year"],
+    ["Since Inception", "since_inception"],
+  ] as const;
+
+  return (
+    <main className="sif-report-page min-h-screen bg-[#f7f7f5] text-[#101522] dark:bg-slate-950 dark:text-slate-100">
+      <div className="no-print border-b border-[#d8b76f] bg-[#0b1e3a] px-5 py-3 text-white sm:px-8">
+        <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4">
+          <button type="button" onClick={() => router.push("/sif-pms-aif")} className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-300 transition hover:text-white">
+            ← Back to selection
+          </button>
+          <div className="flex items-center gap-3">
+            <span className="hidden text-[11px] text-slate-400 sm:inline">SIF research pack</span>
+            <button type="button" onClick={() => window.print()} className="rounded border border-white/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition hover:border-[#d8b76f] hover:text-[#e5c886]">
+              <Download className="mr-1.5 inline h-3.5 w-3.5" /> Print / PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-[1180px] bg-white shadow-[0_20px_70px_rgba(16,21,34,0.08)] dark:bg-slate-900 dark:shadow-none">
+        <header className="relative border-b border-[#e0e2e4] bg-white dark:border-slate-800 dark:bg-slate-900">
+          <div className="flex h-12 items-center justify-between bg-[#0b1e3a] px-8 text-[11px] text-slate-300 sm:px-12">
+            <div className="flex items-center gap-3">
+              <span className="font-heading text-[16px] font-semibold tracking-[-0.04em] text-white">SIF<span className="text-[#d8b76f]">scan</span></span>
+              <span className="h-4 w-px bg-white/30" />
+              <span>Research</span>
+            </div>
+            <span>{formatDate(new Date().toISOString())}</span>
+          </div>
+          <div className="h-1 bg-[#d8b76f]" />
+          <div className="px-8 pb-8 pt-9 sm:px-12 sm:pb-10">
+            <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b39a66]">Fund research pack</p>
+            <h1 className="mt-5 max-w-4xl font-serif text-3xl font-bold leading-tight tracking-[-0.035em] text-[#101522] sm:text-[40px] dark:text-white">{title}</h1>
+            <p className="mt-2 text-[15px] text-[#53606c] dark:text-slate-400">{String(fundHouse ?? "Data Not Available")}</p>
+            <p className="mt-3 text-[12px] text-[#7c858e] dark:text-slate-500">{categoryLabel}</p>
+          </div>
+        </header>
+
+        <section className="border-y border-[#e0e2e4] bg-[#fdfcf9] px-8 py-5 sm:px-12">
+          <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-4 sm:gap-y-0">
+            <SifMetric label="Latest NAV" value={hasValue(nav.raw) ? String(nav.raw) : nav.value != null ? `₹${Number(nav.value).toFixed(2)}` : "—"} detail={hasValue(asOf) ? `as of ${formatDate(asOf)}` : undefined} />
+            <SifMetric label="AUM" value={hasValue(aum.raw) ? String(aum.raw) : "—"} />
+            <SifMetric label="Expense ratio" value={hasValue(expense.raw) ? String(expense.raw) : expense.value != null ? `${Number(expense.value).toFixed(2)}%` : "—"} />
+            <SifMetric label="Min. investment" value={hasValue(getPath(data, "scheme_details.minimum_initial_investment")) ? String(getPath(data, "scheme_details.minimum_initial_investment")) : "—"} />
+          </div>
+        </section>
+
+        <section className="border-b border-[#e0e2e4] bg-white px-8 py-5 sm:px-12 dark:border-slate-800 dark:bg-slate-900">
+          <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-5 sm:gap-y-0">
+            {performanceRows.map(([label, key]) => (
+              <SifMetric key={key} label={label === "Since Inception" ? <>Since inception<br />return</> : `${label} return`} value={formatReportReturn(returns?.[key])} />
+            ))}
+          </div>
+        </section>
+
+        <div className="space-y-12 px-8 pb-16 pt-10 sm:px-12 sm:pt-12">
+          <section>
+            <SifSectionTitle>Strategy parameters</SifSectionTitle>
+            <div className="divide-y divide-[#eceef0] border-b border-[#eceef0] dark:divide-slate-800 dark:border-slate-800">
+              {strategyRows.map((row) => (
+                <div key={row.label} className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] py-2.5 text-[12px] sm:grid-cols-[28%_72%]">
+                  <span className="text-[#6e7882] dark:text-slate-400">{row.label}</span>
+                  <span className={`font-semibold ${row.value === "—" ? "text-[#7d858d]" : "text-[#101522] dark:text-slate-100"}`}>{row.value}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <SifSectionTitle>NAV history</SifSectionTitle>
+            <SifNavRange data={data} />
+          </section>
+
+          <section>
+            <SifSectionTitle>Performance returns</SifSectionTitle>
+            <div className="overflow-hidden rounded-[4px] border border-[#e0e2e4] dark:border-slate-700">
+              <div className="grid grid-cols-[1fr_110px] bg-[#f7f7f5] px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#6e7882] dark:bg-slate-800 dark:text-slate-400">
+                <span>Period</span>
+                <span className="text-right">Return</span>
+              </div>
+              {performanceRows.map(([label, key]) => (
+                <div key={key} className="grid grid-cols-[1fr_110px] border-t border-[#eceef0] px-4 py-2.5 text-[12px] dark:border-slate-800">
+                  <span>{label}</span>
+                  <span className={`text-right font-semibold ${hasValue(returns?.[key]) ? "text-[#1d6a4c]" : "text-[#7d858d]"}`}>{formatReportReturn(returns?.[key])}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <SifSectionTitle>Risk profile</SifSectionTitle>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                ["SEBI risk band", riskBand],
+                ["Complexity", complexity],
+              ].map(([label, value]) => (
+                <div key={String(label)} className="border-l-2 border-[#c9ad70] bg-[#fdfcf9] px-4 py-4 dark:bg-slate-800/60">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#6e7882] dark:text-slate-400">{String(label)}</p>
+                  <p className="mt-3 text-[15px] font-semibold">{hasValue(value) ? String(value) : "—"}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="border-l-[3px] border-[#0b1e3a] bg-[#fdfcf9] px-5 py-5 dark:bg-slate-800/50">
+            <h2 className="font-serif text-[14px] font-bold uppercase tracking-[0.08em]">Important disclosures</h2>
+            <div className="mt-4 space-y-3 text-[11px] leading-5 text-[#6e7882] dark:text-slate-400">
+              <p>{hasValue(disclosure) ? String(disclosure) : "This document is generated for informational and research purposes only. It does not constitute investment advice, a solicitation, or an offer to buy or sell any security."}</p>
+              <p>Data is sourced from publicly available SEBI and AMFI disclosures. NAV, AUM, and portfolio data may not reflect the most recent disclosures. Past performance and current data do not guarantee future results.</p>
+              <p>Specialised Investment Funds are SEBI-regulated vehicles with specific eligibility and risk requirements. Investors should consult a SEBI-registered investment advisor before making any investment decision.</p>
+            </div>
+          </section>
+        </div>
+
+        <footer className="flex flex-col items-center justify-center gap-1 border-t border-[#e0e2e4] px-8 py-8 text-center text-[11px] text-[#7d858d] dark:border-slate-800 dark:text-slate-500">
+          <p>Generated by SIFscan Research on {formatDate(new Date().toISOString())}</p>
+          <p className="font-medium">sifscan.com</p>
+        </footer>
+      </div>
+    </main>
   );
 }
 
@@ -363,19 +615,20 @@ function PerformanceTable({ data }: { data: JsonRecord }) {
   if (!returns && !benchmarks) return null;
   const periods = PERIOD_ORDER.filter((period) => hasValue(returns?.[period]) || hasValue(benchmarks?.[period]));
   if (!periods.length) return null;
+  const hasBenchmark = Boolean(benchmarks && periods.some((period) => hasValue(benchmarks[period])));
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
-      <div className="grid grid-cols-3 bg-[#f5f8fa] px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+    <div className="overflow-hidden rounded-[2px] border border-slate-200 dark:border-slate-800">
+      <div className={`grid ${hasBenchmark ? "grid-cols-3" : "grid-cols-2"} bg-[#f8f7f4] px-4 py-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500 dark:bg-slate-800 dark:text-slate-400`}>
         <span>Period</span>
-        <span>Product</span>
-        <span>Benchmark</span>
+        <span>Return</span>
+        {hasBenchmark && <span>Benchmark</span>}
       </div>
       {periods.map((period) => (
-        <div key={period} className="grid grid-cols-3 border-t border-slate-100 px-4 py-3 text-sm dark:border-slate-800">
+        <div key={period} className={`grid ${hasBenchmark ? "grid-cols-3" : "grid-cols-2"} border-t border-slate-100 px-4 py-3 text-sm dark:border-slate-800`}>
           <span className="font-medium text-slate-600 dark:text-slate-300">{PERIOD_LABELS[period] ?? formatKey(period)}</span>
           <span className="font-semibold text-[#0b7772]">{formatValue(returns?.[period], "return")}</span>
-          <span className="text-slate-600 dark:text-slate-300">{formatValue(benchmarks?.[period], "return")}</span>
+          {hasBenchmark && <span className="text-slate-600 dark:text-slate-300">{formatValue(benchmarks?.[period], "return")}</span>}
         </div>
       ))}
     </div>
@@ -534,6 +787,9 @@ function SifPmsAifReportContent() {
   }
 
   const title = getReportTitle(data);
+  if (category === "SIF") {
+    return <SifResearchReport data={data} title={title} category={category} router={router} />;
+  }
   const subtitle = getSubtitle(data);
   const metadata = isRecord(data.data_metadata) ? data.data_metadata : {};
   const overviewRows = [
