@@ -421,7 +421,11 @@ function SifPmsAifReportContent() {
     }
     setLoading(true);
     setError("");
-    fetch(`/PMS-AIF-SIF/${category}/${encodeURIComponent(product.fileName)}`)
+    const reportUrl =
+      category === "SIF"
+        ? `/api/sif-report?product=${encodeURIComponent(product.label)}`
+        : `/PMS-AIF-SIF/${category}/${encodeURIComponent(product.fileName)}`;
+    fetch(reportUrl)
       .then(async (response) => {
         if (!response.ok) throw new Error("Product file unavailable");
         return response.json() as Promise<JsonRecord>;
@@ -610,7 +614,7 @@ function SifPmsAifReportContent() {
           <ReportSection number="01" icon={Info} title="Product overview" description="A concise view of the product identity and mandate.">
             <InfoGrid rows={overviewRows} />
           </ReportSection>
-          {objective && (
+          {objective && hasValue(objective.objective) && (
             <ReportSection number="02" icon={Sparkles} title="Investment objective" description="What the product is designed to pursue.">
               <p className="text-[15px] leading-7 text-slate-600 dark:text-slate-300">{formatValue(objective.objective)}</p>
               {objectiveBullets.length > 0 && (

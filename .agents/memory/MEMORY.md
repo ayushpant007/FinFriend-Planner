@@ -1,1 +1,2 @@
 - [NAV row integrity](nav-row-integrity.md) — NAV must use the selected fund row's scheme code and reject provider responses for a different scheme or plan.
+- [SIF PDF extraction](sif-pdf-extraction.md) — Use the server's pdftotext utility for local SIF research packs to keep Next builds lightweight.
