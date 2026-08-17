@@ -1,0 +1,287 @@
+                                  | Research                                                                                      14 August 2026
+
+
+
+
+FUND RESEARCH PACK
+
+
+
+
+qsif Hybrid Long-Short Fund
+Quant Mutual Fund
+Hybrid Long Short           ·     Hybrid Long-Short           ·     Since 15 Oct 2025
+
+
+
+
+L AT E S T N AV                               AUM                                        E X P E N S E R AT I O         MIN. INVESTMENT
+
+
+₹11.13
+as of 13 Aug 2026
+                                              ₹170       Cr
+                                              as of 30 Jun 2026
+                                                                                         2.12%
+                                                                                         Regular: 3.53%
+                                                                                                                        ₹10 L
+
+
+1M RETURN                            3M RETURN                               6M RETURN                      1Y RETURN        SINCE INCEPTION
+
+                                                                                                                             RETURN
++1.77%                               +4.60%                                  +11.01%                        —
+                                                                                                                             +9.69%
+
+
+INVESTMENT OBJECTIVE
+
+     A dynamic hybrid fund blending 25–75% equity and 25–75% debt with up to 25% unhedged short positions. Also invests
+     up to 20% in REITs/InvITs for diversification. Aims for better risk-adjusted returns than a traditional balanced fund by using
+     the long-short overlay.
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                      sifscan.com   1/5
+                                                                                                                          qsif Hybrid Long-Short Fund
+
+
+
+
+STRATEGY PARAMETERS
+
+
+Lock-in Period                                   No
+
+Redemption Frequency                             Twice-weekly
+
+Derivatives                                      Permitted
+
+Short Selling                                    Permitted
+
+Gross Exposure                                   —
+
+Net Exposure                                     —
+
+Risk Band                                        Level 5 / 5
+
+Complexity                                       Very-high
+
+Benchmark                                        Nifty 50 Hybrid Composite Debt 50:50 Index
+
+
+Style & Risk Tags
+
+
+  Long-short         Hybrid        Multi-asset        Reits-invits       High-risk   Derivatives-exposure   Multi-asset
+
+
+
+
+FUND MANAGEMENT
+
+
+   Sandeep Tandon                                                                     Lokesh Garg
+   Fund Manager                                                                       Fund Manager
+
+
+
+
+   Ankit Pande                                                                        Sameer Kate
+   Fund Manager                                                                       Fund Manager
+
+
+
+
+   Sanjeev Sharma
+   Fund Manager
+
+
+
+
+ADDITIONAL NOTES
+
+Liquidity: Redemptions every Tuesday and Wednesday
+
+Fees: Exit load 1% within 15 days
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                         sifscan.com   2/5
+                                                                                          qsif Hybrid Long-Short Fund
+
+
+
+
+NAV HISTORY
+
+
+    2026-07-14                                                                                         2026-08-13
+
+
+
+
+    Low: ₹10.57                                                                                       High: ₹11.21
+
+
+
+
+PERFORMANCE RETURNS
+
+
+   PERIOD                                                                                                RETURN
+
+
+   1 Month                                                                                                 +1.77%
+
+   3 Months                                                                                                +4.60%
+
+   6 Months                                                                                              +11.01%
+
+   1 Year                                                                                                        —
+
+   Since Inception                                                                                         +9.69%
+
+
+
+
+RISK PROFILE
+
+
+    SEBI RISK BAND                                                           COMPLEXITY
+
+
+    Level 5 / 5                                                              Very-high
+
+
+    BENCHMARK
+
+    Nifty 50 Hybrid Composite Debt 50:50 Index
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                         sifscan.com   3/5
+                                                                                                               qsif Hybrid Long-Short Fund
+
+
+
+
+PORTFOLIO ALLOCATION
+
+By Asset Type                                                                        Concentration
+
+
+                                                                                     Top 5 Holdings            48.6%
+
+    Equity 37.57%          Debt 27.62%          Cash 21.95%                          Top 10 Holdings           77.8%
+
+    Etf Invit 19.02%        Derivative 1.68%
+                                                                                     Top Sectors
+
+                                                                                     Other                     107.8%
+
+
+
+
+PORTFOLIO HOLDINGS (25 OF 26)
+
+As reported in the latest available disclosure.
+
+
+   #      SECURITY                                                    ISIN                            SECTOR                    % NAV
+
+
+   1      TREPS 01-Jun-2026 DEPO 10                                   INCBLO010626                    —                        17.08%
+
+   2      SIDBI CD 27-Oct-2026                                        INE556F16BN1                    —                          9.20%
+
+   3      Reliance Industries Limited                                 INE002A01018                    —                          7.52%
+
+   4      PTC India Limited                                           INE877F01012                    —                          7.50%
+
+   5      India Grid Trust (INVIT)                                    INE219X23014                    —                          7.33%
+
+   6      Bagmane Prime Office REIT                                   INE2OVN25015                    —                          6.55%
+
+   7      Muthoot Finance Ltd CP 08-Sep-2026                          INE414G14UT3                    —                          6.19%
+
+   8      6.28% GOI 14-July-2032                                      IN0020250059                    —                          6.14%
+
+   9      Bharti Airtel Limited                                       INE397D01024                    —                          5.38%
+
+   10     NCA-NET CURRENT ASSETS                                      —                               —                          4.87%
+
+   11     Indus Towers Limited                                        INE121J01017                    —                          3.13%
+
+   12     364 Days Treasury Bill 12-Nov-2026                          IN002025Z336                    —                          3.09%
+
+   13     Tech Mahindra Limited                                       INE669C01036                    —                          3.06%
+
+   14     364 Days Treasury Bill 06-May-2027                          IN002026Z052                    —                          3.00%
+
+   15     Samvardhana Motherson International Ltd                     INE775A01035                    —                          2.97%
+
+   16     Citius TransNet Investment Trust (INVIT)                    INE2Q7823014                    —                          2.69%
+
+   17     Raajmarg Infra Investment Trust (InvIT)                     INE2PB023011                    —                          2.46%
+
+   18     ICICI Bank Limited                                          INE090A01021                    —                          2.07%
+
+   19     Sonata Software Limited                                     INE269A01021                    —                          1.97%
+
+   20     Tata Chemicals Ltd                                          INE092A01019                    —                          1.84%
+
+   21     Adani Enterprises Limited 30/06/2026                        —                               —                          1.68%
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                              sifscan.com   4/5
+   22     Poly Medicure Limited                                       INE205C01021   —              1.11%
+
+   23     Adani Green Energy Limited                                  INE364U01010   —              1.03%
+
+   24     Laurus Labs Ltd 30/06/2026 (Short)                          —              —              -1.78%
+
+   25     BSE Ltd 30/06/2026 (Short)                                  —              —              -2.99%
+
+
+Showing top 25 of 26 holdings. Full portfolio at sifscan.com/funds/qsif-hybrid-long-short
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                  sifscan.com   4/5
+                                                                                                                                     qsif Hybrid Long-Short Fund
+
+
+
+
+      IM PORTANT DIS C L OS URE S
+
+      This document is generated by SIFscan (sifscan.com) for informational and research purposes only. It does not constitute investment advice, a solicitation,
+      or an offer to buy or sell any security. SIFscan scorecards are proprietary analytical tools and are not endorsed by SEBI, AMFI, or the fund manager.
+
+
+      Data is sourced from publicly available SEBI and AMFI disclosures. NAV, AUM, and portfolio data may not reflect the most recent disclosures. Past
+      performance and current data do not guarantee future results.
+
+
+      Specialised Investment Funds are SEBI-regulated vehicles with specific eligibility and risk requirements. Investors should consult a SEBI-registered
+      investment advisor before making any investment decision.
+
+
+
+
+                                                      Generated by SIFscan Research on 14 August 2026
+
+                                                                             sifscan.com
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                                       sifscan.com        5/5
+

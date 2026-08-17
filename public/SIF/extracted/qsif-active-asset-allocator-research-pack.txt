@@ -1,0 +1,247 @@
+                                   | Research                                                                                      14 August 2026
+
+
+
+
+FUND RESEARCH PACK
+
+
+
+
+qsif Active Asset Allocator Long-Short Fund
+Quant Mutual Fund
+Active Asset Allocator         ·      Active Asset Allocator Long-Short            ·     Since 21 Apr 2026
+
+
+
+
+L AT E S T N AV                               AUM                                         E X P E N S E R AT I O         MIN. INVESTMENT
+
+
+₹11.55
+as of 13 Aug 2026
+                                              ₹92     Cr
+                                              as of 30 Jun 2026
+                                                                                          2.43%
+                                                                                          Regular: 3.93%
+                                                                                                                         ₹10 L
+
+
+1M RETURN                            3M RETURN                               6M RETURN                       1Y RETURN        SINCE INCEPTION
+
+                                                                                                                              RETURN
++6.16%                               +13.45%                                 —                               —
+                                                                                                                              +14.76%
+
+
+INVESTMENT OBJECTIVE
+
+     Quant MF's 4th SIF scheme — an active asset allocator dynamically investing across equities, debt, derivatives, REITs/InvITs,
+     and commodities with up to 25% short exposure. Managed by Sanjeev Sharma. TER capped at 2%. NFO open April 2–16,
+     2026.
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                       sifscan.com   1/5
+                                                                                                          qsif Active Asset Allocator Long-Short Fund
+
+
+
+
+STRATEGY PARAMETERS
+
+
+Lock-in Period                                  No
+
+Redemption Frequency                            Twice-weekly
+
+Derivatives                                     Permitted
+
+Short Selling                                   Permitted
+
+Gross Exposure                                  —
+
+Net Exposure                                    —
+
+Risk Band                                       —
+
+Complexity                                      Very-high
+
+Benchmark                                       —
+
+
+Style & Risk Tags
+
+
+  Multi-asset        Active-allocation        Quant-driven          Commodities   High-risk   Derivatives-exposure
+
+
+
+
+ADDITIONAL NOTES
+
+Liquidity: Redemptions every Tuesday and Wednesday of the week (next business day if Tuesday/Wednesday is a non-business
+day). Subscriptions are accepted daily (business days only).
+
+Fees: Exit load 1% within 15 days
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                        sifscan.com    2/5
+                                                                                          qsif Active Asset Allocator Long-Short Fund
+
+
+
+
+NAV HISTORY
+
+
+    2026-07-14                                                                                                        2026-08-13
+
+
+
+
+    Low: ₹10.82                                                                                                      High: ₹11.61
+
+
+
+
+PERFORMANCE RETURNS
+
+
+   PERIOD                                                                                                                RETURN
+
+
+   1 Month                                                                                                                +6.16%
+
+   3 Months                                                                                                              +13.45%
+
+   6 Months                                                                                                                     —
+
+   1 Year                                                                                                                       —
+
+   Since Inception                                                                                                       +14.76%
+
+
+
+
+RISK PROFILE
+
+
+    SEBI RISK BAND                                                           COMPLEXITY
+
+
+    —                                                                        Very-high
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                        sifscan.com    3/5
+                                                                                                               qsif Active Asset Allocator Long-Short Fund
+
+
+
+
+PORTFOLIO ALLOCATION
+
+By Asset Type                                                                        Concentration
+
+
+                                                                                     Top 5 Holdings                          69.2%
+
+    Equity 49.03%          Cash 44.35%          Derivative 11.85%                    Top 10 Holdings                         95.3%
+
+    Debt 6.97%
+                                                                                     Top Sectors
+
+                                                                                     Other                                   112.2%
+
+
+
+
+PORTFOLIO HOLDINGS (21 OF 21)
+
+As reported in the latest available disclosure.
+
+
+   #      SECURITY                                                    ISIN                            SECTOR                                   % NAV
+
+
+   1      TREPS 01-Jun-2026 DEPO 10                                   INCBLO010626                    —                                        44.35%
+
+   2      Bharti Airtel Limited                                       INE397D01024                    —                                         6.34%
+
+   3      HDFC Life Insurance Co Ltd                                  INE795G01014                    —                                         6.29%
+
+   4      Adani Enterprises Limited 30/06/2026                        —                               —                                         6.16%
+
+   5      Reliance Industries Limited                                 INE002A01018                    —                                         6.09%
+
+   6      L&T Technology Services Limited                             INE010V01017                    —                                         5.71%
+
+   7      Indus Towers Limited 30/06/2026                             —                               —                                         5.69%
+
+   8      HFCL Limited                                                INE548A01028                    —                                         5.06%
+
+   9      Tech Mahindra Limited                                       INE669C01036                    —                                         4.92%
+
+   10     YES Bank Ltd.                                               INE528G01035                    —                                         4.67%
+
+   11     LIC Housing Finance Ltd                                     INE115A01026                    —                                         3.74%
+
+   12     Manappuram Finance Ltd                                      INE522D01027                    —                                         2.28%
+
+   13     Apollo Tyres Ltd                                            INE438A01022                    —                                         1.99%
+
+   14     Kaynes Technology India Limited                             INE918Z01012                    —                                         1.93%
+
+   15     91 Days Treasury Bill 23-Jul-2026                           IN002026X032                    —                                         1.55%
+
+   16     91 Days Treasury Bill 30-Jul-2026                           IN002026X040                    —                                         1.55%
+
+   17     91 Days Treasury Bill 06-Aug-2026                           IN002026X057                    —                                         1.55%
+
+   18     91 Days Treasury Bill 13-Aug-2026                           IN002026X065                    —                                         1.55%
+
+   19     91 Days Treasury Bill 28-Aug-2026                           IN002026X081                    —                                         0.77%
+
+   20     Hindalco Industries Limited 30/06/2026 (Short) —                                            —                                        -1.12%
+
+   21     NCA-NET CURRENT ASSETS                                      —                               —                                       -11.08%
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                             sifscan.com    4/5
+                                                                                                                    qsif Active Asset Allocator Long-Short Fund
+
+
+
+
+      IM PORTANT DIS C L OS URE S
+
+      This document is generated by SIFscan (sifscan.com) for informational and research purposes only. It does not constitute investment advice, a solicitation,
+      or an offer to buy or sell any security. SIFscan scorecards are proprietary analytical tools and are not endorsed by SEBI, AMFI, or the fund manager.
+
+
+      Data is sourced from publicly available SEBI and AMFI disclosures. NAV, AUM, and portfolio data may not reflect the most recent disclosures. Past
+      performance and current data do not guarantee future results.
+
+
+      Specialised Investment Funds are SEBI-regulated vehicles with specific eligibility and risk requirements. Investors should consult a SEBI-registered
+      investment advisor before making any investment decision.
+
+
+
+
+                                                      Generated by SIFscan Research on 14 August 2026
+
+                                                                             sifscan.com
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                                       sifscan.com        5/5
+

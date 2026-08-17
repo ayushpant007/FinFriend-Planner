@@ -1,0 +1,280 @@
+                                  | Research                                                                                      14 August 2026
+
+
+
+
+FUND RESEARCH PACK
+
+
+
+
+iSIF Equity Ex-Top 100 Long-Short Fund
+ICICI Prudential Mutual Fund
+Equity Ex Top100 Long Short             ·     Long-Short Equity Ex-Top 100           ·    Since 4 Feb 2026
+
+
+
+
+L AT E S T N AV                               AUM                                        E X P E N S E R AT I O         MIN. INVESTMENT
+
+
+₹10.48
+as of 13 Aug 2026
+                                              ₹1913         Cr
+                                              as of 30 Jun 2026
+                                                                                         1.50%
+                                                                                         Regular: 2.77%
+                                                                                                                        ₹10 L
+
+
+1M RETURN                            3M RETURN                               6M RETURN                      1Y RETURN        SINCE INCEPTION
+
+                                                                                                                             RETURN
++1.76%                               +4.63%                                  +3.79%                         —
+                                                                                                                             +4.10%
+
+
+INVESTMENT OBJECTIVE
+
+     ICICI Prudential's mid and small-cap SIF, focusing exclusively on the ex-top-100 universe. 65% to 100% in Ex-Top 100 stocks
+     with up to 25% unhedged short positions via derivatives. ICICI Pru's strong mid-small-cap research capability underpins
+     this fund.
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                      sifscan.com   1/5
+                                                                                                           iSIF Equity Ex-Top 100 Long-Short Fund
+
+
+
+
+STRATEGY PARAMETERS
+
+
+Lock-in Period                                  No
+
+Redemption Frequency                            Daily
+
+Derivatives                                     Permitted
+
+Short Selling                                   Permitted
+
+Gross Exposure                                  100% to 125%
+
+Net Exposure                                    40% to 100%
+
+Risk Band                                       —
+
+Complexity                                      High
+
+Benchmark                                       Nifty 500 TRI
+
+
+Style & Risk Tags
+
+
+  Equity-long-short         Mid-small-cap          Ex-top-100        Very-high-risk   Mid-small-cap-risk
+
+
+
+
+FUND MANAGEMENT
+
+
+   Sankaran Naren                                                                     Manan Tijoriwala
+   Fund Manager                                                                       Fund Manager
+
+
+
+
+   Divya Jain
+   Fund Manager
+
+
+
+
+ADDITIONAL NOTES
+
+Fees: Exit load 1% within 12 months; nil after 12 months
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                     sifscan.com   2/5
+                                                                                          iSIF Equity Ex-Top 100 Long-Short Fund
+
+
+
+
+NAV HISTORY
+
+
+    2026-06-10                                                                                                    2026-08-13
+
+
+
+
+    Low: ₹9.72                                                                                                  High: ₹10.52
+
+
+
+
+PERFORMANCE RETURNS
+
+
+   PERIOD                                                                                                           RETURN
+
+
+   1 Month                                                                                                           +1.76%
+
+   3 Months                                                                                                          +4.63%
+
+   6 Months                                                                                                          +3.79%
+
+   1 Year                                                                                                                   —
+
+   Since Inception                                                                                                   +4.10%
+
+
+
+
+RISK PROFILE
+
+
+    SEBI RISK BAND                                                           COMPLEXITY
+
+
+    —                                                                        High
+
+
+    BENCHMARK
+
+    Nifty 500 TRI
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                    sifscan.com   3/5
+                                                                                                               iSIF Equity Ex-Top 100 Long-Short Fund
+
+
+
+
+PORTFOLIO ALLOCATION
+
+By Asset Type                                                                        Concentration
+
+
+                                                                                     Top 5 Holdings                      28.6%
+
+    Equity 76.03%          Cash 20.92%          Debt 1.46%                           Top 10 Holdings                     38.9%
+
+
+                                                                                     Top Sectors
+
+                                                                                     Other                               98.4%
+
+
+
+
+PORTFOLIO HOLDINGS (25 OF 115)
+
+As reported in the latest available disclosure.
+
+
+   #      SECURITY                                                    ISIN                            SECTOR                               % NAV
+
+
+   1      TREPS                                                       —                               —                                   18.46%
+
+   2      Info Edge (India) Ltd.                                      INE663F01032                    —                                    2.69%
+
+   3      Marico Ltd.                                                 INE196A01026                    —                                    2.57%
+
+   4      Cash Margin - Derivatives                                   —                               —                                    2.46%
+
+   5      LIC Housing Finance Ltd.                                    INE115A01026                    —                                    2.45%
+
+   6      Shree Cements Ltd.                                          INE070A01015                    —                                    2.26%
+
+   7      Mahindra & Mahindra Ltd.                                    INE101A01026                    —                                    2.13%
+
+   8      ICICI Lombard General Insurance Company Ltd. INE765G01017                                   —                                    1.97%
+
+   9      UPL Ltd.                                                    INE628A01036                    —                                    1.97%
+
+   10     HDFC Bank Ltd.                                              INE040A01034                    —                                    1.96%
+
+   11     Bharti Hexacom Ltd.                                         INE343G01021                    —                                    1.86%
+
+   12     Rural Electrification Corporation Ltd.                      INE020B01018                    —                                    1.70%
+
+   13     ICICI Prudential Life Insurance Company Ltd.                INE726G01019                    —                                    1.54%
+
+   14     Blue Star Ltd.                                              INE472A01039                    —                                    1.54%
+
+   15     Medplus Health Services Ltd                                 INE804L01022                    —                                    1.53%
+
+   16     Indian Railway Catering and Tourism CorporationINE335Y01020                                 —                                    1.47%
+          Ltd.
+
+   17     SBI Cards & Payment Services Ltd.                           INE018E01016                    —                                    1.44%
+
+   18     Jindal Stainless Ltd.                                       INE220G01021                    —                                    1.37%
+
+   19     The Phoenix Mills Ltd.                                      INE211B01039                    —                                    1.29%
+
+   20     Colgate - Palmolive (India) Ltd.                            INE259A01022                    —                                    1.25%
+
+   21     Mphasis Ltd.                                                INE356A01018                    —                                    1.24%
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                         sifscan.com   4/5
+   22     Havells India Ltd.                                          INE176B01034   —                         1.20%
+
+   23     HDB Financial Services Ltd.                                 INE756I01012   —                         1.19%
+
+   24     Maruti Suzuki India Ltd.                                    INE585B01010   —                         1.17%
+
+   25     Biocon Ltd.                                                 INE376G01013   —                         1.15%
+
+
+Showing top 25 of 115 holdings. Full portfolio at sifscan.com/funds/isif-equity-ex-top100-long-short
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                             sifscan.com   4/5
+                                                                                                                        iSIF Equity Ex-Top 100 Long-Short Fund
+
+
+
+
+      IM PORTANT DIS C L OS URE S
+
+      This document is generated by SIFscan (sifscan.com) for informational and research purposes only. It does not constitute investment advice, a solicitation,
+      or an offer to buy or sell any security. SIFscan scorecards are proprietary analytical tools and are not endorsed by SEBI, AMFI, or the fund manager.
+
+
+      Data is sourced from publicly available SEBI and AMFI disclosures. NAV, AUM, and portfolio data may not reflect the most recent disclosures. Past
+      performance and current data do not guarantee future results.
+
+
+      Specialised Investment Funds are SEBI-regulated vehicles with specific eligibility and risk requirements. Investors should consult a SEBI-registered
+      investment advisor before making any investment decision.
+
+
+
+
+                                                      Generated by SIFscan Research on 14 August 2026
+
+                                                                             sifscan.com
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                                       sifscan.com        5/5
+

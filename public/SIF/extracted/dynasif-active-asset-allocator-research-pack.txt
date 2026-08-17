@@ -1,0 +1,283 @@
+                                   | Research                                                                                      14 August 2026
+
+
+
+
+FUND RESEARCH PACK
+
+
+
+
+DynaSIF Active Asset Allocator Long-Short Fund
+360 ONE Mutual Fund
+Active Asset Allocator         ·      Active Asset Allocator Long-Short            ·     Since 25 Mar 2026
+
+
+
+
+L AT E S T N AV                               AUM                                         E X P E N S E R AT I O         MIN. INVESTMENT
+
+
+₹10.55
+as of 12 Aug 2026
+                                              —                                           1.63%
+                                                                                          Regular: 2.92%
+                                                                                                                         ₹10 L
+
+
+1M RETURN                            3M RETURN                               6M RETURN                       1Y RETURN        SINCE INCEPTION
+
+                                                                                                                              RETURN
++0.71%                               +3.61%                                  —                               —
+                                                                                                                              +4.81%
+
+
+INVESTMENT OBJECTIVE
+
+     An active asset allocator SIF from 360 ONE. Dynamically allocates across equity, debt, commodities, and InvITs. Combines
+     long-short, options, arbitrage, and commodity hedges in a single structure. Three specialist managers: Harsh Agarwal
+     (strategy/equity), Milan Mody (debt), Rahul Khetawat (commodities). Truly multi-asset in the most comprehensive sense.
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                       sifscan.com   1/5
+                                                                                                        DynaSIF Active Asset Allocator Long-Short Fund
+
+
+
+
+STRATEGY PARAMETERS
+
+
+Lock-in Period                                  No
+
+Redemption Frequency                            Interval
+
+Derivatives                                     Permitted
+
+Short Selling                                   Permitted
+
+Gross Exposure                                  —
+
+Net Exposure                                    —
+
+Risk Band                                       —
+
+Complexity                                      Very-high
+
+Benchmark                                       25% BSE SENSEX TRI + 60% CRISIL ST Bond + 15% iCOMDEX
+
+
+Style & Risk Tags
+
+
+  Multi-asset        Active-allocation        Commodities           Invits   Options-strategy   High-risk    Derivatives-exposure
+
+
+  Commodities-risk
+
+
+
+
+FUND MANAGEMENT
+
+
+   Harsh Agarwal                                                                     Milan Mody
+   Fund Manager                                                                      Fund Manager for Debt Portion
+
+
+
+
+   Rahul Khetawat
+   Fund Manager for Commodity Portion
+
+
+
+
+ADDITIONAL NOTES
+
+Fees: Exit load 0.5% within 3 months
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                          sifscan.com   2/5
+                                                                                          DynaSIF Active Asset Allocator Long-Short Fund
+
+
+
+
+NAV HISTORY
+
+
+    2026-07-13                                                                                                            2026-08-12
+
+
+
+
+    Low: ₹10.35                                                                                                          High: ₹10.55
+
+
+
+
+PERFORMANCE RETURNS
+
+
+   PERIOD                                                                                                                   RETURN
+
+
+   1 Month                                                                                                                    +0.71%
+
+   3 Months                                                                                                                   +3.61%
+
+   6 Months                                                                                                                         —
+
+   1 Year                                                                                                                           —
+
+   Since Inception                                                                                                            +4.81%
+
+
+
+
+RISK PROFILE
+
+
+    SEBI RISK BAND                                                           COMPLEXITY
+
+
+    —                                                                        Very-high
+
+
+    BENCHMARK
+
+    25% BSE SENSEX TRI + 60% CRISIL ST Bond + 15%
+    iCOMDEX
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                            sifscan.com   3/5
+                                                                                                          DynaSIF Active Asset Allocator Long-Short Fund
+
+
+
+
+PORTFOLIO ALLOCATION
+
+By Asset Type                                                                        Concentration
+
+
+                                                                                     Top 5 Holdings                         41.4%
+
+    Debt 42.05%          Cash 26.07%           Equity 23.77%                         Top 10 Holdings                        60.6%
+
+    Etf Invit 13.00%        Futures 7.67%
+                                                                                     Top Sectors
+
+                                                                                     Other                                  112.6%
+
+
+
+
+PORTFOLIO HOLDINGS (25 OF 65)
+
+As reported in the latest available disclosure.
+
+
+   #      SECURITY                                                    ISIN                            SECTOR                                  % NAV
+
+
+   1      Net Receivables / (Payables)                                —                               —                                      14.25%
+
+   2      TREPS                                                       —                               —                                      11.82%
+
+   3      9% Piramal Finance Limited (28/06/2027) **                  INE202B07JT0                    —                                       5.14%
+
+   4      364 Days Tbill (MD 25/06/2026)                              IN002025Z138                    —                                       5.12%
+
+   5      9.1% SK Finance Limited (09/10/2028) **                     INE124N07770                    —                                       5.09%
+
+   6      8.95% Vedanta Limited (16/03/2029) **                       INE205A08095                    —                                       5.09%
+
+   7      ICICI Prudential Gold ETF                                   INF109KC1NT3                    —                                       4.11%
+
+   8      Gold                                                        —                               —                                       4.02%
+
+   9      Bank Nifty Index June 2026 Future                           —                               —                                       3.38%
+
+   10     8.6% Cholamandalam Investment and Finance                   INE121A07RY7                    —                                       2.58%
+          Company Ltd (15/03/2029) **
+
+   11     8.6% Cholamandalam Investment and Finance                   INE121A07RX9                    —                                       2.58%
+          Company Ltd (05/03/2029) **
+
+   12     8.25% Poonawalla Fincorp Limited (11/05/2028) INE511C07AA1                                  —                                       2.56%
+          **
+
+   13     364 Days Tbill (MD 16/07/2026)                              IN002025Z161                    —                                       2.55%
+
+   14     7.58% State Government Securities (11/02/2037) IN3120250714                                 —                                       2.54%
+
+   15     7.48% State Government Securities (04/09/2037) IN1920250280                                 —                                       2.52%
+
+   16     6.01% Government of India (21/07/2030)                      IN0020250067                    —                                       2.51%
+
+   17     6.48% Government of India (06/10/2035)                      IN0020250091                    —                                       2.48%
+
+   18     GOLDTEN                                                     —                               —                                       1.63%
+
+   19     Embassy Office Parks REIT                                   INE041025011                    —                                       1.62%
+
+   20     SILVER                                                      —                               —                                       1.61%
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                            sifscan.com   4/5
+   21     Bharti Airtel Limited                                       INE397D01024   —                      1.41%
+
+   22     Adani Ports and Special Economic Zone Limited INE742F01042                 —                      1.39%
+
+   23     Maruti Suzuki India Limited June 2026 Future                —              —                      1.36%
+
+   24     Tata Steel Limited                                          INE081A01020   —                      1.34%
+
+   25     6.36% Government of India (16/02/2031)                      IN0020250141   —                      1.27%
+
+
+Showing top 25 of 65 holdings. Full portfolio at sifscan.com/funds/dynasif-active-asset-allocator
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                          sifscan.com   4/5
+                                                                                                              DynaSIF Active Asset Allocator Long-Short Fund
+
+
+
+
+      IM PORTANT DIS C L OS URE S
+
+      This document is generated by SIFscan (sifscan.com) for informational and research purposes only. It does not constitute investment advice, a solicitation,
+      or an offer to buy or sell any security. SIFscan scorecards are proprietary analytical tools and are not endorsed by SEBI, AMFI, or the fund manager.
+
+
+      Data is sourced from publicly available SEBI and AMFI disclosures. NAV, AUM, and portfolio data may not reflect the most recent disclosures. Past
+      performance and current data do not guarantee future results.
+
+
+      Specialised Investment Funds are SEBI-regulated vehicles with specific eligibility and risk requirements. Investors should consult a SEBI-registered
+      investment advisor before making any investment decision.
+
+
+
+
+                                                      Generated by SIFscan Research on 14 August 2026
+
+                                                                             sifscan.com
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                                       sifscan.com        5/5
+

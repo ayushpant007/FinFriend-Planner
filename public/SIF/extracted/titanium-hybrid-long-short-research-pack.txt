@@ -1,0 +1,281 @@
+                                  | Research                                                                                      14 August 2026
+
+
+
+
+FUND RESEARCH PACK
+
+
+
+
+Titanium Hybrid Long-Short Fund
+Tata Mutual Fund
+Hybrid Long Short           ·     Hybrid Long-Short           ·     Since 17 Dec 2025
+
+
+
+
+L AT E S T N AV                               AUM                                        E X P E N S E R AT I O         MIN. INVESTMENT
+
+
+₹10.29
+as of 13 Aug 2026
+                                              ₹572       Cr
+                                              as of 30 Jun 2026
+                                                                                         1.02%
+                                                                                         Regular: 2.73%
+                                                                                                                        ₹10 L
+
+
+1M RETURN                            3M RETURN                               6M RETURN                      1Y RETURN        SINCE INCEPTION
+
+                                                                                                                             RETURN
++1.93%                               +3.87%                                  +1.68%                         —
+                                                                                                                             +2.85%
+
+
+INVESTMENT OBJECTIVE
+
+     A hybrid long-short fund from Tata AMC with dynamic net equity range from -25% to +75%. The fund can aggressively
+     reduce equity exposure or go short in bearish environments while remaining fully invested in bull markets. Risk Band Level
+     5 (Very High). Monthly redemption window only — suited for investors comfortable with lower liquidity.
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                      sifscan.com   1/5
+                                                                                                                       Titanium Hybrid Long-Short Fund
+
+
+
+
+STRATEGY PARAMETERS
+
+
+Lock-in Period                                  No
+
+Redemption Frequency                            Monthly
+
+Derivatives                                     Permitted
+
+Short Selling                                   Permitted
+
+Gross Exposure                                  —
+
+Net Exposure                                    —
+
+Risk Band                                       —
+
+Complexity                                      Very-high
+
+Benchmark                                       CRISIL Hybrid 50+50 Moderate Index
+
+
+Style & Risk Tags
+
+
+  Hybrid        Tactical-allocation        Monthly-liquidity        Very-high-risk   Liquidity-risk   Derivatives-exposure
+
+
+
+
+FUND MANAGEMENT
+
+
+   Suraj Nanda                                                                       Amit Somani
+   Fund Manager                                                                      Fund Manager
+
+
+
+
+   Hasmukh Devji Vishariya
+   Fund Manager
+
+
+
+
+ADDITIONAL NOTES
+
+Liquidity: Redemptions only on first business day of each month; subscriptions on any working day
+
+Fees: Exit load 1% within 1 year
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                           sifscan.com   2/5
+                                                                                          Titanium Hybrid Long-Short Fund
+
+
+
+
+NAV HISTORY
+
+
+    2026-07-24                                                                                             2026-08-13
+
+
+
+
+    Low: ₹10.05                                                                                           High: ₹10.34
+
+
+
+
+PERFORMANCE RETURNS
+
+
+   PERIOD                                                                                                     RETURN
+
+
+   1 Month                                                                                                     +1.93%
+
+   3 Months                                                                                                    +3.87%
+
+   6 Months                                                                                                    +1.68%
+
+   1 Year                                                                                                             —
+
+   Since Inception                                                                                             +2.85%
+
+
+
+
+RISK PROFILE
+
+
+    SEBI RISK BAND                                                           COMPLEXITY
+
+
+    —                                                                        Very-high
+
+
+    BENCHMARK
+
+    CRISIL Hybrid 50+50 Moderate Index
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                              sifscan.com   3/5
+                                                                                                               Titanium Hybrid Long-Short Fund
+
+
+
+
+PORTFOLIO ALLOCATION
+
+By Asset Type                                                                        Concentration
+
+
+                                                                                     Top 5 Holdings                22.3%
+
+    Equity 48.37%          Debt 18.07%          Derivative 11.19%                    Top 10 Holdings               37.7%
+
+    Cash 8.54%          Etf Invit 3.16%
+                                                                                     Top Sectors
+
+                                                                                     Other                         89.3%
+
+
+
+
+PORTFOLIO HOLDINGS (25 OF 85)
+
+As reported in the latest available disclosure.
+
+
+   #      SECURITY                                                    ISIN                            SECTOR                         % NAV
+
+
+   1      Net Current Assets                                          —                               —                              5.12%
+
+   2      TREASURY BILL 91 DAYS (30/07/2026)                          IN002026X040                    —                              4.52%
+
+   3      TREASURY BILL 91 DAYS (06/08/2026)                          IN002026X057                    —                              4.51%
+
+   4      ICICI BANK LTD.                                             INE090A01021                    —                              4.12%
+
+   5      HDFC BANK LTD.                                              INE040A01034                    —                              4.00%
+
+   6      TREASURY BILL 91 DAYS (20/08/2026)                          IN002026X073                    —                              3.60%
+
+   7      D) Repo                                                     —                               —                              3.42%
+
+   8      MAHINDRA & MAHINDRA LTD.                                    INE101A01026                    —                              3.05%
+
+   9      LARSEN & TOUBRO LTD.                                        INE018A01030                    —                              2.67%
+
+   10     BHARTI AIRTEL LTD.                                          INE397D01024                    —                              2.67%
+
+   11     RELIANCE INDUSTRIES LTD.                                    INE002A01018                    —                              2.29%
+
+   12     Goi - 7.02% (18/06/2031)                                    IN0020240076                    —                              1.83%
+
+   13     TREASURY BILL 182 DAYS (11/06/2026)                         IN002025Y370                    —                              1.82%
+
+   14     Sgs Madhya Pradesh 7.63% (04/03/2041)                       IN2120250468                    —                              1.79%
+
+   15     SUN PHARMACEUTICAL INDUSTRIES LTD.                          INE044A01036                    —                              1.67%
+
+   16     AXIS BANK LTD.                                              INE238A01034                    —                              1.52%
+
+   17     TATA COMMUNICATIONS LTD.                                    INE151A01013                    —                              1.43%
+
+   18     STATE BANK OF INDIA                                         INE062A01020                    —                              1.41%
+
+   19     LIFE INSURANCE CORPORATION OF INDIA                         INE0J1Y01017                    —                              1.35%
+
+   20     OMNITECH ENGINEERING LTD                                    INE0UH301010                    —                              1.31%
+
+   21     NTPC Ltd.                                                   INE733E01010                    —                              1.27%
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                   sifscan.com   4/5
+   22     EMBASSY OFFICE PARKS REIT                                   INE041025011   —                  1.17%
+
+   23     BROOKFIELD INDIA REAL ESTATE TRUST                          INE0FDU25010   —                  1.16%
+
+   24     ITC LTD.                                                    INE154A01025   —                  1.15%
+
+   25     AMBUJA CEMENTS LTD.                                         INE079A01024   —                  1.09%
+
+
+Showing top 25 of 85 holdings. Full portfolio at sifscan.com/funds/titanium-hybrid-long-short
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                      sifscan.com   4/5
+                                                                                                                               Titanium Hybrid Long-Short Fund
+
+
+
+
+      IM PORTANT DIS C L OS URE S
+
+      This document is generated by SIFscan (sifscan.com) for informational and research purposes only. It does not constitute investment advice, a solicitation,
+      or an offer to buy or sell any security. SIFscan scorecards are proprietary analytical tools and are not endorsed by SEBI, AMFI, or the fund manager.
+
+
+      Data is sourced from publicly available SEBI and AMFI disclosures. NAV, AUM, and portfolio data may not reflect the most recent disclosures. Past
+      performance and current data do not guarantee future results.
+
+
+      Specialised Investment Funds are SEBI-regulated vehicles with specific eligibility and risk requirements. Investors should consult a SEBI-registered
+      investment advisor before making any investment decision.
+
+
+
+
+                                                      Generated by SIFscan Research on 14 August 2026
+
+                                                                             sifscan.com
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                                       sifscan.com        5/5
+

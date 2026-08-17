@@ -1,0 +1,285 @@
+                                  | Research                                                                                      14 August 2026
+
+
+
+
+FUND RESEARCH PACK
+
+
+
+
+qsif Equity Long-Short Fund
+Quant Mutual Fund
+Equity Long Short          ·     Long-Short Equity           ·     Since 7 Oct 2025
+
+
+
+
+L AT E S T N AV                               AUM                                        E X P E N S E R AT I O         MIN. INVESTMENT
+
+
+₹11.23
+as of 13 Aug 2026
+                                              ₹625       Cr
+                                              as of 30 Jun 2026
+                                                                                         3.08%
+                                                                                         Regular: 4.45%
+                                                                                                                        ₹10 L
+
+
+1M RETURN                            3M RETURN                               6M RETURN                      1Y RETURN        SINCE INCEPTION
+
+                                                                                                                             RETURN
++1.54%                               +9.59%                                  +11.81%                        —
+                                                                                                                             +10.85%
+
+
+INVESTMENT OBJECTIVE
+
+     An open-ended equity fund that takes long positions in high-conviction ideas and up to 25% unhedged short exposure via
+     derivatives. The fund uses Quant's VLRT (Valuation, Liquidity, Risk, Timing) framework to identify alpha opportunities across
+     the full market-cap spectrum.
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                      sifscan.com   1/5
+                                                                                                                  qsif Equity Long-Short Fund
+
+
+
+
+STRATEGY PARAMETERS
+
+
+Lock-in Period                                  No
+
+Redemption Frequency                            Daily
+
+Derivatives                                     Permitted
+
+Short Selling                                   Permitted
+
+Gross Exposure                                  100% to 125%
+
+Net Exposure                                    0% to +100%
+
+Risk Band                                       Level 3 / 5
+
+Complexity                                      High
+
+Benchmark                                       Nifty 500 TRI
+
+
+Style & Risk Tags
+
+
+  Long-short         Flexi-cap       Derivatives        Quant-driven         High-risk     Derivatives-exposure
+
+
+
+
+FUND MANAGEMENT
+
+
+   Sandeep Tandon                                                                        Lokesh Garg
+   Fund Manager                                                                          Fund Manager
+
+
+
+
+   Ankit Pande                                                                           Sameer Kate
+   Fund Manager                                                                          Fund Manager
+
+
+
+
+   Sanjeev Sharma
+   Fund Manager
+
+
+
+
+ADDITIONAL NOTES
+
+Fees: Exit load 1% within 15 days
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                 sifscan.com   2/5
+                                                                                          qsif Equity Long-Short Fund
+
+
+
+
+NAV HISTORY
+
+
+    2026-07-14                                                                                         2026-08-13
+
+
+
+
+    Low: ₹10.80                                                                                      High: ₹11.26
+
+
+
+
+PERFORMANCE RETURNS
+
+
+   PERIOD                                                                                                RETURN
+
+
+   1 Month                                                                                                +1.54%
+
+   3 Months                                                                                               +9.59%
+
+   6 Months                                                                                              +11.81%
+
+   1 Year                                                                                                        —
+
+   Since Inception                                                                                       +10.85%
+
+
+
+
+RISK PROFILE
+
+
+    SEBI RISK BAND                                                           COMPLEXITY
+
+
+    Level 3 / 5                                                              High
+
+
+    BENCHMARK
+
+    Nifty 500 TRI
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                         sifscan.com   3/5
+                                                                                                               qsif Equity Long-Short Fund
+
+
+
+
+PORTFOLIO ALLOCATION
+
+By Asset Type                                                                        Concentration
+
+
+                                                                                     Top 5 Holdings            45.2%
+
+    Equity 74.53%          Cash 16.31%          Derivative 9.65%                     Top 10 Holdings           70.6%
+
+    Debt 7.37%
+                                                                                     Top Sectors
+
+                                                                                     Other                     107.9%
+
+
+
+
+PORTFOLIO HOLDINGS (25 OF 35)
+
+As reported in the latest available disclosure.
+
+
+   #      SECURITY                                                    ISIN                            SECTOR                    % NAV
+
+
+   1      TREPS 01-Jun-2026 DEPO 10                                   INCBLO010626                    —                        15.64%
+
+   2      Bharti Airtel Limited                                       INE397D01024                    —                         8.66%
+
+   3      Reliance Industries Limited                                 INE002A01018                    —                         7.86%
+
+   4      Adani Enterprises Limited 30/06/2026                        —                               —                         6.64%
+
+   5      Indus Towers Limited                                        INE121J01017                    —                         6.36%
+
+   6      Tech Mahindra Limited                                       INE669C01036                    —                         6.27%
+
+   7      YES Bank Ltd.                                               INE528G01035                    —                         6.01%
+
+   8      Manappuram Finance Ltd                                      INE522D01027                    —                         5.97%
+
+   9      Adani Wilmar Limited                                        INE699H01024                    —                         3.73%
+
+   10     AU Small Finance Bank Ltd                                   INE949L01017                    —                         3.47%
+
+   11     Capri Global Capital Limited                                INE180C01042                    —                         3.33%
+
+   12     Samvardhana Motherson International Ltd                     INE775A01035                    —                         3.07%
+
+   13     Indus Towers Limited 30/06/2026                             —                               —                         3.01%
+
+   14     Sona BLW Precision Forgings Limited                         INE073K01018                    —                         2.98%
+
+   15     Tata Chemicals Ltd                                          INE092A01019                    —                         2.72%
+
+   16     ICICI Bank Limited                                          INE090A01021                    —                         2.52%
+
+   17     Aurobindo Pharma Limited                                    INE406A01037                    —                         2.35%
+
+   18     INOX INDIA LIMITED                                          INE616N01034                    —                         2.23%
+
+   19     PTC India Limited                                           INE877F01012                    —                         1.98%
+
+   20     Adani Green Energy Limited                                  INE364U01010                    —                         1.84%
+
+   21     UNITED BREWERIES LIMITED                                    INE686F01025                    —                         1.68%
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                              sifscan.com   4/5
+   22     Dixon Technologies (India) Ltd.                             INE935N01020   —              1.46%
+
+   23     91 Days Treasury Bill 04-Jun-2026                           IN002025X489   —              0.84%
+
+   24     91 Days Treasury Bill 11-Jun-2026                           IN002025X497   —              0.84%
+
+   25     91 Days Treasury Bill 16-Jul-2026                           IN002026X024   —              0.84%
+
+
+Showing top 25 of 35 holdings. Full portfolio at sifscan.com/funds/qsif-equity-long-short
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                  sifscan.com   4/5
+                                                                                                                                      qsif Equity Long-Short Fund
+
+
+
+
+      IM PORTANT DIS C L OS URE S
+
+      This document is generated by SIFscan (sifscan.com) for informational and research purposes only. It does not constitute investment advice, a solicitation,
+      or an offer to buy or sell any security. SIFscan scorecards are proprietary analytical tools and are not endorsed by SEBI, AMFI, or the fund manager.
+
+
+      Data is sourced from publicly available SEBI and AMFI disclosures. NAV, AUM, and portfolio data may not reflect the most recent disclosures. Past
+      performance and current data do not guarantee future results.
+
+
+      Specialised Investment Funds are SEBI-regulated vehicles with specific eligibility and risk requirements. Investors should consult a SEBI-registered
+      investment advisor before making any investment decision.
+
+
+
+
+                                                      Generated by SIFscan Research on 14 August 2026
+
+                                                                             sifscan.com
+
+
+
+
+SIFscan Research · For informational purposes only · Not investment advice                                                                       sifscan.com        5/5
+

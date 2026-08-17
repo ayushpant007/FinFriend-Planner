@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { NextRequest, NextResponse } from "next/server";
@@ -22,13 +23,28 @@ export async function GET(request: NextRequest) {
   }
 
   const pdfPath = path.join(process.cwd(), "public", "SIF", product.fileName);
+  const extractedTextPath = path.join(
+    process.cwd(),
+    "public",
+    "SIF",
+    "extracted",
+    `${product.fileName}.txt`,
+  );
 
   try {
-    const { stdout } = await execFileAsync("pdftotext", [pdfPath, "-"], {
-      encoding: "utf8",
-      maxBuffer: 10 * 1024 * 1024,
-    });
-    return NextResponse.json(parseSifPdf(stdout, product, product.fileName));
+    let extractedText: string;
+    try {
+      extractedText = await readFile(extractedTextPath, "utf8");
+    } catch {
+      // Keep local development usable for a newly added pack before its
+      // checked-in text companion has been generated.
+      const { stdout } = await execFileAsync("pdftotext", [pdfPath, "-"], {
+        encoding: "utf8",
+        maxBuffer: 10 * 1024 * 1024,
+      });
+      extractedText = stdout;
+    }
+    return NextResponse.json(parseSifPdf(extractedText, product, product.fileName));
   } catch (error) {
     console.error("[SIF report] Could not read selected research pack", {
       product: product.label,

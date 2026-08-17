@@ -1,3 +1,3 @@
 - [NAV row integrity](nav-row-integrity.md) — NAV must use the selected fund row's scheme code and reject provider responses for a different scheme or plan.
-- [SIF PDF extraction](sif-pdf-extraction.md) — Use the server's pdftotext utility for local SIF research packs to keep Next builds lightweight.
+- [SIF PDF extraction](sif-pdf-extraction.md) — Pre-extract SIF PDFs into checked-in text assets because published autoscale runtimes lack pdftotext.
 - [PMS source availability](pms-source-availability.md) — CSV URL mappings can resolve to PMS pages that later return 404/timeout; surface upstream status and keep a direct-source fallback.
