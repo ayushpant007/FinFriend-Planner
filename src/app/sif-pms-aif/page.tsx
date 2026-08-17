@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FileText, Plus, Trash2 } from "lucide-react";
+import { FileText, LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,14 +19,45 @@ type InvestmentSelection = {
   investment: string;
 };
 
+type PmsOption = {
+  name: string;
+  url: string;
+  category: string;
+};
+
 export default function SifPmsAifPage() {
   const router = useRouter();
+  const [pmsOptions, setPmsOptions] = useState<PmsOption[]>([]);
+  const [pmsLoading, setPmsLoading] = useState(true);
+  const [pmsError, setPmsError] = useState("");
   const [selections, setSelections] = useState<InvestmentSelection[]>([
     { category: "", investment: "" },
   ]);
   const hasCompleteSelection = selections.some(
     (selection) => selection.category && selection.investment,
   );
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/pms-master-list")
+      .then(async (response) => {
+        if (!response.ok) throw new Error("PMS master list unavailable");
+        return response.json() as Promise<{ entries?: PmsOption[] }>;
+      })
+      .then((payload) => {
+        if (!active) return;
+        setPmsOptions(Array.isArray(payload.entries) ? payload.entries : []);
+      })
+      .catch(() => {
+        if (active) setPmsError("We could not load the PMS master list.");
+      })
+      .finally(() => {
+        if (active) setPmsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <main className="min-h-screen">
@@ -152,7 +183,7 @@ export default function SifPmsAifPage() {
                           </Select>
                         </div>
 
-                        {selection.category && (
+                         {selection.category && (
                           <div className="space-y-2">
                             <label
                               htmlFor={`investment-selection-${index}`}
@@ -161,6 +192,7 @@ export default function SifPmsAifPage() {
                               {categoryLabel}
                             </label>
                             <Select
+                               disabled={selection.category === "PMS" && (pmsLoading || pmsOptions.length === 0)}
                               value={selection.investment}
                               onValueChange={(value) =>
                                 setSelections((current) =>
@@ -175,17 +207,36 @@ export default function SifPmsAifPage() {
                               <SelectTrigger
                                 id={`investment-selection-${index}`}
                                 aria-label={categoryLabel}
+                                 className="w-full"
                               >
-                                <SelectValue placeholder={categoryLabel} />
+                                 <SelectValue
+                                   placeholder={
+                                     selection.category === "PMS" && pmsLoading
+                                       ? "Loading PMS names…"
+                                       : categoryLabel
+                                   }
+                                 />
                               </SelectTrigger>
-                              <SelectContent>
-                                {investmentOptions[selection.category].map((option) => (
-                                  <SelectItem key={option.label} value={option.label}>
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
+                               <SelectContent className="max-h-[min(60vh,460px)]">
+                                 {selection.category === "PMS"
+                                   ? pmsOptions.map((option) => (
+                                       <SelectItem key={option.name} value={option.name}>
+                                         {option.name}
+                                       </SelectItem>
+                                     ))
+                                   : investmentOptions[selection.category].map((option) => (
+                                       <SelectItem key={option.label} value={option.label}>
+                                         {option.label}
+                                       </SelectItem>
+                                     ))}
                               </SelectContent>
                             </Select>
+                             {selection.category === "PMS" && (
+                               <p className={`flex items-center gap-1.5 text-xs ${pmsError ? "text-red-600" : "text-slate-500"}`}>
+                                 {pmsLoading && <LoaderCircle className="h-3.5 w-3.5 animate-spin" />}
+                                 {pmsError || (pmsLoading ? "Loading names from the uploaded PMS master list…" : `${pmsOptions.length} PMS strategies from the uploaded PMS AIF World list`)}
+                               </p>
+                             )}
                           </div>
                         )}
                       </div>

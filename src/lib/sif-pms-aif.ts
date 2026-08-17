@@ -42,28 +42,10 @@ const sifProducts: InvestmentProduct[] = [
 
 export const investmentOptions: Record<InvestmentCategory, InvestmentProduct[]> = {
   SIF: sifProducts,
-  PMS: [
-    {
-      label: "ICICI Prudential Emerging Leaders PMS",
-      fileName: "ICICI Prudential PMS Emerging Leaders Strategy.txt",
-    },
-    {
-      label: "Abakkus Emerging Opportunities PMS",
-      fileName: "Abakkus Emerging Opportunities Approach.txt",
-    },
-    {
-      label: "Helios India Rising Portfolio",
-      fileName: "Helios India Rising PMS.txt",
-    },
-    {
-      label: "Motilal Oswal Founders Strategy PMS",
-      fileName: "Motilal Oswal Founders Portfolio.txt",
-    },
-    {
-      label: "ABSL Select Sector Portfolio PMS",
-      fileName: "Aditya Birla Sun Life AMC Select Sector Portfolio.txt",
-    },
-  ],
+  // PMS selections are loaded from the uploaded PMS AIF World master CSV by
+  // the selection page. This prevents the legacy local PMS templates from
+  // being used as report sources.
+  PMS: [],
   AIF: [
     {
       label: "ICICI Prudential Emerging Leaders Fund — Series III",

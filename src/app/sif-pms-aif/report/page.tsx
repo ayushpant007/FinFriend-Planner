@@ -10,7 +10,9 @@ import {
   CheckCircle2,
   ChevronRight,
   Download,
+  ExternalLink,
   FileText,
+  Globe2,
   Info,
   Landmark,
   LineChart,
@@ -610,6 +612,143 @@ function SifResearchReport({
   );
 }
 
+function PmsSourceReport({
+  data,
+  productName,
+  router,
+}: {
+  data: JsonRecord;
+  productName: string;
+  router: ReturnType<typeof useRouter>;
+}) {
+  const sourceUrl = String(data.sourceUrl ?? "");
+  const title = String(data.title ?? productName);
+  const description = String(data.description ?? "");
+  const headings = asList(data.headings).filter((item): item is string => typeof item === "string");
+  const paragraphs = asList(data.paragraphs).filter((item): item is string => typeof item === "string");
+  const tables = asList(data.tables)
+    .filter(Array.isArray)
+    .map((table) =>
+      table
+        .filter(Array.isArray)
+        .map((row) => row.filter((cell): cell is string => typeof cell === "string")),
+    )
+    .filter((table) => table.length > 0);
+  const fetchedAt = data.fetchedAt ? formatDate(data.fetchedAt) : "Just now";
+
+  return (
+    <main className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
+      <div className="no-print border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+          <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]">
+            <ArrowLeft className="h-4 w-4" /> Back to PMS selection
+          </button>
+          <span className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-[#0b7772] sm:inline">Financial Friend · live source view</span>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-6xl px-6 py-10 sm:py-14">
+        <header className="overflow-hidden rounded-3xl bg-[#10243d] p-7 text-white shadow-[0_20px_60px_rgba(16,36,61,0.18)] sm:p-10">
+          <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+            <div className="max-w-4xl">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#78d2c9]">PMS source data</p>
+              <h1 className="mt-4 font-heading text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">{title}</h1>
+              <p className="mt-4 text-base leading-7 text-slate-300">{productName}</p>
+            </div>
+            <div className="shrink-0 rounded-2xl border border-white/15 bg-white/[0.07] px-5 py-4 text-sm text-slate-300">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7a66d]">Fetched from</p>
+              <p className="mt-2 font-semibold text-white">{String(data.sourceName ?? "PMS AIF World")}</p>
+              <p className="mt-1 text-xs text-slate-400">{fetchedAt}</p>
+            </div>
+          </div>
+          <a
+            href={sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-8 inline-flex max-w-full items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
+          >
+            <Globe2 className="h-4 w-4 shrink-0 text-[#78d2c9]" />
+            <span className="truncate">Open exact PMS AIF World page</span>
+            <ExternalLink className="h-4 w-4 shrink-0 text-[#d7a66d]" />
+          </a>
+          <p className="mt-3 break-all text-xs text-slate-400">{sourceUrl}</p>
+        </header>
+
+        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(260px,0.65fr)]">
+          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
+            <div className="mb-6 flex items-center justify-between gap-4 border-b border-slate-200 pb-4 dark:border-slate-800">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0b7772]">Source page content</p>
+                <h2 className="mt-1 font-heading text-xl font-semibold">Information fetched from the selected URL</h2>
+              </div>
+              <span className="hidden rounded-full bg-[#e4f1ef] px-3 py-1.5 text-xs font-semibold text-[#0b7772] sm:inline-flex">No local PMS template</span>
+            </div>
+            {description && <p className="rounded-xl bg-[#f4f8f8] p-4 text-sm leading-6 text-slate-600 dark:bg-slate-800/70 dark:text-slate-300">{description}</p>}
+            {paragraphs.length > 0 ? (
+              <div className="mt-6 space-y-4">
+                {paragraphs.map((paragraph, index) => (
+                  <p key={`${paragraph.slice(0, 24)}-${index}`} className="text-sm leading-7 text-slate-600 dark:text-slate-300">{paragraph}</p>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-6 text-sm text-slate-500">The source page did not expose readable paragraph content. Use the exact source link above to view it directly.</p>
+            )}
+          </section>
+
+          <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0b7772]">Sections found</p>
+            <h2 className="mt-1 font-heading text-xl font-semibold">Source headings</h2>
+            {headings.length > 0 ? (
+              <div className="mt-5 space-y-2">
+                {headings.map((heading, index) => (
+                  <div key={`${heading}-${index}`} className="flex gap-3 border-b border-slate-100 pb-3 text-sm last:border-0 dark:border-slate-800">
+                    <span className="font-heading text-xs font-bold text-[#d29b5d]">{String(index + 1).padStart(2, "0")}</span>
+                    <span className="text-slate-600 dark:text-slate-300">{heading}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-5 text-sm text-slate-500">No headings were exposed by the source page.</p>
+            )}
+          </aside>
+        </div>
+
+        {tables.length > 0 && (
+          <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
+            <div className="mb-6 border-b border-slate-200 pb-4 dark:border-slate-800">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0b7772]">Structured source data</p>
+              <h2 className="mt-1 font-heading text-xl font-semibold">Tables published on the PMS page</h2>
+            </div>
+            <div className="grid gap-6 xl:grid-cols-2">
+              {tables.map((table, tableIndex) => (
+                <div key={`table-${tableIndex}`} className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[420px] text-left text-sm">
+                      <tbody>
+                        {table.map((row, rowIndex) => (
+                          <tr key={`row-${rowIndex}`} className={rowIndex === 0 ? "bg-[#f4f8f8] font-semibold dark:bg-slate-800" : "border-t border-slate-100 dark:border-slate-800"}>
+                            {row.map((cell, cellIndex) => (
+                              <td key={`cell-${cellIndex}`} className="px-4 py-3 text-slate-600 dark:text-slate-300">{cell}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <p className="mt-8 text-center text-xs leading-5 text-slate-500">
+          This PMS view displays content fetched from the selected PMS AIF World URL. Verify current details on the source page before making any investment decision.
+        </p>
+      </div>
+    </main>
+  );
+}
+
 function InfoGrid({ rows }: { rows: { label: string; value: string }[] }) {
   return (
     <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
@@ -689,13 +828,15 @@ function SifPmsAifReportContent() {
   const productParam = searchParams.get("product");
   const category = isInvestmentCategory(categoryParam) ? categoryParam : null;
   const product = category ? getInvestmentProduct(category, productParam) : null;
+  const isPmsSelection = category === "PMS" && Boolean(productParam);
+  const hasSource = category === "PMS" ? isPmsSelection : Boolean(product?.fileName);
   const [data, setData] = useState<JsonRecord | null>(null);
-  const [loading, setLoading] = useState(Boolean(product?.fileName));
+  const [loading, setLoading] = useState(hasSource);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
-    if (!product?.fileName || !category) {
+    if (!hasSource || !category) {
       setData(null);
       setLoading(false);
       return;
@@ -703,9 +844,11 @@ function SifPmsAifReportContent() {
     setLoading(true);
     setError("");
     const reportUrl =
-      category === "SIF"
-        ? `/api/sif-report?product=${encodeURIComponent(product.label)}`
-        : `/PMS-AIF-SIF/${category}/${encodeURIComponent(product.fileName)}`;
+      category === "PMS"
+        ? `/api/pms-report?product=${encodeURIComponent(productParam ?? "")}`
+        : category === "SIF"
+        ? `/api/sif-report?product=${encodeURIComponent(product?.label ?? productParam ?? "")}`
+        : `/PMS-AIF-SIF/${category}/${encodeURIComponent(product?.fileName ?? "")}`;
     fetch(reportUrl)
       .then(async (response) => {
         if (!response.ok) throw new Error("Product file unavailable");
@@ -715,7 +858,13 @@ function SifPmsAifReportContent() {
         if (active) setData(nextData);
       })
       .catch(() => {
-        if (active) setError("We could not read the selected product file.");
+        if (active) {
+          setError(
+            category === "PMS"
+              ? "We could not fetch the selected PMS AIF World page."
+              : "We could not read the selected product file.",
+          );
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -723,7 +872,7 @@ function SifPmsAifReportContent() {
     return () => {
       active = false;
     };
-  }, [category, product?.fileName]);
+  }, [category, hasSource, product?.fileName, product?.label, productParam]);
 
   const metrics = useMemo(() => (data ? getMetrics(data) : []), [data]);
   const allocationRows = useMemo(() => (data ? getAllocationRows(data) : []), [data]);
@@ -760,7 +909,7 @@ function SifPmsAifReportContent() {
     );
   }
 
-  if (!product?.fileName) {
+  if (!hasSource) {
     return (
       <main className="min-h-screen">
         <AppHeader />
@@ -812,6 +961,10 @@ function SifPmsAifReportContent() {
         </section>
       </main>
     );
+  }
+
+  if (category === "PMS") {
+    return <PmsSourceReport data={data} productName={productParam ?? "Selected PMS"} router={router} />;
   }
 
   const title = getReportTitle(data);
