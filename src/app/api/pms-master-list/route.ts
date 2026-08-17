@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readPmsWorldEntries } from "@/lib/pms-world";
+import { getPmsMasterFilename, readPmsWorldEntries } from "@/lib/pms-world";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -8,7 +8,7 @@ export async function GET() {
   try {
     const entries = readPmsWorldEntries();
     return NextResponse.json({
-      source: "PMS_AIF_WORLD_Master_List_-_PMS_Master_List_1786942853690.csv",
+      source: getPmsMasterFilename(),
       count: entries.length,
       entries: entries.map(({ name, url, category }) => ({ name, url, category })),
     });

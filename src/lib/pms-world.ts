@@ -22,10 +22,28 @@ type PmsCsvRow = {
   "URL Verification"?: string;
 };
 
-const PMS_MASTER_FILE = "PMS_AIF_WORLD_Master_List_-_PMS_Master_List_1786942853690.csv";
+const PMS_MASTER_FILE_PREFIX = "PMS_AIF_WORLD_Master_List_-_PMS_Master_List_";
 
 function getPmsMasterPath() {
-  return path.join(process.cwd(), "attached_assets", PMS_MASTER_FILE);
+  const assetsDirectory = path.join(process.cwd(), "attached_assets");
+  const candidates = fs
+    .readdirSync(assetsDirectory)
+    .filter(
+      (fileName) =>
+        fileName.startsWith(PMS_MASTER_FILE_PREFIX) && fileName.endsWith(".csv"),
+    )
+    .sort()
+    .reverse();
+
+  if (candidates.length === 0) {
+    throw new Error("No uploaded PMS master-list CSV was found.");
+  }
+
+  return path.join(assetsDirectory, candidates[0]);
+}
+
+export function getPmsMasterFilename() {
+  return path.basename(getPmsMasterPath());
 }
 
 export function readPmsWorldEntries(): PmsWorldEntry[] {
