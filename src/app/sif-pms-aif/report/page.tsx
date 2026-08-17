@@ -24,7 +24,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
-import financialFriendLogo from "../../../../attached_assets/images-removebg-preview_1786696645447.png";
+const financialFriendLogo = "/financial-friend-logo.png";
 import {
   getInvestmentProduct,
   isInvestmentCategory,
