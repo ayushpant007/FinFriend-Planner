@@ -833,6 +833,8 @@ function SifPmsAifReportContent() {
   const [data, setData] = useState<JsonRecord | null>(null);
   const [loading, setLoading] = useState(hasSource);
   const [error, setError] = useState("");
+  const [errorSourceUrl, setErrorSourceUrl] = useState("");
+  const [retryToken, setRetryToken] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -843,6 +845,7 @@ function SifPmsAifReportContent() {
     }
     setLoading(true);
     setError("");
+    setErrorSourceUrl("");
     const reportUrl =
       category === "PMS"
         ? `/api/pms-report?product=${encodeURIComponent(productParam ?? "")}`
@@ -851,19 +854,26 @@ function SifPmsAifReportContent() {
         : `/PMS-AIF-SIF/${category}/${encodeURIComponent(product?.fileName ?? "")}`;
     fetch(reportUrl)
       .then(async (response) => {
-        if (!response.ok) throw new Error("Product file unavailable");
-        return response.json() as Promise<JsonRecord>;
+        const payload = (await response.json().catch(() => ({}))) as JsonRecord;
+        if (!response.ok) {
+          const sourceUrl = typeof payload.sourceUrl === "string" ? payload.sourceUrl : "";
+          const message = typeof payload.error === "string" ? payload.error : "Product file unavailable";
+          const sourceError = new Error(message) as Error & { sourceUrl?: string };
+          sourceError.sourceUrl = sourceUrl;
+          throw sourceError;
+        }
+        return payload;
       })
       .then((nextData) => {
         if (active) setData(nextData);
       })
-      .catch(() => {
+      .catch((caughtError: unknown) => {
         if (active) {
-          setError(
-            category === "PMS"
-              ? "We could not fetch the selected PMS AIF World page."
-              : "We could not read the selected product file.",
-          );
+          const sourceError = caughtError as Error & { sourceUrl?: string };
+          setError(sourceError?.message || (category === "PMS"
+            ? "We could not fetch the selected PMS AIF World page."
+            : "We could not read the selected product file."));
+          setErrorSourceUrl(sourceError?.sourceUrl ?? "");
         }
       })
       .finally(() => {
@@ -872,7 +882,7 @@ function SifPmsAifReportContent() {
     return () => {
       active = false;
     };
-  }, [category, hasSource, product?.fileName, product?.label, productParam]);
+  }, [category, hasSource, product?.fileName, product?.label, productParam, retryToken]);
 
   const metrics = useMemo(() => (data ? getMetrics(data) : []), [data]);
   const allocationRows = useMemo(() => (data ? getAllocationRows(data) : []), [data]);
@@ -954,9 +964,26 @@ function SifPmsAifReportContent() {
             <XCircle className="mx-auto h-12 w-12 text-red-500" />
             <h1 className="mt-5 font-heading text-2xl font-semibold text-[#14263d] dark:text-slate-100">Report could not be loaded</h1>
             <p className="mt-3 text-slate-500 dark:text-slate-400">{error || "No report data was found for this selection."}</p>
-            <button type="button" onClick={() => router.push("/sif-pms-aif")} className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#0b7772] px-5 py-3 text-sm font-semibold text-white">
-              <ArrowLeft className="h-4 w-4" /> Return to selection
-            </button>
+            {category === "PMS" && errorSourceUrl && (
+              <a
+                href={errorSourceUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mx-auto mt-5 flex max-w-md items-center justify-center gap-2 break-all text-xs font-medium text-[#0b7772] underline decoration-[#0b7772]/30 underline-offset-4"
+              >
+                Open the selected PMS AIF World source <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+              </a>
+            )}
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              {category === "PMS" && (
+                <button type="button" onClick={() => setRetryToken((value) => value + 1)} className="inline-flex items-center gap-2 rounded-xl bg-[#0b7772] px-5 py-3 text-sm font-semibold text-white">
+                  Try again
+                </button>
+              )}
+              <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-[#14263d] dark:border-slate-700 dark:text-slate-100">
+                <ArrowLeft className="h-4 w-4" /> Return to selection
+              </button>
+            </div>
           </div>
         </section>
       </main>
