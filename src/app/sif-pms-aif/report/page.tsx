@@ -749,6 +749,219 @@ function PmsSourceReport({
   );
 }
 
+const AIF_STANDARD_ASSUMPTION_NOTE =
+  "Standard assumption — this is illustrative and may not be the actual term of the selected AIF.";
+
+const AIF_DISCLAIMER =
+  "* Standard assumptions used for illustrative analysis. Actual fund terms, minimum investment, risk, liquidity, fees and other characteristics may vary by AIF. Investors should refer to the respective fund documents before making an investment decision.";
+
+function AifInfoGrid({
+  rows,
+}: {
+  rows: { label: string; value: string; source?: string }[];
+}) {
+  return (
+    <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+      {rows.map((row) => (
+        <div key={row.label} className="border-b border-slate-100 pb-4 dark:border-slate-800">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">{row.label}</p>
+          <p className={`mt-1.5 text-sm font-semibold ${row.value === "Data Not Available" ? "text-slate-400" : "text-[#14263d] dark:text-slate-100"}`}>
+            {row.value}
+          </p>
+          {row.source && <p className="mt-1 text-[11px] text-slate-400">{row.source}</p>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AifAssumptionCard({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4 dark:border-amber-900/50 dark:bg-amber-950/20">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-800 dark:text-amber-300">{label}</p>
+        <span className="shrink-0 rounded-full border border-amber-300 bg-white/70 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+          Standard
+        </span>
+      </div>
+      <p className="mt-3 text-lg font-semibold text-amber-950 dark:text-amber-100">{value}</p>
+      <p className="mt-1.5 text-[11px] leading-5 text-amber-900/70 dark:text-amber-200/70">{AIF_STANDARD_ASSUMPTION_NOTE}</p>
+    </div>
+  );
+}
+
+function AifUnavailableGrid({ fields }: { fields: string[] }) {
+  return (
+    <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+      {fields.map((field) => (
+        <div key={field} className="border-b border-slate-100 pb-4 dark:border-slate-800">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">{field}</p>
+          <p className="mt-1.5 text-sm font-semibold text-slate-400">Data Not Available</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AifStandardReport({
+  data,
+  productName,
+  router,
+}: {
+  data: JsonRecord;
+  productName: string;
+  router: ReturnType<typeof useRouter>;
+}) {
+  const entry = isRecord(data.entry) ? data.entry : {};
+  const value = (key: string) => {
+    const current = entry[key];
+    return hasValue(current) ? String(current) : "Data Not Available";
+  };
+  const address = [value("registeredAddress"), value("city"), value("state"), value("pincode")]
+    .filter((item) => item !== "Data Not Available")
+    .join(", ");
+  const status = value("validityTo") === "Data Not Available"
+    ? "Data Not Available"
+    : `Registered · validity ${value("validityTo")}`;
+  const standardBasics = [
+    ["Minimum investment", "₹1 Crore*"],
+    ["Investment horizon", "5+ Years*"],
+    ["Investor profile", "HNI / Sophisticated Investor*"],
+    ["Liquidity", "Low to Moderate*"],
+    ["Risk level", "Very High Risk*"],
+    ["Investment style", "Long-Term Wealth Creation*"],
+  ] as const;
+  const unavailableStatistics = [
+    "AUM",
+    "NAV",
+    "1Y Return",
+    "3Y Return",
+    "5Y Return",
+    "CAGR",
+    "Sharpe Ratio",
+    "Alpha",
+    "Beta",
+    "Volatility",
+    "Actual Minimum Investment",
+    "Management Fee",
+    "Performance Fee",
+    "Exit Load",
+    "Actual Lock-in Period",
+    "Benchmark",
+    "Top Holdings",
+    "Sector Allocation",
+  ];
+
+  return (
+    <main className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
+      <AppHeader />
+      <div className="no-print mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pb-2 pt-8">
+        <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]">
+          <ArrowLeft className="h-4 w-4" /> Back to investment selection
+        </button>
+        <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+          <Download className="h-4 w-4" /> Print / save PDF
+        </button>
+      </div>
+
+      <div className="mx-auto max-w-7xl space-y-6 px-6 pb-16 pt-4">
+        <section className="relative overflow-hidden rounded-3xl bg-[#10243d] px-6 py-10 text-white shadow-[0_20px_60px_rgba(16,36,61,0.25)] sm:px-10 sm:py-12">
+          <div className="absolute -right-24 -top-32 h-80 w-80 rounded-full border-[32px] border-[#2ba69b]/20" />
+          <div className="absolute -bottom-40 right-24 h-80 w-80 rounded-full border border-[#d7a66d]/20" />
+          <div className="relative grid gap-10 lg:grid-cols-[1fr_330px] lg:items-center">
+            <div>
+              <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.2em] text-[#78d2c9]">
+                <span>Financial Friend AIF report</span>
+                <span className="h-1 w-1 rounded-full bg-[#d7a66d]" />
+                <span>Standard template</span>
+              </div>
+              <h1 className="mt-5 max-w-4xl font-heading text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl">{productName}</h1>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">Registry-backed identity details with a consistent illustrative analysis framework.</p>
+              <div className="mt-7 flex flex-wrap gap-2.5">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-medium text-slate-200">
+                  <Landmark className="h-3.5 w-3.5 text-[#78d2c9]" /> {value("category")}
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-medium text-slate-200">
+                  <ShieldAlert className="h-3.5 w-3.5 text-[#d7a66d]" /> Very High Risk*
+                </span>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-amber-200/30 bg-amber-100/10 p-5 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#e5c886]">Important label</p>
+              <p className="mt-3 text-lg font-semibold text-white">Standard assumptions</p>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Illustrative only. They are not confirmed terms of this selected AIF.</p>
+            </div>
+          </div>
+        </section>
+
+        <ReportSection number="01" icon={Info} title="AIF registry information" description="Basic details shown from the uploaded SEBI registration workbook.">
+          <AifInfoGrid
+            rows={[
+              { label: "AIF name", value: value("name"), source: "Uploaded registry" },
+              { label: "SEBI registration number", value: value("registrationNumber"), source: "Uploaded registry" },
+              { label: "AIF category", value: value("category"), source: "Decoded from the AIF category in the registration number" },
+              { label: "Investment manager", value: "Data Not Available", source: "Not provided in the uploaded workbook" },
+              { label: "Registration date", value: formatDate(value("registrationDate")), source: "Uploaded registry" },
+              { label: "Status", value: status, source: "Based on the registry validity field" },
+              { label: "Contact person", value: value("contactPerson"), source: "Uploaded registry" },
+              { label: "Registered address", value: address || "Data Not Available", source: "Uploaded registry" },
+            ]}
+          />
+        </ReportSection>
+
+        <ReportSection number="02" icon={WalletCards} title="Investment basics" description="The same standardized assumptions are used for every AIF report.">
+          <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-100">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-700 dark:text-amber-300" />
+            <p><strong>Standard assumptions, not actual fund terms.</strong> Review the selected AIF&apos;s official documents before relying on any investment term.</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {standardBasics.map(([label, assumption]) => (
+              <AifAssumptionCard key={label} label={label} value={assumption} />
+            ))}
+          </div>
+        </ReportSection>
+
+        <ReportSection number="03" icon={ShieldAlert} title="Risk analysis" description="Standardized risk framing for illustrative comparison; no fund-specific risk statistics are implied.">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <AifAssumptionCard label="Risk category" value="Very High Risk*" />
+            <AifAssumptionCard label="Diversification" value="Moderate to High*" />
+            <AifAssumptionCard label="Risk score" value="Standardized Score*" />
+          </div>
+        </ReportSection>
+
+        <ReportSection number="04" icon={Users} title="Investor suitability" description="Standard suitability guidance used consistently across the AIF template.">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <AifAssumptionCard label="Suitable for" value="Long-term investors with high risk appetite*" />
+            <AifAssumptionCard label="Not suitable for" value="Short-term / low-risk investors*" />
+            <AifAssumptionCard label="Recommended horizon" value="5+ Years*" />
+          </div>
+        </ReportSection>
+
+        <ReportSection number="05" icon={BarChart3} title="Fund statistics and terms" description="The uploaded registry does not provide these product-level figures, so they are not estimated.">
+          <AifUnavailableGrid fields={unavailableStatistics} />
+        </ReportSection>
+
+        <section className="rounded-2xl border border-amber-300 bg-amber-50 p-6 sm:p-8 dark:border-amber-900/60 dark:bg-amber-950/20">
+          <div className="flex items-start gap-4">
+            <Info className="mt-0.5 h-5 w-5 shrink-0 text-amber-700 dark:text-amber-300" />
+            <div>
+              <h2 className="font-heading text-xl font-semibold text-amber-950 dark:text-amber-100">Important disclaimer</h2>
+              <p className="mt-3 text-sm leading-6 text-amber-950/80 dark:text-amber-100/80">{AIF_DISCLAIMER}</p>
+              <p className="mt-3 text-xs leading-5 text-amber-900/70 dark:text-amber-200/70">Source: {String(data.source ?? "Uploaded AIF registry")}. The registry does not contain fund performance, fees, holdings, or manager data.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
 function InfoGrid({ rows }: { rows: { label: string; value: string }[] }) {
   return (
     <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
@@ -829,7 +1042,11 @@ function SifPmsAifReportContent() {
   const category = isInvestmentCategory(categoryParam) ? categoryParam : null;
   const product = category ? getInvestmentProduct(category, productParam) : null;
   const isPmsSelection = category === "PMS" && Boolean(productParam);
-  const hasSource = category === "PMS" ? isPmsSelection : Boolean(product?.fileName);
+  const hasSource = category === "PMS"
+    ? isPmsSelection
+    : category === "AIF"
+    ? Boolean(productParam)
+    : Boolean(product?.fileName);
   const [data, setData] = useState<JsonRecord | null>(null);
   const [loading, setLoading] = useState(hasSource);
   const [error, setError] = useState("");
@@ -851,6 +1068,8 @@ function SifPmsAifReportContent() {
         ? `/api/pms-report?product=${encodeURIComponent(productParam ?? "")}`
         : category === "SIF"
         ? `/api/sif-report?product=${encodeURIComponent(product?.label ?? productParam ?? "")}`
+        : category === "AIF"
+        ? `/api/aif-report?product=${encodeURIComponent(productParam ?? "")}`
         : `/PMS-AIF-SIF/${category}/${encodeURIComponent(product?.fileName ?? "")}`;
     fetch(reportUrl)
       .then(async (response) => {
@@ -992,6 +1211,10 @@ function SifPmsAifReportContent() {
 
   if (category === "PMS") {
     return <PmsSourceReport data={data} productName={productParam ?? "Selected PMS"} router={router} />;
+  }
+
+  if (category === "AIF") {
+    return <AifStandardReport data={data} productName={productParam ?? "Selected AIF"} router={router} />;
   }
 
   const title = getReportTitle(data);

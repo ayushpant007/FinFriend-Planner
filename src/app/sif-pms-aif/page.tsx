@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FileText, LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { Input } from "@/components/ui/input";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   Select,
   SelectContent,
@@ -13,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { InvestmentCategory, investmentOptions } from "@/lib/sif-pms-aif";
+import type { AifRegistryEntry } from "@/lib/aif-registry";
 
 type InvestmentSelection = {
   category: InvestmentCategory | "";
@@ -28,8 +30,11 @@ type PmsOption = {
 export default function SifPmsAifPage() {
   const router = useRouter();
   const [pmsOptions, setPmsOptions] = useState<PmsOption[]>([]);
+  const [aifOptions, setAifOptions] = useState<AifRegistryEntry[]>([]);
   const [pmsLoading, setPmsLoading] = useState(true);
+  const [aifLoading, setAifLoading] = useState(true);
   const [pmsError, setPmsError] = useState("");
+  const [aifError, setAifError] = useState("");
   const [selections, setSelections] = useState<InvestmentSelection[]>([
     { category: "", investment: "" },
   ]);
@@ -53,6 +58,28 @@ export default function SifPmsAifPage() {
       })
       .finally(() => {
         if (active) setPmsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/aif-master-list")
+      .then(async (response) => {
+        if (!response.ok) throw new Error("AIF registry unavailable");
+        return response.json() as Promise<{ entries?: AifRegistryEntry[] }>;
+      })
+      .then((payload) => {
+        if (!active) return;
+        setAifOptions(Array.isArray(payload.entries) ? payload.entries : []);
+      })
+      .catch(() => {
+        if (active) setAifError("We could not load the uploaded AIF registry.");
+      })
+      .finally(() => {
+        if (active) setAifLoading(false);
       });
     return () => {
       active = false;
@@ -191,52 +218,76 @@ export default function SifPmsAifPage() {
                             >
                               {categoryLabel}
                             </label>
-                            <Select
-                               disabled={selection.category === "PMS" && (pmsLoading || pmsOptions.length === 0)}
-                              value={selection.investment}
-                              onValueChange={(value) =>
-                                setSelections((current) =>
-                                  current.map((currentSelection, currentIndex) =>
-                                    currentIndex === index
-                                      ? { ...currentSelection, investment: value }
-                                      : currentSelection,
-                                  ),
-                                )
-                              }
-                            >
-                              <SelectTrigger
-                                id={`investment-selection-${index}`}
-                                aria-label={categoryLabel}
-                                 className="w-full"
-                              >
-                                 <SelectValue
-                                   placeholder={
-                                     selection.category === "PMS" && pmsLoading
-                                       ? "Loading PMS names…"
-                                       : categoryLabel
-                                   }
-                                 />
-                              </SelectTrigger>
-                               <SelectContent className="max-h-[min(60vh,460px)]">
-                                 {selection.category === "PMS"
-                                   ? pmsOptions.map((option) => (
-                                       <SelectItem key={option.name} value={option.name}>
-                                         {option.name}
-                                       </SelectItem>
-                                     ))
-                                   : investmentOptions[selection.category].map((option) => (
-                                       <SelectItem key={option.label} value={option.label}>
-                                         {option.label}
-                                       </SelectItem>
-                                     ))}
-                              </SelectContent>
-                            </Select>
+                             {selection.category === "AIF" ? (
+                               <SearchableSelect
+                                 options={aifOptions.map((option) => option.name)}
+                                 value={selection.investment}
+                                 onChange={(value) =>
+                                   setSelections((current) =>
+                                     current.map((currentSelection, currentIndex) =>
+                                       currentIndex === index
+                                         ? { ...currentSelection, investment: value }
+                                         : currentSelection,
+                                     ),
+                                   )
+                                 }
+                                 disabled={aifLoading || aifOptions.length === 0}
+                                 placeholder={aifLoading ? "Loading AIF names…" : categoryLabel}
+                               />
+                             ) : (
+                               <Select
+                                 disabled={selection.category === "PMS" && (pmsLoading || pmsOptions.length === 0)}
+                                 value={selection.investment}
+                                 onValueChange={(value) =>
+                                   setSelections((current) =>
+                                     current.map((currentSelection, currentIndex) =>
+                                       currentIndex === index
+                                         ? { ...currentSelection, investment: value }
+                                         : currentSelection,
+                                     ),
+                                   )
+                                 }
+                               >
+                                 <SelectTrigger
+                                   id={`investment-selection-${index}`}
+                                   aria-label={categoryLabel}
+                                   className="w-full"
+                                 >
+                                   <SelectValue
+                                     placeholder={
+                                       selection.category === "PMS" && pmsLoading
+                                         ? "Loading PMS names…"
+                                         : categoryLabel
+                                     }
+                                   />
+                                 </SelectTrigger>
+                                  <SelectContent className="max-h-[min(60vh,460px)]">
+                                    {selection.category === "PMS"
+                                      ? pmsOptions.map((option) => (
+                                          <SelectItem key={option.name} value={option.name}>
+                                            {option.name}
+                                          </SelectItem>
+                                        ))
+                                      : investmentOptions[selection.category].map((option) => (
+                                          <SelectItem key={option.label} value={option.label}>
+                                            {option.label}
+                                          </SelectItem>
+                                        ))}
+                                  </SelectContent>
+                               </Select>
+                             )}
                              {selection.category === "PMS" && (
                                <p className={`flex items-center gap-1.5 text-xs ${pmsError ? "text-red-600" : "text-slate-500"}`}>
                                  {pmsLoading && <LoaderCircle className="h-3.5 w-3.5 animate-spin" />}
                                  {pmsError || (pmsLoading ? "Loading names from the uploaded PMS master list…" : `${pmsOptions.length} PMS strategies from the uploaded PMS AIF World list`)}
                                </p>
                              )}
+                              {selection.category === "AIF" && (
+                                <p className={`flex items-center gap-1.5 text-xs ${aifError ? "text-red-600" : "text-slate-500"}`}>
+                                  {aifLoading && <LoaderCircle className="h-3.5 w-3.5 animate-spin" />}
+                                  {aifError || (aifLoading ? "Loading names from the uploaded SEBI registry…" : `${aifOptions.length.toLocaleString("en-IN")} unique AIF names from the uploaded registry`)}
+                                </p>
+                              )}
                           </div>
                         )}
                       </div>

@@ -46,20 +46,10 @@ export const investmentOptions: Record<InvestmentCategory, InvestmentProduct[]> 
   // the selection page. This prevents the legacy local PMS templates from
   // being used as report sources.
   PMS: [],
-  AIF: [
-    {
-      label: "ICICI Prudential Emerging Leaders Fund — Series III",
-      fileName: "ICICI Prudential Emerging Leaders Fund – Series III.txt",
-    },
-    {
-      label: "Helios India Emerging Star Fund",
-      fileName: "Helios India Emerging Star Fund.txt",
-    },
-    {
-      label: "ABSL Select Sector Fund — AIF Category III — Mid & Small Cap Growth Opportunity",
-      fileName: null,
-    },
-  ],
+  // AIF selections are loaded from the uploaded SEBI registry by the
+  // selection page. The former hardcoded AIF research-file options are
+  // intentionally removed.
+  AIF: [],
 };
 
 export function getInvestmentProduct(
