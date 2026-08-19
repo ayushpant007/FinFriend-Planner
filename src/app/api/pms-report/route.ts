@@ -57,7 +57,7 @@ async function fetchPmsSource(url: string): Promise<PmsFetchResult> {
     return {
       response: null,
       error: {
-        message: `PMS AIF World returned HTTP ${lastStatus} for this source page.`,
+        message: `The selected PMS source returned HTTP ${lastStatus}.`,
         kind: "remote_http_error" as const,
         status: lastStatus,
       },
@@ -67,7 +67,7 @@ async function fetchPmsSource(url: string): Promise<PmsFetchResult> {
   return {
     response: null,
     error: {
-      message: "PMS AIF World did not respond before the source request timed out.",
+      message: "The selected PMS source did not respond before the request timed out.",
       kind: "remote_timeout" as const,
       status: null,
       cause: lastError,
@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
       error,
     });
     return NextResponse.json(
-      { error: "The selected PMS AIF World page could not be fetched.", sourceUrl: entry.url },
+      { error: "The selected PMS source page could not be fetched.", sourceUrl: entry.url },
       { status: 502 },
     );
   }

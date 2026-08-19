@@ -656,22 +656,11 @@ function PmsSourceReport({
               <p className="mt-4 text-base leading-7 text-slate-300">{productName}</p>
             </div>
             <div className="shrink-0 rounded-2xl border border-white/15 bg-white/[0.07] px-5 py-4 text-sm text-slate-300">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7a66d]">Fetched from</p>
-              <p className="mt-2 font-semibold text-white">{String(data.sourceName ?? "PMS AIF World")}</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7a66d]">Fetched source</p>
+              <p className="mt-2 font-semibold text-white">{String(data.sourceName ?? "PMS source")}</p>
               <p className="mt-1 text-xs text-slate-400">{fetchedAt}</p>
             </div>
           </div>
-          <a
-            href={sourceUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-8 inline-flex max-w-full items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
-          >
-            <Globe2 className="h-4 w-4 shrink-0 text-[#78d2c9]" />
-            <span className="truncate">Open exact PMS AIF World page</span>
-            <ExternalLink className="h-4 w-4 shrink-0 text-[#d7a66d]" />
-          </a>
-          <p className="mt-3 break-all text-xs text-slate-400">{sourceUrl}</p>
         </header>
 
         <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(260px,0.65fr)]">
@@ -691,7 +680,7 @@ function PmsSourceReport({
                 ))}
               </div>
             ) : (
-              <p className="mt-6 text-sm text-slate-500">The source page did not expose readable paragraph content. Use the exact source link above to view it directly.</p>
+              <p className="mt-6 text-sm text-slate-500">The source page did not expose readable paragraph content.</p>
             )}
           </section>
 
@@ -742,7 +731,7 @@ function PmsSourceReport({
         )}
 
         <p className="mt-8 text-center text-xs leading-5 text-slate-500">
-          This PMS view displays content fetched from the selected PMS AIF World URL. Verify current details on the source page before making any investment decision.
+          This PMS view displays content fetched from the selected source. Verify current details before making any investment decision.
         </p>
       </div>
     </main>
@@ -1090,7 +1079,7 @@ function SifPmsAifReportContent() {
         if (active) {
           const sourceError = caughtError as Error & { sourceUrl?: string };
           setError(sourceError?.message || (category === "PMS"
-            ? "We could not fetch the selected PMS AIF World page."
+            ? "We could not fetch the selected PMS source page."
             : "We could not read the selected product file."));
           setErrorSourceUrl(sourceError?.sourceUrl ?? "");
         }
@@ -1190,7 +1179,7 @@ function SifPmsAifReportContent() {
                 rel="noreferrer"
                 className="mx-auto mt-5 flex max-w-md items-center justify-center gap-2 break-all text-xs font-medium text-[#0b7772] underline decoration-[#0b7772]/30 underline-offset-4"
               >
-                Open the selected PMS AIF World source <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+                Open the selected source <ExternalLink className="h-3.5 w-3.5 shrink-0" />
               </a>
             )}
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">

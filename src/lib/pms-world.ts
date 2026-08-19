@@ -179,7 +179,7 @@ export function parsePmsSourcePage(
     productType: "PMS_SOURCE",
     productName: entry.name,
     sourceUrl: entry.url,
-    sourceName: "PMS AIF World",
+    sourceName: "PMS source",
     category: entry.category || "PMS",
     title,
     description: extractMetaDescription(withoutNoise),

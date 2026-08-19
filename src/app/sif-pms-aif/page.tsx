@@ -279,7 +279,7 @@ export default function SifPmsAifPage() {
                              {selection.category === "PMS" && (
                                <p className={`flex items-center gap-1.5 text-xs ${pmsError ? "text-red-600" : "text-slate-500"}`}>
                                  {pmsLoading && <LoaderCircle className="h-3.5 w-3.5 animate-spin" />}
-                                 {pmsError || (pmsLoading ? "Loading names from the uploaded PMS master list…" : `${pmsOptions.length} PMS strategies from the uploaded PMS AIF World list`)}
+                                  {pmsError || (pmsLoading ? "Loading names from the uploaded PMS master list…" : `${pmsOptions.length} PMS strategies from the uploaded master list`)}
                                </p>
                              )}
                               {selection.category === "AIF" && (

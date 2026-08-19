@@ -42,7 +42,7 @@ const sifProducts: InvestmentProduct[] = [
 
 export const investmentOptions: Record<InvestmentCategory, InvestmentProduct[]> = {
   SIF: sifProducts,
-  // PMS selections are loaded from the uploaded PMS AIF World master CSV by
+  // PMS selections are loaded from the uploaded PMS master CSV by
   // the selection page. This prevents the legacy local PMS templates from
   // being used as report sources.
   PMS: [],
