@@ -11,35 +11,29 @@ export type PmsWorldEntry = {
   category: string;
   fundManager: string;
   urlVerification: string;
+  status: string;
 };
 
 type PmsCsvRow = {
+  "S.No."?: string;
   "PMS Name"?: string;
   "PMS AIF World URL"?: string;
   "Product Type"?: string;
   Category?: string;
   "Fund Manager"?: string;
   "URL Verification"?: string;
+  Status?: string;
 };
 
-const PMS_MASTER_FILE_PREFIX = "PMS_AIF_WORLD_Master_List_-_PMS_Master_List_";
+const PMS_MASTER_FILE = path.join("public", "PMS", "PMS_Updated_LISt.csv");
+const PMS_SELECTABLE_STATUSES = new Set(["VERIFIED", "CORRECTED"]);
 
 function getPmsMasterPath() {
-  const assetsDirectory = path.join(process.cwd(), "attached_assets");
-  const candidates = fs
-    .readdirSync(assetsDirectory)
-    .filter(
-      (fileName) =>
-        fileName.startsWith(PMS_MASTER_FILE_PREFIX) && fileName.endsWith(".csv"),
-    )
-    .sort()
-    .reverse();
-
-  if (candidates.length === 0) {
-    throw new Error("No uploaded PMS master-list CSV was found.");
+  const masterPath = path.join(process.cwd(), PMS_MASTER_FILE);
+  if (!fs.existsSync(masterPath)) {
+    throw new Error(`PMS master-list CSV was not found at ${PMS_MASTER_FILE}.`);
   }
-
-  return path.join(assetsDirectory, candidates[0]);
+  return masterPath;
 }
 
 export function getPmsMasterFilename() {
@@ -58,7 +52,15 @@ export function readPmsWorldEntries(): PmsWorldEntry[] {
   for (const row of parsed.data) {
     const name = row["PMS Name"]?.trim();
     const url = row["PMS AIF World URL"]?.trim();
-    if (!name || !url || seenNames.has(name)) continue;
+    const status = row.Status?.trim().toUpperCase() ?? "";
+    if (
+      !name ||
+      !url ||
+      !PMS_SELECTABLE_STATUSES.has(status) ||
+      seenNames.has(name)
+    ) {
+      continue;
+    }
     seenNames.add(name);
     entries.push({
       name,
@@ -67,6 +69,7 @@ export function readPmsWorldEntries(): PmsWorldEntry[] {
       category: row.Category?.trim() ?? "PMS",
       fundManager: row["Fund Manager"]?.trim() ?? "",
       urlVerification: row["URL Verification"]?.trim() ?? "",
+      status,
     });
   }
 
