@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { storeDetailedReport, storeSipOptimizerReport, setLatestReportId } from '@/lib/replit-db';
 import { saveReportToDriveInFolder } from '@/lib/google-drive';
+import { saveInvestorAndReport } from '@/lib/investor-storage';
 
 // Helper to safely serialize data and remove non-JSON-serializable values
 function sanitizeForJSON(obj: any): any {
@@ -29,7 +30,7 @@ function sanitizeForJSON(obj: any): any {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { reportId, userId, detailedReport, sipReport } = body;
+    const { reportId, userId, detailedReport, sipReport, plannerData } = body;
 
     if (!reportId) {
       return NextResponse.json(
@@ -41,6 +42,28 @@ export async function POST(request: NextRequest) {
     // Sanitize data before storing
     const sanitizedDetailedReport = sanitizeForJSON(detailedReport);
     const sanitizedSipReport = sanitizeForJSON(sipReport);
+    const sanitizedPlannerData = sanitizeForJSON(
+      plannerData || detailedReport || sipReport || {},
+    );
+
+    const personalDetails =
+      sanitizedDetailedReport?.personalDetails ||
+      sanitizedSipReport?.personalDetails;
+
+    if (!personalDetails) {
+      return NextResponse.json(
+        { error: 'Investor details are required to store the report.' },
+        { status: 400 },
+      );
+    }
+
+    const investorResult = await saveInvestorAndReport({
+      reportId,
+      personalDetails,
+      plannerData: sanitizedPlannerData,
+      detailedReport: sanitizedDetailedReport,
+      sipReport: sanitizedSipReport,
+    });
 
     // Store both reports in parallel
     const [detailedResult, sipResult] = await Promise.all([
@@ -75,7 +98,12 @@ export async function POST(request: NextRequest) {
       console.error('Google Drive save failed (non-critical):', driveError);
     }
 
-    return NextResponse.json({ success: true, reportId, driveLink });
+    return NextResponse.json({
+      success: true,
+      reportId,
+      investorId: investorResult.investorId,
+      driveLink,
+    });
   } catch (error: any) {
     console.error('Error in store-report API:', error);
     return NextResponse.json(

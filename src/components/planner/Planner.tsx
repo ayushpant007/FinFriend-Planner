@@ -31,7 +31,6 @@ import { RecommendedFunds } from './RecommendedFunds';
 import { GoalsBreakdown } from './GoalsBreakdown';
 import { AppHeader } from '../layout/AppHeader';
 import { InsuranceQuotesForm } from './InsuranceQuotesForm';
-import { getSupabase } from '@/lib/supabase';
 
 
 const initialPersonalDetails: PersonalDetails = { name: '', dob: '', dependents: '', retirementAge: '', mobile: '', email: '', arn: '' };
@@ -511,23 +510,20 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
 
     setIsSaving(true);
     try {
-      const supabase = getSupabase();
-      if (!supabase) {
-        throw new Error('Supabase is not configured.');
-      }
-      const { error } = await supabase
-        .from('financial_plans')
-        .upsert({
-          email: personalDetails.email,
-          data: allPlannerData,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'email' });
-
-      if (error) throw error;
+      const response = await fetch('/api/save-investor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          personalDetails,
+          plannerData: allPlannerData,
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Failed to save investor.');
 
       toast({
         title: "Progress Saved",
-        description: "Your data has been securely saved to Supabase.",
+        description: `Investor profile saved with ID ${result.investorId}.`,
       });
     } catch (error: any) {
       console.error('Error saving to Supabase:', error);
@@ -628,12 +624,17 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
         fundBenchmarkCache: fundBenchmarkCache,
       };
 
-      const reportId = `guest_${Date.now()}`;
+      const reportId = `report_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
       try {
         await fetch('/api/store-report', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ reportId, userId: 'guest', sipReport: allocationReportData }),
+         body: JSON.stringify({
+           reportId,
+           userId: personalDetails.email,
+           plannerData: allPlannerData,
+           sipReport: allocationReportData,
+         }),
         });
       } catch (storeError) {
         console.error('Error storing allocation report:', storeError);
@@ -1017,8 +1018,8 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
         willStatus: willStatus,
       };
 
-      // Generate unique report ID using timestamp
-      const reportId = `guest_${Date.now()}`;
+      // Generate a stable report record ID for the Supabase report history.
+      const reportId = `report_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
       // Store data in Replit Database via API for persistence
       try {
@@ -1027,7 +1028,8 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             reportId,
-            userId: 'guest',
+            userId: personalDetails.email,
+            plannerData: allPlannerData,
             detailedReport: generatedDetailedReportData,
             sipReport: generatedSipReportData,
           }),
