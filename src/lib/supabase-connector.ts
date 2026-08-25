@@ -1,8 +1,7 @@
 import 'server-only';
 
-import { ReplitConnectors } from '@replit/connectors-sdk';
-
-const connectors = new ReplitConnectors();
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 type SupabaseProxyOptions = {
   method?: string;
@@ -14,7 +13,30 @@ export function supabaseApi(
   path: string,
   init?: SupabaseProxyOptions,
 ): Promise<Response> {
-  return connectors.proxy('supabase', path, init);
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    return Promise.reject(
+      new Error('Supabase server secrets are not configured.'),
+    );
+  }
+
+  const headers = new Headers(init?.headers);
+  headers.set('apikey', supabaseServiceRoleKey);
+  headers.set('Authorization', `Bearer ${supabaseServiceRoleKey}`);
+  if (init?.body !== undefined && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  return fetch(`${supabaseUrl}${path}`, {
+    method: init?.method ?? 'GET',
+    headers,
+    body:
+      init?.body === undefined
+        ? undefined
+        : typeof init.body === 'string'
+          ? init.body
+          : JSON.stringify(init.body),
+    cache: 'no-store',
+  });
 }
 
 export async function supabaseJson<T>(

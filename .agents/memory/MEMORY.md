@@ -3,3 +3,4 @@
 - [PMS source availability](pms-source-availability.md) — CSV URL mappings can resolve to PMS pages that later return 404/timeout; surface upstream status and keep a direct-source fallback.
 - [AIF registry ingestion](aif-registry-ingestion.md) — Pre-extract the uploaded legacy workbook into deduplicated JSON and keep unsupported fund statistics unavailable.
 - [Supabase managed connection DDL](supabase-ddl-connection.md) — REST access works through the managed connector, but table migrations must be applied in Supabase SQL Editor.
+- [Supabase secret runtime](supabase-secret-runtime.md) — This app's report storage must use the configured Supabase Secrets directly; the managed connector may be unavailable at runtime.
