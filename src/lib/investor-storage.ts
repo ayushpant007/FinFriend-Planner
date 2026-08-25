@@ -124,3 +124,23 @@ export async function saveInvestorProfile(input: {
 
   return { investorId: investorResult.data[0].id };
 }
+
+export async function getInvestorReport(reportId: string) {
+  const encodedReportId = encodeURIComponent(reportId);
+  const result = await supabaseJson<JsonObject[]>(
+    `/rest/v1/investor_reports?select=planner_data,detailed_report,sip_report&report_id=eq.${encodedReportId}&limit=1`,
+  );
+
+  if (!result.response.ok) {
+    throw new Error(`Failed to load investor report: ${JSON.stringify(result.data)}`);
+  }
+
+  const report = result.data?.[0];
+  if (!report) return null;
+
+  return {
+    plannerData: (report.planner_data as JsonObject | null) ?? null,
+    detailedReport: (report.detailed_report as JsonObject | null) ?? null,
+    sipReport: (report.sip_report as JsonObject | null) ?? null,
+  };
+}

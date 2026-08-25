@@ -7,6 +7,7 @@ import type { ReportData } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { ShareReportLink } from '@/components/planner/ShareReportLink';
 
 function ReportPageContent() {
   const searchParams = useSearchParams();
@@ -66,6 +67,7 @@ function ReportPageContent() {
   return (
     <div className="min-h-screen bg-background">
         <main className="container mx-auto p-4 md:p-8">
+            <ShareReportLink />
             <Report data={reportData} />
         </main>
     </div>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDetailedReport, getSipOptimizerReport } from '@/lib/replit-db';
+import { getInvestorReport } from '@/lib/investor-storage';
 
 export const dynamic = 'force-dynamic';
 
@@ -199,6 +200,22 @@ export async function GET(request: NextRequest) {
         if (sipData) {
           reportData = convertSipToDetailed(sipData);
         }
+      }
+    }
+
+    // Shared report links must work across instances, where local KV storage
+    // may not contain the report. Supabase is the durable source of truth.
+    if (!reportData) {
+      try {
+        const storedReport = await getInvestorReport(reportId);
+        if (storedReport) {
+          reportData =
+            reportType === 'sip'
+              ? storedReport.sipReport || storedReport.detailedReport
+              : storedReport.detailedReport || storedReport.sipReport;
+        }
+      } catch (supabaseError) {
+        console.warn('Supabase report lookup failed:', supabaseError);
       }
     }
 

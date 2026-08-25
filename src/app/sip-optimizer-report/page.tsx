@@ -7,6 +7,7 @@ import type { SipOptimizerReportData, GoalWithCalculations } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { ShareReportLink } from '@/components/planner/ShareReportLink';
 
 function SipOptimizerReportPageContent() {
   const searchParams = useSearchParams();
@@ -78,6 +79,9 @@ function SipOptimizerReportPageContent() {
   return (
     <div className="min-h-screen bg-gray-50">
         <main>
+            <div className="mx-auto max-w-7xl px-4 pt-4 md:px-8">
+              <ShareReportLink />
+            </div>
             <SipOptimizerReport data={reportData} isPreview={isPreview} />
         </main>
     </div>
