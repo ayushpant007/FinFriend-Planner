@@ -70,6 +70,7 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
 
   
   const [personalDetails, setPersonalDetails] = useState<PersonalDetails>(initialPersonalDetails);
+  const [clientsSidebarOpen, setClientsSidebarOpen] = useState(false);
   const [isPersonalDetailsModalOpen, setIsPersonalDetailsModalOpen] = useState(false);
 
   const [assets, setAssets] = useState<Asset[]>(initialAssets);
@@ -1060,11 +1061,11 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
 
   return (
     <div>
-      {!isAllocationView && <ClientsSidebar />}
+      {!isAllocationView && <ClientsSidebar open={clientsSidebarOpen} onOpenChange={setClientsSidebarOpen} />}
       <ScrollProgressBar />
       <ScrollToTopButton />
       <AppHeader />
-      <div className="container mx-auto p-4 md:p-8 lg:ml-72 lg:max-w-[calc(100%-18rem)]">
+      <div className={`container mx-auto p-4 md:p-8 transition-[margin,max-width] duration-200 ${!isAllocationView && clientsSidebarOpen ? "lg:ml-72 lg:max-w-[calc(100%-18rem)]" : ""}`}>
         {isAllocationView ? (
           <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold font-headline text-foreground">Allocation</h2>

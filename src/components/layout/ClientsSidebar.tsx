@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ChevronDown, ChevronRight, FileText, Loader2, Pencil, Search, Users } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, FileText, Loader2, Menu, Pencil, Search, Users, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -16,7 +16,13 @@ type Investor = {
   latestReportId?: string | null;
 };
 
-export function ClientsSidebar() {
+export function ClientsSidebar({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const router = useRouter();
   const { toast } = useToast();
   const [investors, setInvestors] = useState<Investor[]>([]);
@@ -81,11 +87,34 @@ export function ClientsSidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 z-[110] hidden h-screen w-72 flex-col border-r bg-sidebar text-sidebar-foreground shadow-lg lg:flex">
+    <>
+      {!open && (
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Open clients sidebar"
+          title="Open clients"
+          onClick={() => onOpenChange(true)}
+          className="fixed left-4 top-4 z-[120] h-10 w-10 bg-background shadow-md"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+      )}
+      {open && (
+        <button
+          aria-label="Close clients sidebar"
+          onClick={() => onOpenChange(false)}
+          className="fixed inset-0 z-[100] bg-black/20 backdrop-blur-[1px]"
+        />
+      )}
+      <aside className={`fixed left-0 top-0 z-[110] flex h-screen w-80 max-w-[calc(100vw-2rem)] flex-col border-r bg-sidebar text-sidebar-foreground shadow-lg transition-transform duration-200 ${open ? "translate-x-0" : "-translate-x-full"}`}>
       <div className="border-b p-5">
         <div className="mb-4 flex items-center gap-2 font-semibold">
           <Users className="h-5 w-5 text-primary" /> Saved Clients
           <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">{investors.length}</span>
+          <Button variant="ghost" size="icon" aria-label="Close clients sidebar" onClick={() => onOpenChange(false)} className="ml-1 h-8 w-8">
+            <X className="h-4 w-4" />
+          </Button>
         </div>
         <div className="relative">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -126,6 +155,7 @@ export function ClientsSidebar() {
           );
         })}
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }
