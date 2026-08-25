@@ -9,9 +9,13 @@ create table if not exists public.investors (
   dependents integer,
   retirement_age integer,
   arn text,
+  converted boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.investors
+  add column if not exists converted boolean not null default false;
 
 create table if not exists public.investor_reports (
   id uuid primary key default gen_random_uuid(),

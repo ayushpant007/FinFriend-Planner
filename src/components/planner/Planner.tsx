@@ -30,6 +30,7 @@ import { AssetAllocationForm } from './AssetAllocationForm';
 import { RecommendedFunds } from './RecommendedFunds';
 import { GoalsBreakdown } from './GoalsBreakdown';
 import { AppHeader } from '../layout/AppHeader';
+import { ClientsSidebar } from '../layout/ClientsSidebar';
 import { InsuranceQuotesForm } from './InsuranceQuotesForm';
 
 
@@ -1059,10 +1060,11 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
 
   return (
     <div>
+      {!isAllocationView && <ClientsSidebar />}
       <ScrollProgressBar />
       <ScrollToTopButton />
       <AppHeader />
-      <div className="container mx-auto p-4 md:p-8">
+      <div className="container mx-auto p-4 md:p-8 lg:ml-72 lg:max-w-[calc(100%-18rem)]">
         {isAllocationView ? (
           <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold font-headline text-foreground">Allocation</h2>

@@ -144,3 +144,59 @@ export async function getInvestorReport(reportId: string) {
     sipReport: (report.sip_report as JsonObject | null) ?? null,
   };
 }
+
+export async function listInvestors() {
+  const result = await supabaseJson<JsonObject[]>(
+    '/rest/v1/investors?select=id,name,email,mobile,converted,updated_at,investor_reports(report_id,generated_at)&order=updated_at.desc',
+  );
+  if (!result.response.ok) {
+    throw new Error(`Failed to load investors: ${JSON.stringify(result.data)}`);
+  }
+  return (result.data ?? []).map((investor) => {
+    const reports = Array.isArray(investor.investor_reports)
+      ? (investor.investor_reports as JsonObject[]).sort(
+          (a, b) => new Date(String(b.generated_at)).getTime() - new Date(String(a.generated_at)).getTime(),
+        )
+      : [];
+    return {
+      id: investor.id,
+      name: investor.name,
+      email: investor.email,
+      mobile: investor.mobile,
+      converted: investor.converted === true,
+      updatedAt: investor.updated_at,
+      latestReportId: reports[0]?.report_id ?? null,
+    };
+  });
+}
+
+export async function updateInvestorConverted(id: string, converted: boolean) {
+  const result = await supabaseJson<JsonObject[]>(
+    `/rest/v1/investors?id=eq.${encodeURIComponent(id)}`,
+    {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ converted, updated_at: new Date().toISOString() }),
+    },
+  );
+  if (!result.response.ok) {
+    throw new Error(`Failed to update client: ${JSON.stringify(result.data)}`);
+  }
+}
+
+export async function getInvestorPlannerData(investorId: string) {
+  const result = await supabaseJson<JsonObject[]>(
+    `/rest/v1/investor_reports?select=report_id,planner_data,detailed_report,sip_report,generated_at&investor_id=eq.${encodeURIComponent(investorId)}&order=generated_at.desc&limit=1`,
+  );
+  if (!result.response.ok) {
+    throw new Error(`Failed to load client report: ${JSON.stringify(result.data)}`);
+  }
+  const report = result.data?.[0];
+  if (!report) return null;
+  return {
+    reportId: report.report_id,
+    plannerData: report.planner_data ?? {},
+    detailedReport: report.detailed_report ?? null,
+    sipReport: report.sip_report ?? null,
+  };
+}
