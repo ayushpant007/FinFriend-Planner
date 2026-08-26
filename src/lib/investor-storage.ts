@@ -165,6 +165,10 @@ export async function listInvestors() {
       mobile: investor.mobile,
       converted: investor.converted === true,
       updatedAt: investor.updated_at,
+      reports: reports.map((report) => ({
+        reportId: report.report_id,
+        generatedAt: report.generated_at,
+      })),
       latestReportId: reports[0]?.report_id ?? null,
     };
   });
@@ -190,6 +194,23 @@ export async function getInvestorPlannerData(investorId: string) {
   );
   if (!result.response.ok) {
     throw new Error(`Failed to load client report: ${JSON.stringify(result.data)}`);
+  }
+  const report = result.data?.[0];
+  if (!report) return null;
+  return {
+    reportId: report.report_id,
+    plannerData: report.planner_data ?? {},
+    detailedReport: report.detailed_report ?? null,
+    sipReport: report.sip_report ?? null,
+  };
+}
+
+export async function getInvestorPlannerDataByReportId(reportId: string) {
+  const result = await supabaseJson<JsonObject[]>(
+    `/rest/v1/investor_reports?select=report_id,planner_data,detailed_report,sip_report,generated_at&report_id=eq.${encodeURIComponent(reportId)}&limit=1`,
+  );
+  if (!result.response.ok) {
+    throw new Error(`Failed to load report: ${JSON.stringify(result.data)}`);
   }
   const report = result.data?.[0];
   if (!report) return null;

@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getInvestorPlannerData } from '@/lib/investor-storage';
+import {
+  getInvestorPlannerData,
+  getInvestorPlannerDataByReportId,
+} from '@/lib/investor-storage';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,7 +12,10 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const report = await getInvestorPlannerData(id);
+    const reportId = new URL(_request.url).searchParams.get('reportId');
+    const report = reportId
+      ? await getInvestorPlannerDataByReportId(reportId)
+      : await getInvestorPlannerData(id);
     if (!report) return NextResponse.json({ error: 'No saved report found' }, { status: 404 });
     return NextResponse.json(report);
   } catch (error: any) {

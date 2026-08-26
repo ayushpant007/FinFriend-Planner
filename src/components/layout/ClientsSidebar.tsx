@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ChevronDown, ChevronRight, FileText, Loader2, Menu, Pencil, Search, Users, X } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, Clock3, Eye, Loader2, Menu, Pencil, Search, Users, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +14,10 @@ type Investor = {
   mobile?: string | null;
   converted: boolean;
   latestReportId?: string | null;
+  reports: {
+    reportId: string;
+    generatedAt?: string | null;
+  }[];
 };
 
 export function ClientsSidebar({
@@ -70,13 +74,13 @@ export function ClientsSidebar({
     }
   };
 
-  const editClient = async (client: Investor) => {
-    if (!client.latestReportId) {
+  const editClient = async (client: Investor, reportId: string) => {
+    if (!reportId) {
       toast({ title: "No report available", description: "Generate a report for this client before editing it." });
       return;
     }
     try {
-      const response = await fetch(`/api/investors/${client.id}/report`, { cache: "no-store" });
+      const response = await fetch(`/api/investors/${client.id}/report?reportId=${encodeURIComponent(reportId)}`, { cache: "no-store" });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       sessionStorage.setItem("financial_planner_form_data", JSON.stringify(data.plannerData));
@@ -84,6 +88,19 @@ export function ClientsSidebar({
     } catch (error: any) {
       toast({ title: "Report could not be loaded", description: error.message, variant: "destructive" });
     }
+  };
+
+  const formatReportDate = (value?: string | null) => {
+    if (!value) return "Date unavailable";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "Date unavailable";
+    return new Intl.DateTimeFormat(undefined, {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
   };
 
   return (
@@ -131,18 +148,47 @@ export function ClientsSidebar({
               <button className="flex w-full items-center gap-2 p-3 text-left hover:bg-sidebar-accent" onClick={() => setExpanded(isOpen ? null : client.id)}>
                 {isOpen ? <ChevronDown className="h-4 w-4 shrink-0" /> : <ChevronRight className="h-4 w-4 shrink-0" />}
                 <span className="min-w-0 flex-1 truncate text-sm font-medium">{client.name}</span>
-                {client.converted && <Check className="h-4 w-4 shrink-0 text-emerald-600" title="Converted" />}
+                <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+                  {client.reports.length} {client.reports.length === 1 ? "report" : "reports"}
+                </span>
+                {client.converted && <Check aria-label="Converted" className="h-4 w-4 shrink-0 text-emerald-600" />}
               </button>
               {isOpen && <div className="space-y-2 border-t px-3 pb-3 pt-2">
                 <p className="truncate text-xs text-muted-foreground">{client.email}</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" size="sm" disabled={!client.latestReportId} onClick={() => client.latestReportId && router.push(`/sip-optimizer-report?id=${client.latestReportId}`)}>
-                    <FileText className="mr-1 h-3.5 w-3.5" /> View
-                  </Button>
-                  <Button variant="outline" size="sm" disabled={!client.latestReportId} onClick={() => editClient(client)}>
-                    <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
-                  </Button>
-                </div>
+                 {client.reports.length === 0 ? (
+                   <p className="rounded-md bg-muted/50 px-2 py-2 text-xs text-muted-foreground">
+                     No reports created yet.
+                   </p>
+                 ) : (
+                   <div className="space-y-1.5">
+                     {client.reports.map((report) => (
+                       <div key={report.reportId} className="rounded-md border bg-background px-2 py-2">
+                         <div className="mb-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                           <Clock3 className="h-3.5 w-3.5 shrink-0" />
+                           <span>{formatReportDate(report.generatedAt)}</span>
+                         </div>
+                         <div className="grid grid-cols-2 gap-1.5">
+                           <Button
+                             variant="outline"
+                             size="sm"
+                             className="h-8 text-xs"
+                             onClick={() => router.push(`/sip-optimizer-report?id=${report.reportId}`)}
+                           >
+                             <Eye className="mr-1 h-3.5 w-3.5" /> View
+                           </Button>
+                           <Button
+                             variant="outline"
+                             size="sm"
+                             className="h-8 text-xs"
+                             onClick={() => editClient(client, report.reportId)}
+                           >
+                             <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
+                           </Button>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 )}
                 <div className="flex items-center justify-between rounded-md bg-muted/50 px-2 py-1.5 text-xs">
                   <span>Converted?</span>
                   <div className="flex gap-1">
