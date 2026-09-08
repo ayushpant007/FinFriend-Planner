@@ -28,6 +28,19 @@ const FILES: CsvFileSpec[] = [
 ];
 
 let cache: { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] } | null = null;
+let cacheSignature = '';
+
+function getFilesSignature(baseDir: string, specs: Array<{ file: string }>): string {
+  return specs.map(spec => {
+    const fullPath = path.join(baseDir, spec.file);
+    try {
+      const stat = fs.statSync(fullPath);
+      return `${spec.file}:${stat.size}:${stat.mtimeMs}`;
+    } catch {
+      return `${spec.file}:missing`;
+    }
+  }).join('|');
+}
 
 function parseCSV(text: string): string[][] {
   const rows: string[][] = [];
@@ -75,11 +88,12 @@ function cleanType(val: string | undefined): string {
 }
 
 function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] } {
-  if (cache) return cache;
+  const baseDir = path.join(process.cwd(), 'Mutual Fund');
+  const signature = getFilesSignature(baseDir, FILES);
+  if (cache && cacheSignature === signature) return cache;
 
   const byCode = new Map<string, FundCsvRecord>();
   const all: FundCsvRecord[] = [];
-  const baseDir = path.join(process.cwd(), 'Mutual Fund');
 
   for (const spec of FILES) {
     const fullPath = path.join(baseDir, spec.file);
@@ -145,6 +159,7 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
 
   console.log(`[funds-csv] Loaded ${all.length} fund rows across ${FILES.length} CSVs`);
   cache = { byCode, all };
+  cacheSignature = signature;
   return cache;
 }
 
@@ -355,11 +370,11 @@ export function buildAllocationFundData(record: FundCsvRecord): AllocationFundDa
     schemeCategory: record.schemeCategory,
     benchmarkName: pickFirst(r, BENCHMARK_NAME_KEYS) ?? null,
     riskCategory: pickFirst(r, RISK_LABEL_KEYS) ?? null,
-    totalScore: toNum(pickFirst(r, TOTAL_SCORE_KEYS)),
+    totalScore: toNum(pickFirst(r, [...TOTAL_SCORE_KEYS, 'Score (/40)', 'Score/40', 'Score'])),
     alpha: toNum(pickFirst(r, ['Alpha', 'alpha'])),
     beta: toNum(pickFirst(r, ['Beta', 'beta'])),
     sharpe: toNum(pickFirst(r, ['Sharpe Ratio', 'Sharpe', 'sharpe'])),
-    sortino: toNum(pickFirst(r, ['Sortino (%)', 'Sortino', 'sortino'])),
+    sortino: toNum(pickFirst(r, ['Sortino Ratio', 'Sortino (%)', 'Sortino', 'sortino'])),
     stdDev: toNum(pickFirst(r, ['Std Dev', 'Standard Deviation', 'Std Dev\n(%)', 'std_dev'])),
     meanReturn: toNum(pickFirst(r, ['Mean Return (%)', 'Mean Return', 'Mean Return\n(%)', 'mean_return'])),
     ytm: toNum(pickFirst(r, ['YTM (%)', 'YTM\n(%)', 'Yield to Maturity (%)', 'YTM', 'ytm'])),
@@ -370,8 +385,8 @@ export function buildAllocationFundData(record: FundCsvRecord): AllocationFundDa
     top10Holdings: toNum(pickFirst(r, ['Top 10 Stocks (%)', 'Top 10\nHoldings %', 'top_10_holdings'])),
     top5Stocks: toNum(pickFirst(r, ['Top 5 Stocks (%)', 'Top 5\nStocks %', 'top_5_stocks'])),
     top3Sectors: toNum(pickFirst(r, ['Top 3 Sectors (%)', 'Top 3\nSectors %', 'top_3_sectors'])),
-    pbRatio: toNum(pickFirst(r, ['P/B Ratio', 'P/B\nRatio', 'pb_ratio'])),
-    peRatio: toNum(pickFirst(r, ['P/E Ratio', 'P/E\nRatio', 'pe_ratio'])),
+    pbRatio: toNum(pickFirst(r, ['P/B Ratio', 'Portfolio P/B', 'P/B\nRatio', 'pb_ratio'])),
+    peRatio: toNum(pickFirst(r, ['P/E Ratio', 'Portfolio P/E', 'P/E\nRatio', 'pe_ratio'])),
   };
 
   const returnSpec = FUND_RETURN_KEYS[record.category];
@@ -449,12 +464,13 @@ interface TopHoldingsCache {
 }
 
 let holdingsCache: TopHoldingsCache | null = null;
+let holdingsCacheSignature = '';
 
 const TOP_HOLDINGS_FILES = [
-  { id: 'equity',      file: 'Equity_Funds_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: 'P/E Ratio' },
-  { id: 'hybrid',      file: 'Hybrid_Funds_Holdings.csv',      codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holding Type',  instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets', peCol: 'P/E Ratio' },
-  { id: 'debt',        file: 'Debt_Funds_Holdings.csv',        codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,        typeCol: null,           instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets', peCol: null },
-  { id: 'solution',    file: 'Solution_Oriented_Holdings.csv',    codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: 'P/E Ratio' },
+  { id: 'equity',      file: 'Equity_Funds_Holdings.csv',      codeCol: 'Scheme Code', fundNameCol: 'Fund Name', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: 'P/E Ratio' },
+  { id: 'hybrid',      file: 'Hybrid_Funds_Holdings.csv',      codeCol: 'Scheme Code', fundNameCol: 'Fund Name', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: 'Holding Type',  instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets', peCol: 'P/E Ratio' },
+  { id: 'debt',        file: 'Debt_Funds_Holdings.csv',        codeCol: 'Scheme Code', fundNameCol: 'Fund Name', companyCol: 'Company Name', sectorCol: null,        typeCol: null,           instrCol: 'Instrument', creditCol: 'Credit Rating', pctCol: '% of Assets', peCol: null },
+  { id: 'solution',    file: 'Solution_Oriented_Holdings.csv',    codeCol: 'Scheme Code', fundNameCol: 'Fund Name', companyCol: 'Company Name', sectorCol: 'Sector',   typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: 'P/E Ratio' },
   { id: 'commodities', file: 'Commodities_Funds_Holdings.csv', codeCol: 'Scheme Code', companyCol: 'Company Name', sectorCol: null,       typeCol: null,           instrCol: null,        creditCol: null,            pctCol: '% of Assets', peCol: null },
 ];
 
@@ -480,9 +496,21 @@ function normalizeCategoryId(category: string): string {
 }
 
 function loadTopHoldings(): TopHoldingsCache {
-  if (holdingsCache) return holdingsCache;
-  const byCategoryAndCode = new Map<string, TopHolding[]>();
   const baseDir = path.join(process.cwd(), 'Mutual Fund');
+  const signature = getFilesSignature(baseDir, [...FILES, ...TOP_HOLDINGS_FILES]);
+  if (holdingsCache && holdingsCacheSignature === signature) return holdingsCache;
+
+  const fundRecords = getAllFundCsvRecords();
+  const fundCodeByCategoryAndName = new Map<string, string>();
+  for (const record of fundRecords) {
+    if (!record.schemeCode) continue;
+    const key = `${normalizeCategoryId(record.category)}:${normalizeFundName(record.schemeName)}`;
+    const existingCode = fundCodeByCategoryAndName.get(key);
+    if (!existingCode || record.plan.toLowerCase() === 'direct') {
+      fundCodeByCategoryAndName.set(key, record.schemeCode);
+    }
+  }
+  const byCategoryAndCode = new Map<string, TopHolding[]>();
 
   for (const spec of TOP_HOLDINGS_FILES) {
     const fullPath = path.join(baseDir, spec.file);
@@ -501,6 +529,7 @@ function loadTopHoldings(): TopHoldingsCache {
     };
 
     const codeIdx = colIdx(spec.codeCol);
+    const fundNameIdx = colIdx('Fund Name');
     const companyIdx = colIdx(spec.companyCol);
     const sectorIdx = colIdx(spec.sectorCol);
     const typeIdx = colIdx(spec.typeCol);
@@ -509,12 +538,17 @@ function loadTopHoldings(): TopHoldingsCache {
     const pctIdx = colIdx(spec.pctCol);
     const peIdx = colIdx(spec.peCol ?? null);
 
-    if (codeIdx === -1 || companyIdx === -1 || pctIdx === -1) continue;
+    if ((codeIdx === -1 && fundNameIdx === -1) || companyIdx === -1 || pctIdx === -1) continue;
 
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
       if (!row || row.length === 0) continue;
-      const code = (row[codeIdx] ?? '').trim();
+      let code = codeIdx >= 0 ? (row[codeIdx] ?? '').trim() : '';
+      if (!code && fundNameIdx >= 0) {
+        const fundName = (row[fundNameIdx] ?? '').trim();
+        const normalizedName = normalizeFundName(fundName);
+        code = fundCodeByCategoryAndName.get(`${spec.id}:${normalizedName}`) ?? '';
+      }
       if (!code) continue;
       const company = (row[companyIdx] ?? '').trim();
       if (!company) continue;
@@ -546,6 +580,7 @@ function loadTopHoldings(): TopHoldingsCache {
   }
 
   holdingsCache = { byCategoryAndCode };
+  holdingsCacheSignature = signature;
   return holdingsCache;
 }
 
