@@ -471,6 +471,9 @@ export interface TopHolding {
 interface TopHoldingsCache {
   // key: `${fileId}:${schemeCode}` — holdings per category-file per scheme
   byCategoryAndCode: Map<string, TopHolding[]>;
+  // key: `${fileId}:${normalizedPlanSpecificFundName}` — used when holdings
+  // files omit scheme codes and contain multiple plans/funds with similar names.
+  byCategoryAndName: Map<string, TopHolding[]>;
 }
 
 let holdingsCache: TopHoldingsCache | null = null;
@@ -524,6 +527,7 @@ function loadTopHoldings(): TopHoldingsCache {
     }
   }
   const byCategoryAndCode = new Map<string, TopHolding[]>();
+  const byCategoryAndName = new Map<string, TopHolding[]>();
 
   for (const spec of TOP_HOLDINGS_FILES) {
     const fullPath = path.join(baseDir, spec.file);
@@ -591,15 +595,46 @@ function loadTopHoldings(): TopHoldingsCache {
         peRatio,
       };
 
+      if (fundNameIdx >= 0) {
+        const fundName = (row[fundNameIdx] ?? '').trim();
+        if (fundName) {
+          const nameKey = `${spec.id}:${normalizeExactFundName(fundName)}`;
+          if (!byCategoryAndName.has(nameKey)) byCategoryAndName.set(nameKey, []);
+          byCategoryAndName.get(nameKey)!.push(holding);
+        }
+      }
+
+      if (!code) continue;
       const mapKey = `${spec.id}:${code}`;
       if (!byCategoryAndCode.has(mapKey)) byCategoryAndCode.set(mapKey, []);
       byCategoryAndCode.get(mapKey)!.push(holding);
     }
   }
 
-  holdingsCache = { byCategoryAndCode };
+  holdingsCache = { byCategoryAndCode, byCategoryAndName };
   holdingsCacheSignature = signature;
   return holdingsCache;
+}
+
+/**
+ * A source file should never make a portfolio appear to contain more than
+ * 100% of its assets. Keep the original percentages unchanged and include
+ * only complete rows that fit within the asset cap. In normal data this is a
+ * no-op; it protects the UI from duplicated or malformed source rows.
+ */
+function capHoldingsAt100(holdings: TopHolding[]): TopHolding[] {
+  const total = holdings.reduce((sum, holding) => sum + holding.percentOfAssets, 0);
+  if (total <= 100) return holdings;
+
+  let runningTotal = 0;
+  const capped: TopHolding[] = [];
+  for (const holding of holdings) {
+    if (runningTotal + holding.percentOfAssets <= 100 + Number.EPSILON) {
+      capped.push(holding);
+      runningTotal += holding.percentOfAssets;
+    }
+  }
+  return capped;
 }
 
 /**
@@ -615,9 +650,16 @@ export function getTopHoldings(schemeCode: string | number, category?: string): 
 
   if (category) {
     const fileId = normalizeCategoryId(category);
+    const selectedRecord = getFundCsvRecord(code, category);
+    if (selectedRecord) {
+      const nameKey = `${fileId}:${normalizeExactFundName(selectedRecord.schemeName)}`;
+      const holdings = cache.byCategoryAndName.get(nameKey);
+      if (holdings?.length) return capHoldingsAt100(holdings);
+    }
+
     for (const candidateCode of codesToTry) {
       const holdings = cache.byCategoryAndCode.get(`${fileId}:${candidateCode}`);
-      if (holdings?.length) return holdings;
+      if (holdings?.length) return capHoldingsAt100(holdings);
     }
     return [];
   }
@@ -634,7 +676,7 @@ export function getTopHoldings(schemeCode: string | number, category?: string): 
       if (!seen.has(k)) { seen.add(k); result.push(h); }
     }
   }
-  return result;
+  return capHoldingsAt100(result);
 }
 
 export interface PortfolioGrowthInput {
