@@ -338,6 +338,16 @@ function normalizeFundName(name: string): string {
     .trim();
 }
 
+// Preserve plan/option tokens for holdings files that identify funds by name.
+// This is intentionally separate from normalizeFundName(), which strips those
+// tokens for counterpart and fallback matching.
+function normalizeExactFundName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function findDirectCounterpart(record: FundCsvRecord): FundCsvRecord | null {
   if (record.plan.toLowerCase() === 'direct') {
     return null;
@@ -501,9 +511,12 @@ function loadTopHoldings(): TopHoldingsCache {
   if (holdingsCache && holdingsCacheSignature === signature) return holdingsCache;
 
   const fundRecords = getAllFundCsvRecords();
+  const fundCodeByCategoryAndExactName = new Map<string, string>();
   const fundCodeByCategoryAndName = new Map<string, string>();
   for (const record of fundRecords) {
     if (!record.schemeCode) continue;
+    const exactKey = `${normalizeCategoryId(record.category)}:${normalizeExactFundName(record.schemeName)}`;
+    fundCodeByCategoryAndExactName.set(exactKey, record.schemeCode);
     const key = `${normalizeCategoryId(record.category)}:${normalizeFundName(record.schemeName)}`;
     const existingCode = fundCodeByCategoryAndName.get(key);
     if (!existingCode || record.plan.toLowerCase() === 'direct') {
@@ -544,6 +557,11 @@ function loadTopHoldings(): TopHoldingsCache {
       const row = rows[i];
       if (!row || row.length === 0) continue;
       let code = codeIdx >= 0 ? (row[codeIdx] ?? '').trim() : '';
+      if (!code && fundNameIdx >= 0) {
+        const fundName = (row[fundNameIdx] ?? '').trim();
+        const exactName = normalizeExactFundName(fundName);
+        code = fundCodeByCategoryAndExactName.get(`${spec.id}:${exactName}`) ?? '';
+      }
       if (!code && fundNameIdx >= 0) {
         const fundName = (row[fundNameIdx] ?? '').trim();
         const normalizedName = normalizeFundName(fundName);
