@@ -856,8 +856,11 @@ export function FundAllocationItem({
                   </tbody>
                   <tfoot>
                     <tr className="border-t border-blue-200 dark:border-blue-700">
-                      <td colSpan={3 + extraCols} className="py-1.5 text-muted-foreground font-medium">
+                      <td colSpan={2 + extraCols} className="py-1.5 text-muted-foreground font-medium">
                         Total ({topHoldings.length} holdings)
+                      </td>
+                      <td className="py-1.5 text-right font-bold text-blue-700 dark:text-blue-300">
+                        {topHoldings.reduce((s, h) => s + h.percentOfAssets, 0).toFixed(2)}%
                       </td>
                     </tr>
                   </tfoot>
