@@ -14,3 +14,9 @@ Commodity fund rows can also have a blank scheme code even when the scheme is va
 **Why:** The commodities dataset included `SBI Gold Reg` without a code, so the curated-funds API discarded the regular option before the allocation dropdown could display it.
 
 **How to apply:** Keep missing-code fallbacks narrowly scoped to the affected commodity label and use the authoritative master code; do not loosen the API to emit selectable rows with empty codes.
+
+Holdings loaders must keep a single all-assets row visible when source rounding reports slightly more than 100%; clamp that displayed row to 100% instead of dropping it.
+
+**Why:** Commodity holdings can report the only holding at values such as 100.07%, and the previous cap logic returned an empty list.
+
+**How to apply:** Preserve normal multi-row capping behavior, but handle the first over-100% row as a rounded all-assets position.

@@ -641,6 +641,12 @@ function capHoldingsAt100(holdings: TopHolding[]): TopHolding[] {
     if (runningTotal + holding.percentOfAssets <= 100 + Number.EPSILON) {
       capped.push(holding);
       runningTotal += holding.percentOfAssets;
+    } else if (capped.length === 0 && holding.percentOfAssets > 100) {
+      // Some source files report a single all-assets holding slightly above
+      // 100% because of rounding. Keep it visible rather than returning an
+      // empty holdings list, but keep the displayed total within the cap.
+      capped.push({ ...holding, percentOfAssets: 100 });
+      runningTotal = 100;
     }
   }
   return capped;
