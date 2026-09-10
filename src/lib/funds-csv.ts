@@ -27,6 +27,10 @@ const FILES: CsvFileSpec[] = [
   { category: 'Commodities', file: 'Commodities_Funds.csv' },
 ];
 
+const COMMODITY_SCHEME_CODE_FALLBACKS: Record<string, string> = {
+  'SBI Gold Reg': '115676',
+};
+
 let cache: { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] } | null = null;
 let cacheSignature = '';
 
@@ -133,7 +137,12 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
       headers.forEach((h, j) => {
         raw[h] = (row[j] ?? '').trim();
       });
-      const schemeCode = (codeIdx >= 0 ? row[codeIdx] : '')?.trim() || '';
+      const schemeName = (nameIdx >= 0 ? row[nameIdx] : '')?.trim() || '';
+      const schemeCode =
+        (codeIdx >= 0 ? row[codeIdx] : '')?.trim() ||
+        (spec.category === 'Commodities'
+          ? COMMODITY_SCHEME_CODE_FALLBACKS[schemeName] || ''
+          : '');
       if (!schemeCode) continue;
 
       const rawType = (catIdx >= 0 ? row[catIdx] : '')?.trim() || '';
@@ -142,8 +151,8 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
       const record: FundCsvRecord = {
         category: spec.category,
         schemeCode,
-        fundName: (nameIdx >= 0 ? row[nameIdx] : '')?.trim() || '',
-        schemeName: (nameIdx >= 0 ? row[nameIdx] : '')?.trim() || '',
+        fundName: schemeName,
+        schemeName,
         isin: (isinIdx >= 0 ? row[isinIdx] : '')?.trim() || '',
         plan: (planIdx >= 0 ? row[planIdx] : '')?.trim() || '',
         schemeCategory,
