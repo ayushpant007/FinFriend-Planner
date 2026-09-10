@@ -22,6 +22,13 @@ const AMC_NAMES = [
   "Sundaram", "Tata", "Taurus", "The Wealth Company", "TRUST MF", "Unifi", "Union", "UTI", "WhiteOak Capital"
 ];
 
+// The commodities CSV contains this regular-plan row but its Scheme Code
+// cell is blank. Keep the row selectable using the corresponding code from
+// the checked-in fund master.
+const COMMODITY_SCHEME_CODE_FALLBACKS: Record<string, string> = {
+  'SBI Gold Reg': '115676',
+};
+
 export async function GET() {
   const fundsDir = path.join(process.cwd(), 'Mutual Fund');
   const files = [
@@ -48,7 +55,14 @@ export async function GET() {
           const schemeName = row['Fund Name'] || row['fund_name'] || row[''] || '';
           const rawType = row['Category'] || row['category'] || row['bm'] || '';
           const type = rawType.replace(/^(Debt|Hybrid|Solution|Commodities):\s*/i, '').trim();
-          const schemeCode = row['Scheme Code'] || row['scheme_code'] || row['AMFI Scheme Code'] || '';
+          const rawSchemeName = row['Fund Name'] || row['fund_name'] || row[''] || '';
+          const schemeCode =
+            row['Scheme Code'] ||
+            row['scheme_code'] ||
+            row['AMFI Scheme Code'] ||
+            (file.name === 'Commodities_Funds.csv'
+              ? COMMODITY_SCHEME_CODE_FALLBACKS[rawSchemeName.trim()] || ''
+              : '');
           
           let fundName = schemeName.split(' ')[0] || 'Unknown';
           
