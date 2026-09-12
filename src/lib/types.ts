@@ -210,6 +210,8 @@ export interface ReportSections {
   estatePlanning: boolean;
   retirementPlanning: boolean;
   modelPortfolioAnalysis: boolean;
+  riskReturnMetrics: boolean;
+  topHoldings: boolean;
   liquidAssetAllocation: boolean;
   equityWeightAnalysis: boolean;
   debtWeightAnalysis: boolean;

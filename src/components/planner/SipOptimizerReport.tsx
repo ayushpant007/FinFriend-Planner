@@ -330,7 +330,7 @@ const CHART_COLORS = [
 ];
 
 
-import type { FundMetricsView } from '@/lib/funds-csv';
+import type { FundMetricsView, TopHolding } from '@/lib/funds-csv';
 
 const categoryMatches = (fundCategory: string | undefined, target: string) => {
     if (!fundCategory) return false;
@@ -344,12 +344,16 @@ const FundDetailCard = ({
   alloc, 
   goalName, 
   formatCurrency,
-  cachedBenchmarkData
+  cachedBenchmarkData,
+  showRiskReturnMetrics,
+  showTopHoldings,
 }: { 
   alloc: FundAllocation, 
   goalName: string, 
   formatCurrency: (v: number | '') => string,
   cachedBenchmarkData?: { yearlyComparison: any[]; benchmarkName: string; riskMetrics: any; csvMetrics?: FundMetricsView } | null
+  showRiskReturnMetrics: boolean
+  showTopHoldings: boolean
 }) => {
   const [returns, setReturns] = useState<FundReturnsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -369,6 +373,8 @@ const FundDetailCard = ({
   const [csvMetrics, setCsvMetrics] = useState<FundMetricsView | null>(
     cachedBenchmarkData?.csvMetrics ?? null
   );
+  const [topHoldings, setTopHoldings] = useState<TopHolding[]>([]);
+  const [isLoadingHoldings, setIsLoadingHoldings] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -444,6 +450,39 @@ const FundDetailCard = ({
     fetchData();
   }, [alloc.schemeCode]);
 
+  useEffect(() => {
+    if (!showTopHoldings || !alloc.schemeCode) {
+      setTopHoldings([]);
+      setIsLoadingHoldings(false);
+      return;
+    }
+
+    let cancelled = false;
+    setIsLoadingHoldings(true);
+
+    fetch('/api/allocation/top-holdings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ schemeCode: alloc.schemeCode, category: alloc.fundCategory }),
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Failed to load holdings: ${response.status}`);
+        const result = await response.json();
+        if (!cancelled) setTopHoldings(result.holdings || []);
+      })
+      .catch((error) => {
+        console.error(`Failed to fetch top holdings for ${alloc.schemeName}`, error);
+        if (!cancelled) setTopHoldings([]);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingHoldings(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [alloc.schemeCode, alloc.fundCategory, showTopHoldings, alloc.schemeName]);
+
   const fmtNum = (v: number | null | undefined, digits = 2) =>
     v === null || v === undefined || Number.isNaN(v) ? 'N/A' : v.toFixed(digits);
   const fmtPct = (v: number | null | undefined, digits = 2) =>
@@ -501,8 +540,13 @@ const FundDetailCard = ({
           ))}
         </div>
 
-        {(riskMetrics || csvMetrics) && (
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2 py-3 border-y border-dashed border-slate-200">
+        {showRiskReturnMetrics && (
+          <div className="py-3 border-y border-dashed border-slate-200">
+            <h4 className="text-[11px] font-black text-amber-700 uppercase tracking-wide mb-3">
+              Risk & Return Metrics
+            </h4>
+            {(riskMetrics || csvMetrics) ? (
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2">
             {/* Equity Metrics */}
             {riskMetrics && !categoryMatches(alloc.fundCategory, 'Debt') && [
               { label: 'Sharpe Ratio', val: fmtNum(riskMetrics.sharpeRatio) },
@@ -534,6 +578,77 @@ const FundDetailCard = ({
                 <span className="font-black text-slate-800">{metric.val}</span>
               </div>
             ))}
+            </div>
+            ) : (
+              <p className="text-[10px] text-slate-400">Metrics unavailable for this fund.</p>
+            )}
+          </div>
+        )}
+
+        {showTopHoldings && (
+          <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <h4 className="text-[11px] font-black text-blue-800 uppercase tracking-wide mb-1">
+              Top Holdings
+            </h4>
+            <p className="text-[10px] text-blue-700/70 mb-3">
+              Portfolio composition as of latest available data
+            </p>
+            {isLoadingHoldings ? (
+              <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Loading top holdings…
+              </div>
+            ) : topHoldings.length > 0 ? (
+              <div className="overflow-x-auto">
+                {(() => {
+                  const hasSector = topHoldings.some(h => h.sector);
+                  const hasInstrument = topHoldings.some(h => h.instrument);
+                  const hasRating = topHoldings.some(h => h.creditRating);
+                  const hasPeRatio = topHoldings.some(h => h.peRatio !== null);
+                  const extraCols = (hasSector ? 1 : 0) + (hasInstrument ? 1 : 0) + (hasRating ? 1 : 0) + (hasPeRatio ? 1 : 0);
+                  return (
+                    <table className="w-full text-[10px]">
+                      <thead>
+                        <tr className="border-b border-blue-200">
+                          <th className="text-left py-1 pr-2 font-medium text-blue-700">#</th>
+                          <th className="text-left py-1 pr-2 font-medium text-blue-700">Company / Instrument</th>
+                          {hasSector && <th className="text-left py-1 pr-2 font-medium text-blue-700">Sector</th>}
+                          {hasInstrument && <th className="text-left py-1 pr-2 font-medium text-blue-700">Instrument</th>}
+                          {hasRating && <th className="text-left py-1 pr-2 font-medium text-blue-700">Rating</th>}
+                          {hasPeRatio && <th className="text-right py-1 pr-2 font-medium text-blue-700">P/E Ratio</th>}
+                          <th className="text-right py-1 font-medium text-blue-700">% Assets</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {topHoldings.map((holding, index) => (
+                          <tr key={`${holding.companyName}-${index}`} className="border-b border-blue-100 last:border-0">
+                            <td className="py-1.5 pr-2 text-slate-500">{index + 1}</td>
+                            <td className="py-1.5 pr-2 font-medium text-slate-800">{holding.companyName}</td>
+                            {hasSector && <td className="py-1.5 pr-2 text-slate-500">{holding.sector || '—'}</td>}
+                            {hasInstrument && <td className="py-1.5 pr-2 text-slate-500">{holding.instrument || '—'}</td>}
+                            {hasRating && <td className="py-1.5 pr-2 text-slate-500">{holding.creditRating || '—'}</td>}
+                            {hasPeRatio && <td className="py-1.5 pr-2 text-right text-slate-500">{holding.peRatio !== null ? holding.peRatio.toFixed(2) : '—'}</td>}
+                            <td className="py-1.5 text-right font-semibold text-blue-700">{holding.percentOfAssets.toFixed(2)}%</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr className="border-t border-blue-200">
+                          <td colSpan={2 + extraCols} className="py-1.5 text-slate-500 font-medium">
+                            Total ({topHoldings.length} holdings)
+                          </td>
+                          <td className="py-1.5 text-right font-bold text-blue-700">
+                            {topHoldings.reduce((sum, holding) => sum + holding.percentOfAssets, 0).toFixed(2)}%
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  );
+                })()}
+              </div>
+            ) : (
+              <p className="text-[10px] text-slate-400">Top holdings data unavailable for this fund.</p>
+            )}
           </div>
         )}
         
@@ -591,7 +706,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
   const [isGenerating, setIsGenerating] = useState(false);
   const [reportGeneratedForData, setReportGeneratedForData] = useState<string>("");
 
-  const sections: ReportSections = data.sections || {
+  const sections: ReportSections = {
     netWorth: true,
     cashflow: true,
     investmentStatus: true,
@@ -603,12 +718,15 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
     estatePlanning: true,
     retirementPlanning: true,
     modelPortfolioAnalysis: true,
+    riskReturnMetrics: true,
+    topHoldings: true,
     equityWeightAnalysis: true,
     debtWeightAnalysis: true,
     hybridWeightAnalysis: true,
     solutionOrientedWeightAnalysis: true,
     othersWeightAnalysis: true,
     liquidAssetAllocation: true,
+    ...(data.sections ?? {}),
   };
 
   const isSimplified = (data as any).isSimplified;
@@ -1367,6 +1485,8 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                                 (data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.otherType || data.goalsWithCalculations?.find(g => g.id === alloc.goalId)?.name || 'Unlinked')}
                       formatCurrency={formatCurrency}
                       cachedBenchmarkData={data.fundBenchmarkCache?.[alloc.schemeCode] ?? null}
+                      showRiskReturnMetrics={sections.riskReturnMetrics}
+                      showTopHoldings={sections.topHoldings}
                     />
                   ))}
                 </div>
