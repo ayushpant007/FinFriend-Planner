@@ -3,6 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import Papa from 'papaparse';
 
+export const dynamic = 'force-dynamic';
+
 interface MutualFundScheme {
   category: string;
   type: string;
@@ -101,5 +103,9 @@ export async function GET() {
     }
   }
 
-  return NextResponse.json(allFunds);
+  return NextResponse.json(allFunds, {
+    headers: {
+      'Cache-Control': 'no-store, max-age=0',
+    },
+  });
 }

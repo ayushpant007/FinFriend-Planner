@@ -13,26 +13,31 @@ export interface MutualFundScheme {
   primaryBenchmark: string;
 }
 
-let fundsCache: MutualFundScheme[] | null = null;
+let fundsRequest: Promise<MutualFundScheme[]> | null = null;
 
 export async function loadMutualFundsFromCSV(): Promise<MutualFundScheme[]> {
-  if (fundsCache) {
-    return fundsCache;
+  if (!fundsRequest) {
+    fundsRequest = (async () => {
+      try {
+        const response = await fetch('/api/funds-curated', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`Failed to load funds from API: ${response.statusText}`);
+        }
+
+        const funds: MutualFundScheme[] = await response.json();
+        console.log(`[Load Funds] Loaded ${funds.length} curated fund schemes`);
+        return funds;
+      } catch (error) {
+        console.error('Error loading mutual funds:', error);
+        return [];
+      }
+    })();
   }
 
   try {
-    const response = await fetch('/api/funds-curated');
-    if (!response.ok) {
-      throw new Error(`Failed to load funds from API: ${response.statusText}`);
-    }
-    
-    const funds: MutualFundScheme[] = await response.json();
-    fundsCache = funds;
-    console.log(`[Load Funds] Loaded ${funds.length} curated fund schemes`);
-    return funds;
-  } catch (error) {
-    console.error('Error loading mutual funds:', error);
-    return [];
+    return await fundsRequest;
+  } finally {
+    fundsRequest = null;
   }
 }
 
