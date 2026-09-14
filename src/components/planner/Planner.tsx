@@ -572,17 +572,18 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
       const allocationOnlySections: ReportSections = {
         netWorth: false, cashflow: false, investmentStatus: false,
         goalProjections: false, goalsBreakdown: false,
-        assetAllocation: true, mutualFundPortfolio: true,
+        assetAllocation: reportSections.assetAllocation,
+        mutualFundPortfolio: reportSections.mutualFundPortfolio,
         insurance: false, estatePlanning: false, retirementPlanning: false,
-        modelPortfolioAnalysis: true,
-        riskReturnMetrics: true,
-        topHoldings: true,
-        equityWeightAnalysis: hasEquityFunds,
-        debtWeightAnalysis: hasDebtFunds,
-        hybridWeightAnalysis: hasHybridFunds,
-        solutionOrientedWeightAnalysis: fundAllocations.some(a => categoryMatches(a.fundCategory, 'Solution') && a.schemeCode),
-        othersWeightAnalysis: fundAllocations.some(a => (categoryMatches(a.fundCategory, 'Other') || categoryMatches(a.fundCategory, 'Commodities')) && a.schemeCode),
-        liquidAssetAllocation: false,
+        modelPortfolioAnalysis: reportSections.modelPortfolioAnalysis,
+        riskReturnMetrics: reportSections.riskReturnMetrics,
+        topHoldings: reportSections.topHoldings,
+        equityWeightAnalysis: reportSections.equityWeightAnalysis && hasEquityFunds,
+        debtWeightAnalysis: reportSections.debtWeightAnalysis && hasDebtFunds,
+        hybridWeightAnalysis: reportSections.hybridWeightAnalysis && hasHybridFunds,
+        solutionOrientedWeightAnalysis: reportSections.solutionOrientedWeightAnalysis && fundAllocations.some(a => categoryMatches(a.fundCategory, 'Solution') && a.schemeCode),
+        othersWeightAnalysis: reportSections.othersWeightAnalysis && fundAllocations.some(a => (categoryMatches(a.fundCategory, 'Other') || categoryMatches(a.fundCategory, 'Commodities')) && a.schemeCode),
+        liquidAssetAllocation: reportSections.liquidAssetAllocation,
       };
 
       const allocationReportData: SipOptimizerReportData & { goalsWithCalculations: GoalWithCalculations[] } = {
@@ -661,9 +662,12 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
     // 1. Back up to Google Drive (with duplicate check inside)
     await saveCsvToDrive();
 
-    // 2. On /allocation page — generate allocation-only report directly
+    // 2. On /allocation page — let the user choose allocation report sections
     if (isAllocationView) {
-      await handleGenerateAllocationReport();
+      setShowSectionSelector(true);
+      setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }, 100);
       return;
     }
 
@@ -1281,7 +1285,7 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
 
               <div className="flex justify-center">
                 <Button 
-                  onClick={handleGenerateReport}
+                  onClick={isAllocationView ? handleGenerateAllocationReport : handleGenerateReport}
                   disabled={isGenerating}
                   className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-12 rounded-lg shadow-lg h-auto text-lg"
                 >
