@@ -27,11 +27,17 @@ const FILES: CsvFileSpec[] = [
   { category: 'Commodities', file: 'Commodities_Funds.csv' },
 ];
 
-const COMMODITY_SCHEME_CODE_FALLBACKS: Record<string, string> = {
-  'Kotak Gold ETF': '106193',
-  'Kotak Gold Dir': '119781',
-  'Kotak Gold Reg': '114758',
-  'SBI Gold Reg': '115676',
+const SCHEME_CODE_FALLBACKS: Partial<Record<FundCsvCategory, Record<string, string>>> = {
+  Commodities: {
+    'Kotak Gold ETF': '106193',
+    'Kotak Gold Dir': '119781',
+    'Kotak Gold Reg': '114758',
+    'SBI Gold Reg': '115676',
+  },
+  Debt: {
+    'Kotak Low Duration Dir': '133810',
+    'Kotak Low Duration Reg': '133805',
+  },
 };
 
 let cache: { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] } | null = null;
@@ -141,11 +147,14 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
         raw[h] = (row[j] ?? '').trim();
       });
       const schemeName = (nameIdx >= 0 ? row[nameIdx] : '')?.trim() || '';
+      const plan = (planIdx >= 0 ? row[planIdx] : '')?.trim() || '';
+      const canUseFallback = /^(direct|regular)$/i.test(plan);
       const schemeCode =
         (codeIdx >= 0 ? row[codeIdx] : '')?.trim() ||
-        (spec.category === 'Commodities'
-          ? COMMODITY_SCHEME_CODE_FALLBACKS[schemeName] || ''
-          : '');
+        (canUseFallback
+          ? SCHEME_CODE_FALLBACKS[spec.category]?.[schemeName]
+          : '') ||
+        '';
       if (!schemeCode) continue;
 
       const rawType = (catIdx >= 0 ? row[catIdx] : '')?.trim() || '';
@@ -157,7 +166,7 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
         fundName: schemeName,
         schemeName,
         isin: (isinIdx >= 0 ? row[isinIdx] : '')?.trim() || '',
-        plan: (planIdx >= 0 ? row[planIdx] : '')?.trim() || '',
+        plan,
         schemeCategory,
         raw,
       };

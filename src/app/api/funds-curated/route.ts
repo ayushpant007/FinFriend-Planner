@@ -22,13 +22,19 @@ const AMC_NAMES = [
   "Sundaram", "Tata", "Taurus", "The Wealth Company", "TRUST MF", "Unifi", "Union", "UTI", "WhiteOak Capital"
 ];
 
-// These commodities rows have blank Scheme Code cells. Keep them selectable
-// using the corresponding codes from the fund registry.
-const COMMODITY_SCHEME_CODE_FALLBACKS: Record<string, string> = {
-  'Kotak Gold ETF': '106193',
-  'Kotak Gold Dir': '119781',
-  'Kotak Gold Reg': '114758',
-  'SBI Gold Reg': '115676',
+// Some source rows have blank Scheme Code cells. Keep only verified rows
+// selectable using their corresponding codes from the fund registry.
+const SCHEME_CODE_FALLBACKS_BY_FILE: Record<string, Record<string, string>> = {
+  'Commodities_Funds.csv': {
+    'Kotak Gold ETF': '106193',
+    'Kotak Gold Dir': '119781',
+    'Kotak Gold Reg': '114758',
+    'SBI Gold Reg': '115676',
+  },
+  'Debt_Funds.csv': {
+    'Kotak Low Duration Dir': '133810',
+    'Kotak Low Duration Reg': '133805',
+  },
 };
 
 export async function GET() {
@@ -58,13 +64,16 @@ export async function GET() {
           const rawType = row['Category'] || row['category'] || row['bm'] || '';
           const type = rawType.replace(/^(Debt|Hybrid|Solution|Commodities):\s*/i, '').trim();
           const rawSchemeName = row['Fund Name'] || row['fund_name'] || row[''] || '';
+          const plan = row['Plan'] || row['plan'] || '';
+          const canUseFallback = /^(direct|regular)$/i.test(plan.trim());
           const schemeCode =
             row['Scheme Code'] ||
             row['scheme_code'] ||
             row['AMFI Scheme Code'] ||
-            (file.name === 'Commodities_Funds.csv'
-              ? COMMODITY_SCHEME_CODE_FALLBACKS[rawSchemeName.trim()] || ''
-              : '');
+            (canUseFallback
+              ? SCHEME_CODE_FALLBACKS_BY_FILE[file.name]?.[rawSchemeName.trim()]
+              : '') ||
+            '';
           
           let fundName = schemeName.split(' ')[0] || 'Unknown';
           
@@ -83,7 +92,7 @@ export async function GET() {
               fundName: fundName,
               schemeName: schemeName,
               schemeCode: schemeCode,
-              plan: row['Plan'] || row['plan'] || '',
+              plan,
               primaryBenchmark: row['Benchmark_Name'] || row['bm'] || ''
             });
           }

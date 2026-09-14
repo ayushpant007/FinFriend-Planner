@@ -5,6 +5,8 @@ function normaliseSchemeName(name: string): string[] {
     .toLowerCase()
     .replace(/\babsl\b/g, 'aditya birla sun life')
     .replace(/\bicici\s+pru\b/g, 'icici prudential')
+    // AMFI still publishes this fund under its earlier scheme name.
+    .replace(/\bkotak\s+low\s+duration\b/g, 'kotak ultra short to short term')
     .replace(/[^a-z0-9\s]/g, ' ')
     .replace(
       /\b(fund|scheme|plan|regular|direct|growth|idcw|dividend|reinvestment|payout|option|ret|dir|reg|formerly|known|as|mutual)\b/g,

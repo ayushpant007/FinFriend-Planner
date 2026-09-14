@@ -9,11 +9,11 @@ Updated holdings datasets may identify funds only with `Fund Name` rather than `
 
 **How to apply:** Keep fund and holdings file signatures in the server cache key so replacing CSV files is reflected without requiring a process restart; preserve plan tokens during exact-name matching.
 
-Commodity fund rows can also have a blank scheme code even when the scheme is valid. Resolve a known missing code from the checked-in master instead of dropping the row from the selector.
+Fund rows can have a blank scheme code even when the scheme is valid. Resolve only verified missing codes instead of dropping those rows from the selector.
 
-**Why:** The commodities dataset included `SBI Gold Reg` without a code, so the curated-funds API discarded the regular option before the allocation dropdown could display it.
+**Why:** Commodity and debt datasets have omitted valid codes. Some debt metrics files also append holdings-shaped rows with the same fund name, which must not become dropdown entries.
 
-**How to apply:** Keep missing-code fallbacks narrowly scoped to the affected commodity label and use the authoritative master code; do not loosen the API to emit selectable rows with empty codes.
+**How to apply:** Scope fallbacks by source category and exact fund label, use authoritative registry codes, and apply them only when the row's plan is exactly Direct or Regular.
 
 Holdings loaders must keep a single all-assets row visible when source rounding reports slightly more than 100%; clamp that displayed row to 100% instead of dropping it.
 
