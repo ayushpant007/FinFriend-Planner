@@ -28,6 +28,9 @@ const FILES: CsvFileSpec[] = [
 ];
 
 const COMMODITY_SCHEME_CODE_FALLBACKS: Record<string, string> = {
+  'Kotak Gold ETF': '106193',
+  'Kotak Gold Dir': '119781',
+  'Kotak Gold Reg': '114758',
   'SBI Gold Reg': '115676',
 };
 

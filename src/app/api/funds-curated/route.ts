@@ -22,10 +22,12 @@ const AMC_NAMES = [
   "Sundaram", "Tata", "Taurus", "The Wealth Company", "TRUST MF", "Unifi", "Union", "UTI", "WhiteOak Capital"
 ];
 
-// The commodities CSV contains this regular-plan row but its Scheme Code
-// cell is blank. Keep the row selectable using the corresponding code from
-// the checked-in fund master.
+// These commodities rows have blank Scheme Code cells. Keep them selectable
+// using the corresponding codes from the fund registry.
 const COMMODITY_SCHEME_CODE_FALLBACKS: Record<string, string> = {
+  'Kotak Gold ETF': '106193',
+  'Kotak Gold Dir': '119781',
+  'Kotak Gold Reg': '114758',
   'SBI Gold Reg': '115676',
 };
 
