@@ -35,6 +35,7 @@ const SCHEME_CODE_FALLBACKS: Partial<Record<FundCsvCategory, Record<string, stri
     'SBI Gold Reg': '115676',
   },
   Debt: {
+    'Axis Short Duration Reg': '112354',
     'Kotak Low Duration Dir': '133810',
     'Kotak Low Duration Reg': '133805',
   },
