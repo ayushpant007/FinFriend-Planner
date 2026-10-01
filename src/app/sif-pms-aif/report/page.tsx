@@ -30,6 +30,12 @@ import {
   isInvestmentCategory,
   type InvestmentCategory,
 } from "@/lib/sif-pms-aif";
+import {
+  EMPTY_INVESTOR_DETAILS,
+  INVESTOR_DETAILS_SESSION_KEY,
+  normalizeInvestorDetails,
+  type InvestorDetails,
+} from "@/lib/sif-pms-aif-investor";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -376,6 +382,52 @@ function formatFinancialFriendBranding(value: unknown) {
     .replace(/sifscan\.com/gi, "financialfriend.in");
 }
 
+function formatInvestorDob(value: string) {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return match ? `${match[3]}-${match[2]}-${match[1]}` : value || "—";
+}
+
+function formatInvestorAmount(value: string) {
+  if (!value) return "—";
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return value;
+  return `₹${amount.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+}
+
+function InvestorDetailsPanel({
+  details,
+}: {
+  details: InvestorDetails;
+}) {
+  const rows = [
+    ["Name", details.name || "—"],
+    ["Date of Birth (DOB)", formatInvestorDob(details.dob)],
+    ["Phone Number", details.phone || "—"],
+    ["Email Address", details.email || "—"],
+    ["Amount (₹)", formatInvestorAmount(details.amount)],
+  ];
+
+  return (
+    <section className="rounded-xl border border-[#e0e2e4] bg-white px-5 py-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 print-avoid-break">
+      <h2 className="text-xs font-bold uppercase tracking-[0.16em] text-[#0b7772] dark:text-teal-300">
+        Investor Details
+      </h2>
+      <div className="mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+        {rows.map(([label, value]) => (
+          <div key={label} className="min-w-0 border-b border-slate-100 pb-2 dark:border-slate-800">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+              {label}
+            </p>
+            <p className="mt-1 break-words text-sm font-semibold text-[#14263d] dark:text-slate-100">
+              {value}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function formatIsoDate(value: unknown) {
   if (!hasValue(value)) return "—";
   const stringValue = String(value);
@@ -444,11 +496,13 @@ function SifResearchReport({
   title,
   category,
   router,
+  investorDetails,
 }: {
   data: JsonRecord;
   title: string;
   category: InvestmentCategory | null;
   router: ReturnType<typeof useRouter>;
+  investorDetails: InvestorDetails;
 }) {
   const current = isRecord(data.current_data) ? data.current_data : {};
   const nav = isRecord(current.nav) ? current.nav : {};
@@ -517,6 +571,10 @@ function SifResearchReport({
             <p className="relative mt-3 text-[12px] text-[#7c858e] dark:text-slate-500">{categoryLabel}</p>
           </div>
         </header>
+
+        <div className="px-8 pt-5 sm:px-12">
+          <InvestorDetailsPanel details={investorDetails} />
+        </div>
 
         <section className="border-y border-[#e0e2e4] bg-[#fdfcf9] px-8 py-5 sm:px-12">
           <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-4 sm:gap-y-0">
@@ -616,10 +674,12 @@ function PmsSourceReport({
   data,
   productName,
   router,
+  investorDetails,
 }: {
   data: JsonRecord;
   productName: string;
   router: ReturnType<typeof useRouter>;
+  investorDetails: InvestorDetails;
 }) {
   const sourceUrl = String(data.sourceUrl ?? "");
   const title = String(data.title ?? productName);
@@ -643,7 +703,12 @@ function PmsSourceReport({
           <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]">
             <ArrowLeft className="h-4 w-4" /> Back to PMS selection
           </button>
-          <span className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-[#0b7772] sm:inline">Financial Friend · live source view</span>
+          <div className="flex items-center gap-3">
+            <span className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-[#0b7772] sm:inline">Financial Friend · live source view</span>
+            <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+              <Download className="h-4 w-4" /> Print / save PDF
+            </button>
+          </div>
         </div>
       </div>
 
@@ -675,6 +740,10 @@ function PmsSourceReport({
             </div>
           </div>
         </header>
+
+        <div className="mt-7">
+          <InvestorDetailsPanel details={investorDetails} />
+        </div>
 
         <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(260px,0.65fr)]">
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
@@ -815,10 +884,12 @@ function AifStandardReport({
   data,
   productName,
   router,
+  investorDetails,
 }: {
   data: JsonRecord;
   productName: string;
   router: ReturnType<typeof useRouter>;
+  investorDetails: InvestorDetails;
 }) {
   const entry = isRecord(data.entry) ? data.entry : {};
   const value = (key: string) => {
@@ -901,6 +972,8 @@ function AifStandardReport({
             </div>
           </div>
         </section>
+
+        <InvestorDetailsPanel details={investorDetails} />
 
         <ReportSection number="01" icon={Info} title="AIF registry information" description="Basic details shown from the uploaded SEBI registration workbook.">
           <AifInfoGrid
@@ -1054,6 +1127,22 @@ function SifPmsAifReportContent() {
   const [error, setError] = useState("");
   const [errorSourceUrl, setErrorSourceUrl] = useState("");
   const [retryToken, setRetryToken] = useState(0);
+  const [investorDetails, setInvestorDetails] = useState<InvestorDetails>({
+    ...EMPTY_INVESTOR_DETAILS,
+  });
+
+  useEffect(() => {
+    try {
+      const storedDetails = window.sessionStorage.getItem(
+        INVESTOR_DETAILS_SESSION_KEY,
+      );
+      if (storedDetails) {
+        setInvestorDetails(normalizeInvestorDetails(JSON.parse(storedDetails)));
+      }
+    } catch (caughtError) {
+      console.error("[Investment report] Could not read investor details", caughtError);
+    }
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -1212,16 +1301,38 @@ function SifPmsAifReportContent() {
   }
 
   if (category === "PMS") {
-    return <PmsSourceReport data={data} productName={productParam ?? "Selected PMS"} router={router} />;
+    return (
+      <PmsSourceReport
+        data={data}
+        productName={productParam ?? "Selected PMS"}
+        router={router}
+        investorDetails={investorDetails}
+      />
+    );
   }
 
   if (category === "AIF") {
-    return <AifStandardReport data={data} productName={productParam ?? "Selected AIF"} router={router} />;
+    return (
+      <AifStandardReport
+        data={data}
+        productName={productParam ?? "Selected AIF"}
+        router={router}
+        investorDetails={investorDetails}
+      />
+    );
   }
 
   const title = getReportTitle(data);
   if (category === "SIF") {
-    return <SifResearchReport data={data} title={title} category={category} router={router} />;
+    return (
+      <SifResearchReport
+        data={data}
+        title={title}
+        category={category}
+        router={router}
+        investorDetails={investorDetails}
+      />
+    );
   }
   const subtitle = getSubtitle(data);
   const metadata = isRecord(data.data_metadata) ? data.data_metadata : {};
@@ -1298,6 +1409,8 @@ function SifPmsAifReportContent() {
             </div>
           </div>
         </section>
+
+        <InvestorDetailsPanel details={investorDetails} />
 
         <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
           <ReportSection number="01" icon={Info} title="Product overview" description="A concise view of the product identity and mandate.">

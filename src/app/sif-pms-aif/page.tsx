@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -15,6 +15,10 @@ import {
 } from "@/components/ui/select";
 import { InvestmentCategory, investmentOptions } from "@/lib/sif-pms-aif";
 import type { AifRegistryEntry } from "@/lib/aif-registry";
+import {
+  INVESTOR_DETAILS_SESSION_KEY,
+  type InvestorDetails,
+} from "@/lib/sif-pms-aif-investor";
 
 type InvestmentSelection = {
   category: InvestmentCategory | "";
@@ -36,12 +40,50 @@ export default function SifPmsAifPage() {
   const [aifLoading, setAifLoading] = useState(true);
   const [pmsError, setPmsError] = useState("");
   const [aifError, setAifError] = useState("");
+  const [submitError, setSubmitError] = useState("");
   const [selections, setSelections] = useState<InvestmentSelection[]>([
     { category: "", investment: "" },
   ]);
   const hasCompleteSelection = selections.some(
     (selection) => selection.category && selection.investment,
   );
+
+  function handleGenerateReport(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const selection = selections.find(
+      (currentSelection) => currentSelection.category && currentSelection.investment,
+    );
+    if (!selection) {
+      setSubmitError("Choose an investment category and product before generating a report.");
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+    const investorDetails: InvestorDetails = {
+      name: String(formData.get("name") ?? "").trim(),
+      dob: String(formData.get("dob") ?? ""),
+      phone: String(formData.get("phone") ?? "").trim(),
+      email: String(formData.get("email") ?? "").trim(),
+      amount: String(formData.get("amount") ?? "").trim(),
+    };
+
+    try {
+      window.sessionStorage.setItem(
+        INVESTOR_DETAILS_SESSION_KEY,
+        JSON.stringify(investorDetails),
+      );
+    } catch {
+      setSubmitError("Investor details could not be saved in this browser tab. Please try again.");
+      return;
+    }
+
+    setSubmitError("");
+    const query = new URLSearchParams({
+      category: selection.category,
+      product: selection.investment,
+    });
+    router.push(`/sif-pms-aif/report?${query.toString()}`);
+  }
 
   useEffect(() => {
     let active = true;
@@ -99,7 +141,7 @@ export default function SifPmsAifPage() {
           </div>
 
           <div className="glass-card p-6 sm:p-8">
-            <div className="space-y-6">
+            <form className="space-y-6" onSubmit={handleGenerateReport}>
               <div>
                 <h2 className="text-lg font-semibold">Investor Details</h2>
                 <div className="mt-5 grid gap-5 sm:grid-cols-2">
@@ -129,6 +171,21 @@ export default function SifPmsAifPage() {
                       Email Address
                     </label>
                     <Input id="investor-email" name="email" type="email" placeholder="Enter your email address" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="investor-amount" className="text-sm font-medium">
+                      Amount (₹)
+                    </label>
+                    <Input
+                      id="investor-amount"
+                      name="amount"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputMode="decimal"
+                      placeholder="Enter investment amount"
+                    />
                   </div>
                 </div>
               </div>
@@ -313,19 +370,7 @@ export default function SifPmsAifPage() {
                   {hasCompleteSelection && (
                     <div className="flex justify-end pt-1">
                       <button
-                        type="button"
-                        onClick={() => {
-                          const selection = selections.find(
-                            (currentSelection) =>
-                              currentSelection.category && currentSelection.investment,
-                          );
-                          if (!selection) return;
-                          const query = new URLSearchParams({
-                            category: selection.category,
-                            product: selection.investment,
-                          });
-                          router.push(`/sif-pms-aif/report?${query.toString()}`);
-                        }}
+                        type="submit"
                         className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 glass-button-primary"
                       >
                         <FileText className="h-4 w-4" />
@@ -333,9 +378,14 @@ export default function SifPmsAifPage() {
                       </button>
                     </div>
                   )}
+                  {submitError && (
+                    <p className="text-sm text-destructive" role="alert">
+                      {submitError}
+                    </p>
+                  )}
                 </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </section>
