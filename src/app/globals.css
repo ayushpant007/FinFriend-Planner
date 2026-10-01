@@ -133,11 +133,6 @@ body {
     break-inside: avoid;
   }
 
-  .consolidated-product + .consolidated-product {
-    break-before: page;
-    page-break-before: always;
-  }
-
   .consolidated-product > article {
     min-height: auto !important;
   }

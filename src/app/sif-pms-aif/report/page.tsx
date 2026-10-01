@@ -557,6 +557,7 @@ function SifResearchReport({
   router,
   investorDetails,
   embedded = false,
+  showBrandingHeader = true,
 }: {
   data: JsonRecord;
   title: string;
@@ -564,6 +565,7 @@ function SifResearchReport({
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
   embedded?: boolean;
+  showBrandingHeader?: boolean;
 }) {
   const ReportRoot = embedded ? "article" : "main";
   const current = isRecord(data.current_data) ? data.current_data : {};
@@ -652,24 +654,28 @@ function SifResearchReport({
 
       <div className="mx-auto max-w-[1180px] bg-white shadow-[0_20px_70px_rgba(16,21,34,0.08)] dark:bg-slate-900 dark:shadow-none">
         <header className="relative border-b border-[#e0e2e4] bg-white dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex h-14 items-center justify-between bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-8 text-[11px] text-slate-300 sm:px-12">
-            <div className="flex items-center gap-3">
-              <div className="relative h-10 w-[142px] overflow-hidden rounded bg-white/95 shadow-[0_3px_12px_rgba(0,0,0,0.12)]">
-                <Image
-                  src={financialFriendLogo}
-                  alt="Financial Friend"
-                  width={132}
-                  height={132}
-                  priority
-                  className="absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2"
-                />
+          {showBrandingHeader && (
+            <>
+              <div className="flex h-14 items-center justify-between bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-8 text-[11px] text-slate-300 sm:px-12">
+                <div className="flex items-center gap-3">
+                  <div className="relative h-10 w-[142px] overflow-hidden rounded bg-white/95 shadow-[0_3px_12px_rgba(0,0,0,0.12)]">
+                    <Image
+                      src={financialFriendLogo}
+                      alt="Financial Friend"
+                      width={132}
+                      height={132}
+                      priority
+                      className="absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2"
+                    />
+                  </div>
+                  <span className="h-4 w-px bg-white/30" />
+                  <span>Research</span>
+                </div>
+                <span>{formatDate(new Date().toISOString())}</span>
               </div>
-              <span className="h-4 w-px bg-white/30" />
-              <span>Research</span>
-            </div>
-            <span>{formatDate(new Date().toISOString())}</span>
-          </div>
-          <div className="h-1 bg-[#d8b76f]" />
+              <div className="h-1 bg-[#d8b76f]" />
+            </>
+          )}
           <div className="relative overflow-hidden px-8 pb-8 pt-9 sm:px-12 sm:pb-10">
             <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full border-[24px] border-[#c9ad70]/[0.08]" />
             <div className="pointer-events-none absolute -right-4 top-8 h-28 w-28 rounded-full border border-[#c9ad70]/[0.12]" />
@@ -1268,11 +1274,13 @@ function InvestmentProductReport({
   router,
   investorDetails,
   embedded = false,
+  showSifBrandingHeader = true,
 }: {
   selection: ReportSelection;
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
   embedded?: boolean;
+  showSifBrandingHeader?: boolean;
 }) {
   const sifProduct =
     selection.category === "SIF"
@@ -1476,6 +1484,7 @@ function InvestmentProductReport({
       router={router}
       investorDetails={investorDetails}
       embedded={embedded}
+      showBrandingHeader={showSifBrandingHeader}
     />
   );
 }
@@ -1567,6 +1576,7 @@ function ConsolidatedProductReports({
                 router={router}
                 investorDetails={investorDetails}
                 embedded
+                showSifBrandingHeader={index === 0}
               />
             </section>
           ))
