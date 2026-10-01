@@ -71,6 +71,24 @@ function hasValue(value: unknown): boolean {
   return value !== null && value !== undefined && value !== "";
 }
 
+function hasDisplayValue(value: unknown): boolean {
+  if (value === null || value === undefined) return false;
+  if (typeof value !== "string") return true;
+  const normalized = value.trim().toLowerCase();
+  return ![
+    "",
+    "—",
+    "–",
+    "-",
+    "n/a",
+    "na",
+    "data not available",
+    "not available",
+    "null",
+    "undefined",
+  ].includes(normalized);
+}
+
 function getPath(source: unknown, path: string): unknown {
   return path.split(".").reduce<unknown>((current, key) => {
     return isRecord(current) ? current[key] : undefined;
@@ -405,7 +423,9 @@ function InvestorDetailsPanel({
     ["Phone Number", details.phone || "—"],
     ["Email Address", details.email || "—"],
     ["Amount (₹)", formatInvestorAmount(details.amount)],
-  ];
+  ].filter(([, value]) => hasDisplayValue(value));
+
+  if (rows.length === 0) return null;
 
   return (
     <section className="rounded-xl border border-[#e0e2e4] bg-white px-5 py-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 print-avoid-break">
@@ -448,29 +468,33 @@ function getSifStrategyParameters(data: JsonRecord) {
     ["Complexity", "complexity"],
     ["Benchmark", "benchmark"],
   ] as const;
-  return fields.map(([label, key]) => ({
-    label,
-    value: hasValue(parameters[key]) ? String(parameters[key]) : "—",
-  }));
+  return fields
+    .map(([label, key]) => ({
+      label,
+      value: hasDisplayValue(parameters[key]) ? String(parameters[key]).trim() : "",
+    }))
+    .filter((row) => hasDisplayValue(row.value));
 }
 
 function SifNavRange({ data }: { data: JsonRecord }) {
   const history = isRecord(data.nav_history) ? data.nav_history : {};
   const low = numberValue(history.low);
   const high = numberValue(history.high);
-  const lowText = hasValue(history.low_raw) ? String(history.low_raw) : low === null ? "—" : `₹${low.toFixed(2)}`;
-  const highText = hasValue(history.high_raw) ? String(history.high_raw) : high === null ? "—" : `₹${high.toFixed(2)}`;
-  const startDate = formatIsoDate(history.start_date);
-  const endDate = formatIsoDate(history.end_date);
+  const lowText = hasDisplayValue(history.low_raw) ? String(history.low_raw) : low === null ? "" : `₹${low.toFixed(2)}`;
+  const highText = hasDisplayValue(history.high_raw) ? String(history.high_raw) : high === null ? "" : `₹${high.toFixed(2)}`;
+  const startDate = hasDisplayValue(history.start_date) ? formatIsoDate(history.start_date) : "";
+  const endDate = hasDisplayValue(history.end_date) ? formatIsoDate(history.end_date) : "";
   const range = low !== null && high !== null ? Math.max(high - low, 0.01) : 1;
   const progress = low !== null && high !== null ? Math.min(Math.max((high - low) / range, 0), 1) : 0.72;
 
   return (
     <div className="rounded-[4px] border border-[#e0e2e4] bg-[#fdfcf9] px-4 pb-4 pt-3 dark:border-slate-700 dark:bg-slate-900">
-      <div className="flex items-center justify-between text-[10px] text-[#707984] dark:text-slate-400">
-        <span>{startDate}</span>
-        <span>{endDate}</span>
-      </div>
+      {(startDate || endDate) && (
+        <div className="flex items-center justify-between text-[10px] text-[#707984] dark:text-slate-400">
+          {startDate ? <span>{startDate}</span> : <span />}
+          {endDate ? <span>{endDate}</span> : <span />}
+        </div>
+      )}
       <svg viewBox="0 0 640 112" className="mt-2 h-28 w-full" role="img" aria-label={`NAV range from ${lowText} to ${highText}`}>
         <defs>
           <linearGradient id="sif-nav-fill" x1="0" x2="0" y1="0" y2="1">
@@ -484,8 +508,8 @@ function SifNavRange({ data }: { data: JsonRecord }) {
         <line x1="12" x2="628" y1="94" y2="94" stroke="#e7e3d9" strokeWidth="1" />
       </svg>
       <div className="flex items-center justify-between text-[10px] text-[#8a929a] dark:text-slate-500">
-        <span>Low: {lowText}</span>
-        <span>High: {highText}</span>
+        {lowText && <span>Low: {lowText}</span>}
+        {highText && <span>High: {highText}</span>}
       </div>
     </div>
   );
@@ -520,10 +544,43 @@ function SifResearchReport({
   const holdings = getHoldings(data);
   const totalHoldings = numberValue(portfolio.total_holdings);
   const strategyRows = getSifStrategyParameters(data);
+  const navHistory = isRecord(data.nav_history) ? data.nav_history : {};
+  const hasNavRange =
+    numberValue(navHistory.low) !== null && numberValue(navHistory.high) !== null;
   const riskMetrics = isRecord(data.risk_metrics) ? data.risk_metrics : {};
   const riskBand = firstValue(riskMetrics, ["risk_band"]) ?? getRiskLabel(data);
   const complexity = firstValue(riskMetrics, ["complexity"]);
   const disclosure = firstValue(metadata, ["disclosure"]);
+  const latestNavValue = hasDisplayValue(nav.raw)
+    ? String(nav.raw)
+    : numberValue(nav.value) !== null
+      ? `₹${numberValue(nav.value)!.toFixed(2)}`
+      : "";
+  const aumValue = hasDisplayValue(aum.raw)
+    ? String(aum.raw)
+    : numberValue(aum.value) !== null
+      ? `${numberValue(aum.value)!.toLocaleString("en-IN")}${hasDisplayValue(aum.unit) ? ` ${String(aum.unit)}` : ""}`
+      : "";
+  const expenseValue = hasDisplayValue(expense.raw)
+    ? String(expense.raw)
+    : numberValue(expense.value) !== null
+      ? `${numberValue(expense.value)!.toFixed(2)}%`
+      : "";
+  const minimumInvestment = getPath(data, "scheme_details.minimum_initial_investment");
+  const summaryMetrics = [
+    {
+      label: "Latest NAV",
+      value: latestNavValue,
+      detail: hasDisplayValue(asOf) ? `as of ${formatDate(asOf)}` : undefined,
+    },
+    { label: "AUM", value: aumValue, detail: undefined },
+    { label: "Expense ratio", value: expenseValue, detail: undefined },
+    {
+      label: "Min. investment",
+      value: hasDisplayValue(minimumInvestment) ? String(minimumInvestment) : "",
+      detail: undefined,
+    },
+  ].filter((metric) => hasDisplayValue(metric.value));
   const performanceRows = [
     ["1 Month", "1_month"],
     ["3 Months", "3_month"],
@@ -531,6 +588,16 @@ function SifResearchReport({
     ["1 Year", "1_year"],
     ["Since Inception", "since_inception"],
   ] as const;
+  const availablePerformanceRows = performanceRows.filter(([, key]) =>
+    hasDisplayValue(returns?.[key]),
+  );
+  const riskRows = [
+    { label: "SEBI risk band", value: riskBand },
+    { label: "Complexity", value: complexity },
+  ].filter((row) => hasDisplayValue(row.value));
+  const disclosureText = hasDisplayValue(disclosure)
+    ? formatFinancialFriendBranding(disclosure)
+    : null;
 
   return (
     <main className="sif-report-page min-h-screen bg-[#f7f7f5] text-[#101522] dark:bg-slate-950 dark:text-slate-100">
@@ -573,7 +640,9 @@ function SifResearchReport({
             <div className="pointer-events-none absolute -right-4 top-8 h-28 w-28 rounded-full border border-[#c9ad70]/[0.12]" />
             <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b39a66]">Fund research pack</p>
             <h1 className="relative mt-5 max-w-4xl font-serif text-3xl font-bold leading-tight tracking-[-0.035em] text-[#101522] sm:text-[40px] dark:text-white">{title}</h1>
-            <p className="relative mt-2 text-[15px] text-[#53606c] dark:text-slate-400">{String(fundHouse ?? "Data Not Available")}</p>
+            {hasDisplayValue(fundHouse) && (
+              <p className="relative mt-2 text-[15px] text-[#53606c] dark:text-slate-400">{String(fundHouse)}</p>
+            )}
             {managerNames.length > 0 && (
               <div className="relative mt-4 flex max-w-4xl flex-col gap-1 rounded-md border border-[#e4e0d6] bg-[#fdfcf9] px-3 py-2.5 sm:flex-row sm:items-baseline sm:gap-3 dark:border-slate-700 dark:bg-slate-800/70">
                 <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8c7445] dark:text-[#d8c08b]">
@@ -588,81 +657,99 @@ function SifResearchReport({
           </div>
         </header>
 
-        <div className="px-8 pt-5 sm:px-12">
-          <InvestorDetailsPanel details={investorDetails} />
-        </div>
-
-        <section className="border-y border-[#e0e2e4] bg-[#fdfcf9] px-8 py-5 sm:px-12">
-          <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-4 sm:gap-y-0">
-            <SifMetric label="Latest NAV" value={hasValue(nav.raw) ? String(nav.raw) : nav.value != null ? `₹${Number(nav.value).toFixed(2)}` : "—"} detail={hasValue(asOf) ? `as of ${formatDate(asOf)}` : undefined} />
-            <SifMetric label="AUM" value={hasValue(aum.raw) ? String(aum.raw) : "—"} />
-            <SifMetric label="Expense ratio" value={hasValue(expense.raw) ? String(expense.raw) : expense.value != null ? `${Number(expense.value).toFixed(2)}%` : "—"} />
-            <SifMetric label="Min. investment" value={hasValue(getPath(data, "scheme_details.minimum_initial_investment")) ? String(getPath(data, "scheme_details.minimum_initial_investment")) : "—"} />
+        {investorDetails && (
+          <div className="px-8 pt-5 sm:px-12">
+            <InvestorDetailsPanel details={investorDetails} />
           </div>
-        </section>
+        )}
 
-        <section className="border-b border-[#e0e2e4] bg-white px-8 py-5 sm:px-12 dark:border-slate-800 dark:bg-slate-900">
-          <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-5 sm:gap-y-0">
-            {performanceRows.map(([label, key]) => (
-              <SifMetric key={key} label={label === "Since Inception" ? <>Since inception<br />return</> : `${label} return`} value={formatReportReturn(returns?.[key])} />
-            ))}
-          </div>
-        </section>
+        {summaryMetrics.length > 0 && (
+          <section className="border-y border-[#e0e2e4] bg-[#fdfcf9] px-8 py-5 sm:px-12">
+            <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-4 sm:gap-y-0">
+              {summaryMetrics.map((metric) => (
+                <SifMetric
+                  key={metric.label}
+                  label={metric.label}
+                  value={String(metric.value)}
+                  detail={metric.detail}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {availablePerformanceRows.length > 0 && (
+          <section className="border-b border-[#e0e2e4] bg-white px-8 py-5 sm:px-12 dark:border-slate-800 dark:bg-slate-900">
+            <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-5 sm:gap-y-0">
+              {availablePerformanceRows.map(([label, key]) => (
+                <SifMetric key={key} label={label === "Since Inception" ? <>Since inception<br />return</> : `${label} return`} value={formatReportReturn(returns?.[key])} />
+              ))}
+            </div>
+          </section>
+        )}
 
         <div className="space-y-12 px-8 pb-16 pt-10 sm:px-12 sm:pt-12">
-          <section>
-            <SifSectionTitle>Strategy parameters</SifSectionTitle>
-            <div className="divide-y divide-[#eceef0] border-b border-[#eceef0] dark:divide-slate-800 dark:border-slate-800">
-              {strategyRows.map((row) => (
-                <div key={row.label} className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] py-2.5 text-[12px] sm:grid-cols-[28%_72%]">
-                  <span className="text-[#6e7882] dark:text-slate-400">{row.label}</span>
-                  <span className={`font-semibold ${row.value === "—" ? "text-[#7d858d]" : "text-[#101522] dark:text-slate-100"}`}>{row.value}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section>
-            <SifSectionTitle>NAV history</SifSectionTitle>
-            <SifNavRange data={data} />
-          </section>
-
-          <section>
-            <SifSectionTitle>Performance returns</SifSectionTitle>
-            <div className="overflow-hidden rounded-[4px] border border-[#e0e2e4] dark:border-slate-700">
-              <div className="grid grid-cols-[1fr_110px] bg-[#f7f7f5] px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#6e7882] dark:bg-slate-800 dark:text-slate-400">
-                <span>Period</span>
-                <span className="text-right">Return</span>
+          {strategyRows.length > 0 && (
+            <section>
+              <SifSectionTitle>Strategy parameters</SifSectionTitle>
+              <div className="divide-y divide-[#eceef0] border-b border-[#eceef0] dark:divide-slate-800 dark:border-slate-800">
+                {strategyRows.map((row) => (
+                  <div key={row.label} className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] py-2.5 text-[12px] sm:grid-cols-[28%_72%]">
+                    <span className="text-[#6e7882] dark:text-slate-400">{row.label}</span>
+                    <span className="font-semibold text-[#101522] dark:text-slate-100">{row.value}</span>
+                  </div>
+                ))}
               </div>
-              {performanceRows.map(([label, key]) => (
-                <div key={key} className="grid grid-cols-[1fr_110px] border-t border-[#eceef0] px-4 py-2.5 text-[12px] dark:border-slate-800">
-                  <span>{label}</span>
-                  <span className={`text-right font-semibold ${hasValue(returns?.[key]) ? "text-[#1d6a4c]" : "text-[#7d858d]"}`}>{formatReportReturn(returns?.[key])}</span>
-                </div>
-              ))}
-            </div>
-          </section>
+            </section>
+          )}
 
-          <section>
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <SifSectionTitle>Portfolio holdings</SifSectionTitle>
-              <p className="text-[11px] text-[#7c858e] dark:text-slate-400">
-                {totalHoldings !== null
-                  ? `Showing ${holdings.length} disclosed positions of ${totalHoldings} total.`
-                  : `${holdings.length} disclosed positions.`}
-              </p>
-            </div>
-            {holdings.length > 0 ? (
+          {hasNavRange && (
+            <section>
+              <SifSectionTitle>NAV history</SifSectionTitle>
+              <SifNavRange data={data} />
+            </section>
+          )}
+
+          {availablePerformanceRows.length > 0 && (
+            <section>
+              <SifSectionTitle>Performance returns</SifSectionTitle>
+              <div className="overflow-hidden rounded-[4px] border border-[#e0e2e4] dark:border-slate-700">
+                <div className="grid grid-cols-[1fr_110px] bg-[#f7f7f5] px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#6e7882] dark:bg-slate-800 dark:text-slate-400">
+                  <span>Period</span>
+                  <span className="text-right">Return</span>
+                </div>
+                {availablePerformanceRows.map(([label, key]) => (
+                  <div key={key} className="grid grid-cols-[1fr_110px] border-t border-[#eceef0] px-4 py-2.5 text-[12px] dark:border-slate-800">
+                    <span>{label}</span>
+                    <span className="text-right font-semibold text-[#1d6a4c]">{formatReportReturn(returns?.[key])}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {holdings.length > 0 && (
+            <section>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <SifSectionTitle>Portfolio holdings</SifSectionTitle>
+                {totalHoldings !== null && (
+                  <p className="text-[11px] text-[#7c858e] dark:text-slate-400">
+                    Showing {holdings.length} disclosed positions of {totalHoldings} total.
+                  </p>
+                )}
+              </div>
               <div className="mt-4 overflow-hidden rounded-[4px] border border-[#e0e2e4] dark:border-slate-700">
                 <div className="grid grid-cols-[38px_minmax(0,1fr)_90px] bg-[#f7f7f5] px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#6e7882] dark:bg-slate-800 dark:text-slate-400">
                   <span>#</span>
                   <span>Security</span>
-                  <span className="text-right">% of NAV</span>
+                  {holdings.some((holding) => hasDisplayValue(holding.weight)) && (
+                    <span className="text-right">% of NAV</span>
+                  )}
                 </div>
                 {holdings.map((holding, index) => (
                   <div
                     key={`${holding.name}-${index}`}
-                    className="grid grid-cols-[38px_minmax(0,1fr)_90px] gap-2 border-t border-[#eceef0] px-4 py-2.5 text-[12px] dark:border-slate-800"
+                    className={`grid ${hasDisplayValue(holding.weight) ? "grid-cols-[38px_minmax(0,1fr)_90px]" : "grid-cols-[38px_minmax(0,1fr)]"} gap-2 border-t border-[#eceef0] px-4 py-2.5 text-[12px] dark:border-slate-800`}
                   >
                     <span className="text-[#7c858e] dark:text-slate-400">
                       {String(index + 1).padStart(2, "0")}
@@ -670,38 +757,35 @@ function SifResearchReport({
                     <span className="break-words font-medium text-[#101522] dark:text-slate-100">
                       {holding.name}
                     </span>
-                    <span className="text-right font-semibold text-[#1d6a4c]">
-                      {formatValue(holding.weight, "weight_percent")}
-                    </span>
+                    {hasDisplayValue(holding.weight) && (
+                      <span className="text-right font-semibold text-[#1d6a4c]">
+                        {formatValue(holding.weight, "weight_percent")}
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="mt-4 rounded-[4px] border border-[#e0e2e4] bg-[#fdfcf9] px-4 py-4 text-[12px] leading-5 text-[#6e7882] dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300">
-                Individual positions are not disclosed in this SIF research pack.
-              </p>
-            )}
-          </section>
+            </section>
+          )}
 
-          <section>
-            <SifSectionTitle>Risk profile</SifSectionTitle>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {[
-                ["SEBI risk band", riskBand],
-                ["Complexity", complexity],
-              ].map(([label, value]) => (
-                <div key={String(label)} className="border-l-2 border-[#c9ad70] bg-[#fdfcf9] px-4 py-4 dark:bg-slate-800/60">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#6e7882] dark:text-slate-400">{String(label)}</p>
-                  <p className="mt-3 text-[15px] font-semibold">{hasValue(value) ? String(value) : "—"}</p>
-                </div>
-              ))}
-            </div>
-          </section>
+          {riskRows.length > 0 && (
+            <section>
+              <SifSectionTitle>Risk profile</SifSectionTitle>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {riskRows.map(({ label, value }) => (
+                  <div key={label} className="border-l-2 border-[#c9ad70] bg-[#fdfcf9] px-4 py-4 dark:bg-slate-800/60">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#6e7882] dark:text-slate-400">{label}</p>
+                    <p className="mt-3 text-[15px] font-semibold">{String(value)}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
-          <section className="border-l-[3px] border-[#0b1e3a] bg-[#fdfcf9] px-5 py-5 dark:bg-slate-800/50">
-            <h2 className="font-serif text-[14px] font-bold uppercase tracking-[0.08em]">Important disclosures</h2>
-            <div className="mt-4 space-y-3 text-[11px] leading-5 text-[#6e7882] dark:text-slate-400">
-              <p>{hasValue(disclosure) ? formatFinancialFriendBranding(disclosure) : "This document is generated for informational and research purposes only. It does not constitute investment advice, a solicitation, or an offer to buy or sell any security."}</p>
+          <section className="border-l-[3px] border-[#0b1e3a] bg-[#fdfcf9] px-4 py-3 dark:bg-slate-800/50">
+            <h2 className="font-serif text-[12px] font-bold uppercase tracking-[0.08em]">Important disclosures</h2>
+            <div className="mt-2 space-y-1.5 text-[10px] leading-4 text-[#6e7882] dark:text-slate-400">
+              <p>{disclosureText ?? "This document is generated for informational and research purposes only. It does not constitute investment advice, a solicitation, or an offer to buy or sell any security."}</p>
               <p>Data is sourced from publicly available SEBI and AMFI disclosures. NAV, AUM, and portfolio data may not reflect the most recent disclosures. Past performance and current data do not guarantee future results.</p>
               <p>Specialised Investment Funds are SEBI-regulated vehicles with specific eligibility and risk requirements. Investors should consult a SEBI-registered investment advisor before making any investment decision.</p>
             </div>
