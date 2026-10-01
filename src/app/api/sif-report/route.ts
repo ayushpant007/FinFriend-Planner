@@ -35,7 +35,15 @@ export async function GET(request: NextRequest) {
     let extractedText: string;
     try {
       extractedText = await readFile(extractedTextPath, "utf8");
-    } catch {
+    } catch (error) {
+      const isMissingText = (error as NodeJS.ErrnoException).code === "ENOENT";
+      if (!isMissingText) throw error;
+      if (process.env.NODE_ENV === "production") {
+        throw Object.assign(
+          new Error(`The bundled SIF text companion is missing: ${extractedTextPath}`),
+          { code: "ENOENT" },
+        );
+      }
       // Keep local development usable for a newly added pack before its
       // checked-in text companion has been generated.
       const { stdout } = await execFileAsync("pdftotext", [pdfPath, "-"], {
@@ -44,6 +52,9 @@ export async function GET(request: NextRequest) {
       });
       extractedText = stdout;
     }
+    if (!extractedText.trim()) {
+      throw new Error(`The selected SIF research pack has no readable text: ${extractedTextPath}`);
+    }
     return NextResponse.json(parseSifPdf(extractedText, product, product.fileName));
   } catch (error) {
     console.error("[SIF report] Could not read selected research pack", {
@@ -51,9 +62,14 @@ export async function GET(request: NextRequest) {
       fileName: product.fileName,
       error,
     });
+    const isMissingAsset = (error as NodeJS.ErrnoException).code === "ENOENT";
     return NextResponse.json(
-      { error: "The selected SIF research pack could not be read." },
-      { status: 500 },
+      {
+        error: isMissingAsset
+          ? "The selected SIF research pack is unavailable in this deployment. Please retry or choose another product."
+          : "The selected SIF research pack could not be read.",
+      },
+      { status: isMissingAsset ? 503 : 500 },
     );
   }
 }

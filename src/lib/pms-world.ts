@@ -11,7 +11,7 @@ export type PmsWorldEntry = {
   category: string;
   fundManager: string;
   urlVerification: string;
-  status: string;
+  dataSource: string;
 };
 
 type PmsCsvRow = {
@@ -22,11 +22,10 @@ type PmsCsvRow = {
   Category?: string;
   "Fund Manager"?: string;
   "URL Verification"?: string;
-  Status?: string;
+  "Data Source"?: string;
 };
 
-const PMS_MASTER_FILE = path.join("public", "PMS", "PMS_Updated_LISt.csv");
-const PMS_SELECTABLE_STATUSES = new Set(["VERIFIED", "CORRECTED"]);
+const PMS_MASTER_FILE = path.join("public", "PMS", "PMS_AIF_WORLD_Master_List.csv");
 
 function getPmsMasterPath() {
   const masterPath = path.join(process.cwd(), PMS_MASTER_FILE);
@@ -51,25 +50,31 @@ export function readPmsWorldEntries(): PmsWorldEntry[] {
 
   for (const row of parsed.data) {
     const name = row["PMS Name"]?.trim();
-    const url = row["PMS AIF World URL"]?.trim();
-    const status = row.Status?.trim().toUpperCase() ?? "";
+    const rawUrl = row["PMS AIF World URL"]?.trim();
+    if (!name || !rawUrl || seenNames.has(name.toLowerCase())) continue;
+
+    let url: URL;
+    try {
+      url = new URL(rawUrl);
+    } catch {
+      continue;
+    }
     if (
-      !name ||
-      !url ||
-      !PMS_SELECTABLE_STATUSES.has(status) ||
-      seenNames.has(name)
+      url.protocol !== "https:" &&
+      url.protocol !== "http:"
     ) {
       continue;
     }
-    seenNames.add(name);
+
+    seenNames.add(name.toLowerCase());
     entries.push({
       name,
-      url,
+      url: url.toString(),
       productType: row["Product Type"]?.trim() ?? "PMS",
       category: row.Category?.trim() ?? "PMS",
       fundManager: row["Fund Manager"]?.trim() ?? "",
       urlVerification: row["URL Verification"]?.trim() ?? "",
-      status,
+      dataSource: row["Data Source"]?.trim() ?? "PMS AIF World",
     });
   }
 
@@ -146,6 +151,7 @@ export type PmsSourceReport = {
   productName: string;
   sourceUrl: string;
   sourceName: string;
+  urlVerification: string;
   category: string;
   title: string;
   description: string;
@@ -179,7 +185,8 @@ export function parsePmsSourcePage(
     productType: "PMS_SOURCE",
     productName: entry.name,
     sourceUrl: entry.url,
-    sourceName: "PMS source",
+    sourceName: entry.dataSource,
+    urlVerification: entry.urlVerification,
     category: entry.category || "PMS",
     title,
     description: extractMetaDescription(withoutNoise),

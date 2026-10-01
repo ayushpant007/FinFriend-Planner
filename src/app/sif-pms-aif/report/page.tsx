@@ -659,6 +659,19 @@ function PmsSourceReport({
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7a66d]">Fetched source</p>
               <p className="mt-2 font-semibold text-white">{String(data.sourceName ?? "PMS source")}</p>
               <p className="mt-1 text-xs text-slate-400">{fetchedAt}</p>
+              <p className="mt-2 text-xs text-slate-400">
+                URL status: {String(data.urlVerification ?? "Not specified")}
+              </p>
+              {(sourceUrl.startsWith("https://") || sourceUrl.startsWith("http://")) && (
+                <a
+                  href={sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[#78d2c9] underline underline-offset-2"
+                >
+                  Open original source <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              )}
             </div>
           </div>
         </header>
@@ -1183,7 +1196,7 @@ function SifPmsAifReportContent() {
               </a>
             )}
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-              {category === "PMS" && (
+              {hasSource && (
                 <button type="button" onClick={() => setRetryToken((value) => value + 1)} className="inline-flex items-center gap-2 rounded-xl bg-[#0b7772] px-5 py-3 text-sm font-semibold text-white">
                   Try again
                 </button>

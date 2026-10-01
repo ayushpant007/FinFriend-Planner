@@ -10,7 +10,12 @@ export async function GET() {
     return NextResponse.json({
       source: getPmsMasterFilename(),
       count: entries.length,
-      entries: entries.map(({ name, url, category }) => ({ name, url, category })),
+      entries: entries.map(({ name, url, category, urlVerification }) => ({
+        name,
+        url,
+        category,
+        urlVerification,
+      })),
     });
   } catch (error) {
     console.error("[PMS master list] Could not read uploaded CSV", error);

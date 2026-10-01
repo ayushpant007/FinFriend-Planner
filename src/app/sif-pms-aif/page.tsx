@@ -25,6 +25,7 @@ type PmsOption = {
   name: string;
   url: string;
   category: string;
+  urlVerification: string;
 };
 
 export default function SifPmsAifPage() {
@@ -154,6 +155,9 @@ export default function SifPmsAifPage() {
                     const categoryLabel = selection.category
                       ? `Choose ${selection.category}`
                       : "Choose Investment";
+                    const selectedPmsOption = pmsOptions.find(
+                      (option) => option.name === selection.investment,
+                    );
 
                     return (
                       <div key={index} className="space-y-5">
@@ -279,9 +283,22 @@ export default function SifPmsAifPage() {
                              {selection.category === "PMS" && (
                                <p className={`flex items-center gap-1.5 text-xs ${pmsError ? "text-red-600" : "text-slate-500"}`}>
                                  {pmsLoading && <LoaderCircle className="h-3.5 w-3.5 animate-spin" />}
-                                  {pmsError || (pmsLoading ? "Loading names from the uploaded PMS master list…" : `${pmsOptions.length} PMS strategies from the uploaded master list`)}
+                                  {pmsError || (pmsLoading ? "Loading names from the PMS AIF World CSV…" : `${pmsOptions.length} strategies from the PMS AIF World CSV`)}
                                </p>
                              )}
+                              {selection.category === "PMS" && selectedPmsOption && (
+                                <p className="text-xs text-slate-500">
+                                  CSV URL status: {selectedPmsOption.urlVerification || "Not specified"} ·{" "}
+                                  <a
+                                    href={selectedPmsOption.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="font-medium text-[#0b7772] underline underline-offset-2"
+                                  >
+                                    Open source URL
+                                  </a>
+                                </p>
+                              )}
                               {selection.category === "AIF" && (
                                 <p className={`flex items-center gap-1.5 text-xs ${aifError ? "text-red-600" : "text-slate-500"}`}>
                                   {aifLoading && <LoaderCircle className="h-3.5 w-3.5 animate-spin" />}

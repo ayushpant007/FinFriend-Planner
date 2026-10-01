@@ -1,6 +1,6 @@
 - [NAV row integrity](nav-row-integrity.md) — NAV must use the selected fund row's scheme code and reject provider responses for a different scheme or plan.
 - [SIF PDF extraction](sif-pdf-extraction.md) — Pre-extract SIF PDFs into checked-in text assets because published autoscale runtimes lack pdftotext.
-- [PMS source availability](pms-source-availability.md) — CSV URL mappings can resolve to PMS pages that later return 404/timeout; surface upstream status and keep a direct-source fallback.
+- [PMS source availability](pms-source-availability.md) — Keep CSV URL verification separate from live fetch status; preserve source links and upstream 404/timeouts.
 - [AIF registry ingestion](aif-registry-ingestion.md) — Pre-extract the uploaded legacy workbook into deduplicated JSON and keep unsupported fund statistics unavailable.
 - [Supabase managed connection DDL](supabase-ddl-connection.md) — REST access works through the managed connector, but table migrations must be applied in Supabase SQL Editor.
 - [Supabase secret runtime](supabase-secret-runtime.md) — This app's report storage must use the configured Supabase Secrets directly; the managed connector may be unavailable at runtime.
