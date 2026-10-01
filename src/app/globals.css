@@ -127,10 +127,28 @@ body {
     box-shadow: none !important;
   }
 
-  .sif-report-page section,
-  .sif-report-page header,
-  .sif-report-page footer {
+  .report-brand-footer {
     break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .consolidated-report-heading {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .report-section-heading,
+  .report-section-lead,
+  .report-table-heading {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .report-table-row {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   .consolidated-product > article {
