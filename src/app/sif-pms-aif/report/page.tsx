@@ -425,12 +425,6 @@ function formatReportReturn(value: unknown) {
   return `${amount >= 0 ? "+" : ""}${amount.toFixed(2)}%`;
 }
 
-function formatFinancialFriendBranding(value: unknown) {
-  return String(value ?? "")
-    .replace(/SIFscan/gi, "Financial Friend")
-    .replace(/sifscan\.com/gi, "financialfriend.in");
-}
-
 function formatInvestorDob(value: string) {
   const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   return match ? `${match[3]}-${match[2]}-${match[1]}` : value || "—";
@@ -594,7 +588,6 @@ function SifResearchReport({
   const riskMetrics = isRecord(data.risk_metrics) ? data.risk_metrics : {};
   const riskBand = firstValue(riskMetrics, ["risk_band"]) ?? getRiskLabel(data);
   const complexity = firstValue(riskMetrics, ["complexity"]);
-  const disclosure = firstValue(metadata, ["disclosure"]);
   const latestNavValue = hasDisplayValue(nav.raw)
     ? String(nav.raw)
     : numberValue(nav.value) !== null
@@ -639,10 +632,6 @@ function SifResearchReport({
     { label: "SEBI risk band", value: riskBand },
     { label: "Complexity", value: complexity },
   ].filter((row) => hasDisplayValue(row.value));
-  const disclosureText = hasDisplayValue(disclosure)
-    ? formatFinancialFriendBranding(disclosure)
-    : null;
-
   return (
     <ReportRoot className="sif-report-page min-h-screen bg-[#f7f7f5] text-[#101522] dark:bg-slate-950 dark:text-slate-100">
       {!embedded && (
@@ -828,14 +817,7 @@ function SifResearchReport({
             </section>
           )}
 
-          <section className="border-l-[3px] border-[#0b1e3a] bg-[#fdfcf9] px-4 py-3 dark:bg-slate-800/50">
-            <h2 className="font-serif text-[12px] font-bold uppercase tracking-[0.08em]">Important disclosures</h2>
-            <div className="mt-2 space-y-1.5 text-[10px] leading-4 text-[#6e7882] dark:text-slate-400">
-              <p>{disclosureText ?? "This document is generated for informational and research purposes only. It does not constitute investment advice, a solicitation, or an offer to buy or sell any security."}</p>
-              <p>Data is sourced from publicly available SEBI and AMFI disclosures. NAV, AUM, and portfolio data may not reflect the most recent disclosures. Past performance and current data do not guarantee future results.</p>
-              <p>Specialised Investment Funds are SEBI-regulated vehicles with specific eligibility and risk requirements. Investors should consult a SEBI-registered investment advisor before making any investment decision.</p>
-            </div>
-          </section>
+          {!embedded && <ImportantDisclosure categories={["SIF"]} />}
         </div>
 
         <footer className="flex flex-col items-center justify-center gap-2 border-t border-[#e0e2e4] px-8 py-8 text-center text-[11px] text-[#7d858d] dark:border-slate-800 dark:text-slate-500">
@@ -1020,9 +1002,7 @@ function PmsSourceReport({
           </section>
         )}
 
-        <p className="mt-8 text-center text-xs leading-5 text-slate-500">
-          This PMS view displays content fetched from the selected source. Verify current details before making any investment decision.
-        </p>
+        {!embedded && <ImportantDisclosure categories={["PMS"]} />}
       </div>
     </ReportRoot>
   );
@@ -1030,9 +1010,6 @@ function PmsSourceReport({
 
 const AIF_STANDARD_ASSUMPTION_NOTE =
   "Standard assumption — this is illustrative and may not be the actual term of the selected AIF.";
-
-const AIF_DISCLAIMER =
-  "* Standard assumptions used for illustrative analysis. Actual fund terms, minimum investment, risk, liquidity, fees and other characteristics may vary by AIF. Investors should refer to the respective fund documents before making an investment decision.";
 
 function AifInfoGrid({
   rows,
@@ -1057,9 +1034,11 @@ function AifInfoGrid({
 function AifAssumptionCard({
   label,
   value,
+  compact = false,
 }: {
   label: string;
   value: string;
+  compact?: boolean;
 }) {
   return (
     <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4 dark:border-amber-900/50 dark:bg-amber-950/20">
@@ -1070,8 +1049,75 @@ function AifAssumptionCard({
         </span>
       </div>
       <p className="mt-3 text-lg font-semibold text-amber-950 dark:text-amber-100">{value}</p>
-      <p className="mt-1.5 text-[11px] leading-5 text-amber-900/70 dark:text-amber-200/70">{AIF_STANDARD_ASSUMPTION_NOTE}</p>
+      {!compact && (
+        <p className="mt-1.5 text-[11px] leading-5 text-amber-900/70 dark:text-amber-200/70">
+          {AIF_STANDARD_ASSUMPTION_NOTE}
+        </p>
+      )}
     </div>
+  );
+}
+
+function ImportantDisclosure({
+  categories,
+  sourceNote,
+}: {
+  categories: readonly InvestmentCategory[];
+  sourceNote?: string;
+}) {
+  const hasSif = categories.includes("SIF");
+  const hasAif = categories.includes("AIF");
+  const hasPms = categories.includes("PMS");
+
+  return (
+    <section
+      className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-900"
+      aria-labelledby="important-disclosure-title"
+    >
+      <div className="flex items-start gap-3">
+        <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#0b7772]" />
+        <div className="min-w-0">
+          <h2
+            id="important-disclosure-title"
+            className="text-sm font-semibold text-[#14263d] dark:text-slate-100"
+          >
+            Important disclosure
+          </h2>
+          <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-300">
+            For information only—not investment, tax or legal advice, a solicitation, or an offer.
+            Sources may be incomplete or outdated; verify current details in official documents.
+            Past performance does not guarantee future results. Consult a qualified adviser before
+            investing.
+          </p>
+          {(hasSif || hasAif || hasPms) && (
+            <ul className="mt-2 space-y-1 text-xs leading-5 text-slate-600 dark:text-slate-300">
+              {hasSif && (
+                <li>
+                  SIFs have product-specific eligibility and risk requirements; consult a
+                  SEBI-registered adviser.
+                </li>
+              )}
+              {hasAif && (
+                <li>
+                  AIF standard assumptions are illustrative, not actual terms; the registry may
+                  omit performance, fees, holdings or manager details.
+                </li>
+              )}
+              {hasPms && (
+                <li>
+                  PMS source pages may not expose every current product detail.
+                </li>
+              )}
+            </ul>
+          )}
+          {hasDisplayValue(sourceNote) && (
+            <p className="mt-2 border-t border-slate-200 pt-2 text-[11px] leading-4 text-slate-500 dark:border-slate-700 dark:text-slate-400">
+              Source: {sourceNote}
+            </p>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -1156,11 +1202,13 @@ function AifStandardReport({
                 </span>
               </div>
             </div>
-            <div className="rounded-2xl border border-amber-200/30 bg-amber-100/10 p-5 backdrop-blur-sm">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#e5c886]">Important label</p>
-              <p className="mt-3 text-lg font-semibold text-white">Standard assumptions</p>
-              <p className="mt-2 text-sm leading-6 text-slate-300">Illustrative only. They are not confirmed terms of this selected AIF.</p>
-            </div>
+            {!embedded && (
+              <div className="rounded-2xl border border-amber-200/30 bg-amber-100/10 p-5 backdrop-blur-sm">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#e5c886]">Important label</p>
+                <p className="mt-3 text-lg font-semibold text-white">Standard assumptions</p>
+                <p className="mt-2 text-sm leading-6 text-slate-300">Illustrative only. They are not confirmed terms of this selected AIF.</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -1175,43 +1223,41 @@ function AifStandardReport({
         )}
 
         <ReportSection number="02" icon={WalletCards} title="Investment basics" description="The same standardized assumptions are used for every AIF report.">
-          <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-100">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-700 dark:text-amber-300" />
-            <p><strong>Standard assumptions, not actual fund terms.</strong> Review the selected AIF&apos;s official documents before relying on any investment term.</p>
-          </div>
+          {!embedded && (
+            <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-100">
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-700 dark:text-amber-300" />
+              <p><strong>Standard assumptions, not actual fund terms.</strong> Review the selected AIF&apos;s official documents before relying on any investment term.</p>
+            </div>
+          )}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {standardBasics.map(([label, assumption]) => (
-              <AifAssumptionCard key={label} label={label} value={assumption} />
+              <AifAssumptionCard key={label} label={label} value={assumption} compact={embedded} />
             ))}
           </div>
         </ReportSection>
 
         <ReportSection number="03" icon={ShieldAlert} title="Risk analysis" description="Standardized risk framing for illustrative comparison; no fund-specific risk statistics are implied.">
           <div className="grid gap-4 sm:grid-cols-3">
-            <AifAssumptionCard label="Risk category" value="Very High Risk*" />
-            <AifAssumptionCard label="Diversification" value="Moderate to High*" />
-            <AifAssumptionCard label="Risk score" value="Standardized Score*" />
+            <AifAssumptionCard label="Risk category" value="Very High Risk*" compact={embedded} />
+            <AifAssumptionCard label="Diversification" value="Moderate to High*" compact={embedded} />
+            <AifAssumptionCard label="Risk score" value="Standardized Score*" compact={embedded} />
           </div>
         </ReportSection>
 
         <ReportSection number="04" icon={Users} title="Investor suitability" description="Standard suitability guidance used consistently across the AIF template.">
           <div className="grid gap-4 sm:grid-cols-3">
-            <AifAssumptionCard label="Suitable for" value="Long-term investors with high risk appetite*" />
-            <AifAssumptionCard label="Not suitable for" value="Short-term / low-risk investors*" />
-            <AifAssumptionCard label="Recommended horizon" value="5+ Years*" />
+            <AifAssumptionCard label="Suitable for" value="Long-term investors with high risk appetite*" compact={embedded} />
+            <AifAssumptionCard label="Not suitable for" value="Short-term / low-risk investors*" compact={embedded} />
+            <AifAssumptionCard label="Recommended horizon" value="5+ Years*" compact={embedded} />
           </div>
         </ReportSection>
 
-        <section className="rounded-2xl border border-amber-300 bg-amber-50 p-6 sm:p-8 dark:border-amber-900/60 dark:bg-amber-950/20">
-          <div className="flex items-start gap-4">
-            <Info className="mt-0.5 h-5 w-5 shrink-0 text-amber-700 dark:text-amber-300" />
-            <div>
-              <h2 className="font-heading text-xl font-semibold text-amber-950 dark:text-amber-100">Important disclaimer</h2>
-              <p className="mt-3 text-sm leading-6 text-amber-950/80 dark:text-amber-100/80">{AIF_DISCLAIMER}</p>
-              <p className="mt-3 text-xs leading-5 text-amber-900/70 dark:text-amber-200/70">Source: {String(data.source ?? "Uploaded AIF registry")}. The registry does not contain fund performance, fees, holdings, or manager data.</p>
-            </div>
-          </div>
-        </section>
+        {!embedded && (
+          <ImportantDisclosure
+            categories={["AIF"]}
+            sourceNote="Uploaded AIF registry"
+          />
+        )}
       </div>
     </ReportRoot>
   );
@@ -1524,6 +1570,13 @@ function ConsolidatedProductReports({
               />
             </section>
           ))
+        )}
+        {selections.length > 0 && (
+          <ImportantDisclosure
+            categories={Array.from(
+              new Set(selections.map((selection) => selection.category)),
+            )}
+          />
         )}
       </div>
     </main>
@@ -2102,16 +2155,12 @@ function SifPmsAifReportContent() {
           </ReportSection>
         )}
 
-        <section className="rounded-2xl border border-[#c8e2df] bg-[#eef8f7] p-6 sm:p-8 dark:border-teal-900 dark:bg-teal-950/20">
-          <div className="flex items-start gap-4">
-            <Info className="mt-0.5 h-5 w-5 shrink-0 text-[#0b7772]" />
-            <div>
-              <h2 className="font-heading text-xl font-semibold text-[#14263d] dark:text-slate-100">Important disclaimers</h2>
-              <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">This report is for informational purposes only and is not investment, tax or legal advice. It is generated from the selected product&apos;s local source disclosure and may not reflect the latest changes. Please review the official product documents and consult a qualified advisor before making an investment decision.</p>
-              {hasValue(sourceNote(data)) && <p className="mt-3 border-t border-[#c8e2df] pt-3 text-xs leading-5 text-slate-500 dark:border-teal-900 dark:text-slate-400">Source: {String(sourceNote(data))}</p>}
-            </div>
-          </div>
-        </section>
+        <ImportantDisclosure
+          categories={category ? [category] : []}
+          sourceNote={
+            hasValue(sourceNote(data)) ? String(sourceNote(data)) : undefined
+          }
+        />
       </div>
     </main>
   );
