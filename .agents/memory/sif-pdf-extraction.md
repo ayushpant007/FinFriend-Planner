@@ -8,3 +8,9 @@ SIF research packs should be pre-extracted into checked-in text companions and r
 **Why:** Published autoscale runtimes do not include the `pdftotext` executable (`spawn pdftotext ENOENT`). Bundling `pdf-parse` into the Next.js route previously caused the production build to stall, so committed text companions avoid both runtime and bundling failures. Strict line-based parsing also silently missed NAV, expense ratio, return, and strategy values present in the SIFscan text; a PMS URL must not be substituted for the wrong SIF product.
 
 **How to apply:** For new SIF source packs, add the real filename to the product map, generate a matching text companion during development, include text assets in the API route's production trace, parse inline table rows, and keep genuinely missing PDF fields as null/Data Not Available in the report.
+
+Fund-manager names may be laid out in aligned columns under `FUND MANAGEMENT`, or disclosed only in explicit “Managed by [name]” prose. Prefer the structured list and use prose only when the source has no structured names; do not infer a manager from a CEO or organization mention.
+
+**Why:** SIF packs use different text layouts, and collapsing whitespace before parsing can merge adjacent managers or roles. Some packs omit the management section but name the manager in their description.
+
+**How to apply:** Parse manager fields from original extracted text while column spacing remains available, stop at the next section/page footer, and leave the report field empty when no person is actually disclosed.
