@@ -412,6 +412,16 @@ function formatInvestorAmount(value: string) {
   return `₹${amount.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
 }
 
+function hasInvestorDetails(details: InvestorDetails) {
+  return [
+    details.name,
+    details.dob,
+    details.phone,
+    details.email,
+    details.amount,
+  ].some(hasDisplayValue);
+}
+
 function InvestorDetailsPanel({
   details,
 }: {
@@ -491,8 +501,8 @@ function SifNavRange({ data }: { data: JsonRecord }) {
     <div className="rounded-[4px] border border-[#e0e2e4] bg-[#fdfcf9] px-4 pb-4 pt-3 dark:border-slate-700 dark:bg-slate-900">
       {(startDate || endDate) && (
         <div className="flex items-center justify-between text-[10px] text-[#707984] dark:text-slate-400">
-          {startDate ? <span>{startDate}</span> : <span />}
-          {endDate ? <span>{endDate}</span> : <span />}
+          {startDate && <span>{startDate}</span>}
+          {endDate && <span>{endDate}</span>}
         </div>
       )}
       <svg viewBox="0 0 640 112" className="mt-2 h-28 w-full" role="img" aria-label={`NAV range from ${lowText} to ${highText}`}>
@@ -657,7 +667,7 @@ function SifResearchReport({
           </div>
         </header>
 
-        {investorDetails && (
+        {hasInvestorDetails(investorDetails) && (
           <div className="px-8 pt-5 sm:px-12">
             <InvestorDetailsPanel details={investorDetails} />
           </div>
