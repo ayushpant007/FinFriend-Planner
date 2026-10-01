@@ -275,7 +275,7 @@ function parseHoldings(lines: string[]) {
   const holdings: JsonRecord[] = [];
   for (const line of section) {
     const row = line.match(
-      /^(\d+)\s+(.+?)\s+([A-Z]{2}[A-Z0-9]{8,12}|—)(?:\s+(.+?))?\s+([-+]?(?:\d+(?:\.\d*)?|\.\d+)%|—)\s*$/i,
+      /^(\d+)\s+(.+?)\s+(IN[A-Z0-9]{9}\d|—)(?:\s+(.+?))?\s+([-+]?(?:\d+(?:\.\d*)?|\.\d+)%|—)\s*$/i,
     );
     if (!row) continue;
     const name = row[2].trim();
