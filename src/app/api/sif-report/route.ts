@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     "public",
     "SIF",
     "extracted",
-    `${product.fileName}.txt`,
+    `${path.parse(product.fileName).name}.txt`,
   );
 
   try {
