@@ -298,7 +298,7 @@ function splitManagerColumns(line: string) {
 }
 
 function isManagerRole(value: string) {
-  return /\b(?:fund\s+manager|portfolio\s+manager|investment\s+manager|manager|vice\s+president|president|chief|director|officer|cio|cfo|head|portion|analyst|management|equity|fixed\s+income|debt|commodit(?:y|ies))\b/i.test(
+  return /\b(?:fund\s+manager|portfolio\s+manager|investment\s+manager|manager|vice\s+president|president|chief|ceo|director|officer|cio|cfo|head|portion|analyst|management|equity|fixed\s+income|debt|commodit(?:y|ies))\b/i.test(
     value,
   );
 }
@@ -316,14 +316,43 @@ function isPersonName(value: string) {
   return /^[\p{L}][\p{L}.'’\-]*(?:\s+[\p{L}][\p{L}.'’\-]*){1,5}$/u.test(candidate);
 }
 
+function parseManagerMentions(text: string): JsonRecord[] {
+  const managers: JsonRecord[] = [];
+  const seenNames = new Set<string>();
+  const addName = (value: string) => {
+    const candidate = value
+      .replace(/\s+(?:under|who|team|brings|with)\b.*$/i, "")
+      .replace(/[’']s$/, "")
+      .trim();
+    if (!isPersonName(candidate)) return;
+    const key = candidate.toLocaleLowerCase();
+    if (seenNames.has(key)) return;
+    seenNames.add(key);
+    managers.push({ name: candidate, role: "Fund Manager" });
+  };
+
+  for (const match of text.matchAll(/\bmanaged\s+by\s+([^.;\n]+)/gi)) {
+    for (const candidate of match[1].split(/\s*,\s*|\s+and\s+/i)) {
+      addName(candidate);
+    }
+  }
+  for (const match of text.matchAll(
+    /\bfund\s+manager\s+([\p{Lu}][\p{L}.'’\-]+(?:\s+[\p{Lu}][\p{L}.'’\-]+){1,4})/gu,
+  )) {
+    addName(match[1]);
+  }
+  return managers;
+}
+
 function parseFundManagers(text: string): JsonRecord[] {
   const sourceLines = text
     .split(/\r?\n/)
     .map((line) => line.replace(/\f/g, "").trimEnd());
+  const mentionedManagers = parseManagerMentions(text);
   const start = sourceLines.findIndex(
     (line) => compactHeading(line.trim()) === "FUNDMANAGEMENT",
   );
-  if (start === -1) return [];
+  if (start === -1) return mentionedManagers;
 
   const end = sourceLines.findIndex((line, index) => {
     if (index <= start) return false;
@@ -387,7 +416,7 @@ function parseFundManagers(text: string): JsonRecord[] {
   }
 
   flushPendingNames();
-  return managers;
+  return managers.length ? managers : mentionedManagers;
 }
 
 export function parseSifPdf(text: string, product: InvestmentProduct, fileName: string): JsonRecord {
