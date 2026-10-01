@@ -6,6 +6,9 @@ function normaliseSchemeName(name: string): string[] {
     // SBI's legacy source rows call the current SBI Money Market Fund
     // "SBI Savings"; preserve identity checks across that scheme rename.
     .replace(/\bsbi\s+savings?\b/g, 'sbi money market')
+    // HDFC currently presents its HDFC Low Duration scheme as Ultra Short
+    // to Short Term; the verified regular growth ISIN is the same.
+    .replace(/\bhdfc\s+low\s+duration\b/g, 'hdfc ultra short to short term')
     .replace(/\babsl\b/g, 'aditya birla sun life')
     .replace(/\bicici\s+pru\b/g, 'icici prudential')
     // AMFI still publishes this fund under its earlier scheme name.

@@ -20,3 +20,9 @@ The legacy debt-fund source labels SBI Savings Fund as SBI Savings, while the li
 **Why:** Strict identity checks otherwise reject verified SBI scheme codes because the AMC's current name differs from the source dataset's legacy label.
 
 **How to apply:** Canonicalize this exact SBI Savings → SBI Money Market name change before token comparison, while retaining the selected row's own code and plan checks.
+
+HDFC's legacy `HDFC Low Duration` label and current `HDFC Ultra Short to Short Term` label identify the same regular growth scheme when the selected row uses the matching growth ISIN; `HDFC Ultra Short Term` is a different scheme.
+
+**Why:** Similar duration names have distinct AMFI codes and investment mandates, while the Low Duration label was updated for the same scheme represented by the Ultra Short to Short Term provider record.
+
+**How to apply:** For the legacy regular row, use its verified regular growth code and a narrow Low Duration ↔ Ultra Short to Short Term alias; never map it to the separate HDFC Ultra Short Term code.

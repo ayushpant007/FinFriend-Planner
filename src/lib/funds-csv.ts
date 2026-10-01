@@ -38,40 +38,11 @@ const SCHEME_CODE_FALLBACKS: Partial<Record<FundCsvCategory, Record<string, stri
     'Axis Short Duration Reg': '112354',
     'Kotak Low Duration Dir': '133810',
     'Kotak Low Duration Reg': '133805',
-    'SBI Savings Dir': '119821',
+    'HDFC Low Duration Reg': '102452',
     'SBI Savings Reg': '102503',
-    'HDFC Ultra Short Term Dir': '145034',
-    'HDFC Ultra Short Term Reg': '145040',
-    'ICICI Pru Short Term Dir': '120754',
     'ICICI Pru Short Term': '101758',
   },
 };
-
-// MFAPI-verified growth plans for this scheme are not represented in the
-// debt metrics CSV. Keep the selector/NAV identity usable without borrowing
-// metrics from a different HDFC debt scheme.
-const MANUAL_FUND_RECORDS: FundCsvRecord[] = [
-  {
-    category: 'Debt',
-    schemeCode: '118942',
-    fundName: 'HDFC Ultra Short To Short Term Fund',
-    schemeName: 'HDFC Ultra Short To Short Term Fund - Direct Plan - Growth Option',
-    isin: '',
-    plan: 'Direct',
-    schemeCategory: 'Ultra Short to Short Term',
-    raw: {},
-  },
-  {
-    category: 'Debt',
-    schemeCode: '102452',
-    fundName: 'HDFC Ultra Short To Short Term Fund',
-    schemeName: 'HDFC Ultra Short To Short Term Fund - Regular Plan - Growth Option',
-    isin: '',
-    plan: 'Regular',
-    schemeCategory: 'Ultra Short to Short Term',
-    raw: {},
-  },
-];
 
 let cache: { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] } | null = null;
 let cacheSignature = '';
@@ -209,12 +180,6 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
         byCode.set(schemeCode, record);
       }
     }
-  }
-
-  for (const record of MANUAL_FUND_RECORDS) {
-    if (byCode.has(record.schemeCode)) continue;
-    all.push(record);
-    byCode.set(record.schemeCode, record);
   }
 
   console.log(`[funds-csv] Loaded ${all.length} fund rows across ${FILES.length} CSVs`);
