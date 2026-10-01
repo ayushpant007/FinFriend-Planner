@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { FileText, LoaderCircle, Plus, Trash2 } from "lucide-react";
+import { FileText, LoaderCircle, Plus, Trash2, WalletCards } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { Input } from "@/components/ui/input";
 import { SearchableSelect } from "@/components/ui/searchable-select";
@@ -32,6 +32,126 @@ type PmsOption = {
   urlVerification: string;
 };
 
+type SifHoldingPreviewItem = {
+  name: string;
+  weight: unknown;
+};
+
+type SifHoldingsPreviewState =
+  | { status: "loading" }
+  | { status: "error"; message: string }
+  | {
+      status: "ready";
+      holdings: SifHoldingPreviewItem[];
+      totalHoldings: number | null;
+    };
+
+function parseSifHoldingsPreview(value: unknown): Omit<
+  Extract<SifHoldingsPreviewState, { status: "ready" }>,
+  "status"
+> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("The SIF report response was not readable.");
+  }
+  const payload = value as Record<string, unknown>;
+  const portfolio =
+    payload.portfolio && typeof payload.portfolio === "object" && !Array.isArray(payload.portfolio)
+      ? (payload.portfolio as Record<string, unknown>)
+      : null;
+  if (!portfolio) {
+    throw new Error("The selected SIF report did not include portfolio data.");
+  }
+
+  const holdings = Array.isArray(portfolio.top_holdings)
+    ? portfolio.top_holdings.flatMap((item): SifHoldingPreviewItem[] => {
+        if (!item || typeof item !== "object" || Array.isArray(item)) return [];
+        const record = item as Record<string, unknown>;
+        const name = record.name ?? record.security ?? record.company;
+        if (typeof name !== "string" || !name.trim()) return [];
+        return [{
+          name: name.trim(),
+          weight: record.weight_percent ?? record.weight ?? record.percentage ?? null,
+        }];
+      })
+    : [];
+  const total = Number(portfolio.total_holdings);
+
+  return {
+    holdings,
+    totalHoldings: Number.isFinite(total) && total >= 0 ? total : null,
+  };
+}
+
+function formatHoldingWeight(value: unknown) {
+  if (value === null || value === undefined || value === "") return "—";
+  const weight = typeof value === "number" ? value : Number(String(value).replace("%", "").trim());
+  if (!Number.isFinite(weight)) return String(value);
+  return `${weight.toLocaleString("en-IN", { maximumFractionDigits: 2 })}%`;
+}
+
+function SifHoldingsPreview({
+  state,
+}: {
+  state: SifHoldingsPreviewState | undefined;
+}) {
+  return (
+    <section
+      className="rounded-xl border border-[#cfe2df] bg-[#f5fbfa] p-4 dark:border-slate-700 dark:bg-slate-900/70"
+      aria-live="polite"
+    >
+      <div className="flex items-center gap-2">
+        <WalletCards className="h-4 w-4 text-[#0b7772]" />
+        <h3 className="text-sm font-semibold text-[#14263d] dark:text-slate-100">
+          Holdings before report
+        </h3>
+      </div>
+      {!state || state.status === "loading" ? (
+        <p className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+          <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+          Loading holdings from the selected SIF research pack…
+        </p>
+      ) : state.status === "error" ? (
+        <p className="mt-3 text-xs text-red-700 dark:text-red-300" role="alert">
+          Holdings preview could not be loaded: {state.message}
+        </p>
+      ) : state.holdings.length === 0 ? (
+        <p className="mt-3 text-xs leading-5 text-slate-600 dark:text-slate-300">
+          {state.totalHoldings
+            ? `The source reports ${state.totalHoldings.toLocaleString("en-IN")} holdings, but individual positions were not available to display.`
+            : "Individual holdings are not disclosed in this SIF research pack."}
+        </p>
+      ) : (
+        <>
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+            Showing the top {Math.min(10, state.holdings.length)} positions
+            {state.totalHoldings !== null
+              ? ` from ${state.totalHoldings.toLocaleString("en-IN")} disclosed holdings.`
+              : " disclosed in the research pack."}
+          </p>
+          <div className="mt-2 max-h-64 space-y-1 overflow-y-auto pr-1">
+            {state.holdings.slice(0, 10).map((holding, index) => (
+              <div
+                key={`${holding.name}-${index}`}
+                className="flex items-start gap-3 border-b border-[#e0eeeb] py-2 last:border-0 dark:border-slate-800"
+              >
+                <span className="w-5 shrink-0 text-xs font-bold text-slate-400">
+                  {index + 1}.
+                </span>
+                <span className="min-w-0 flex-1 text-xs font-medium text-slate-700 dark:text-slate-200">
+                  {holding.name}
+                </span>
+                <span className="shrink-0 text-xs font-semibold text-[#0b7772]">
+                  {formatHoldingWeight(holding.weight)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
 export default function SifPmsAifPage() {
   const router = useRouter();
   const [pmsOptions, setPmsOptions] = useState<PmsOption[]>([]);
@@ -44,9 +164,74 @@ export default function SifPmsAifPage() {
   const [selections, setSelections] = useState<InvestmentSelection[]>([
     { category: "", investment: "" },
   ]);
+  const [sifHoldingsByProduct, setSifHoldingsByProduct] = useState<
+    Record<string, SifHoldingsPreviewState>
+  >({});
+  const selectedSifProducts = [
+    ...new Set(
+      selections
+        .filter((selection) => selection.category === "SIF" && selection.investment)
+        .map((selection) => selection.investment),
+    ),
+  ];
+  const selectedSifProductsKey = JSON.stringify(selectedSifProducts);
+  const sifHoldingsLoading = selectedSifProducts.some((product) => {
+    const state = sifHoldingsByProduct[product];
+    return !state || state.status === "loading";
+  });
   const hasCompleteSelection = selections.some(
     (selection) => selection.category && selection.investment,
   );
+
+  useEffect(() => {
+    const products = JSON.parse(selectedSifProductsKey) as string[];
+    if (products.length === 0) return;
+
+    const controller = new AbortController();
+    setSifHoldingsByProduct((current) => {
+      const next = { ...current };
+      for (const product of products) next[product] = { status: "loading" };
+      return next;
+    });
+
+    for (const product of products) {
+      fetch(`/api/sif-report?product=${encodeURIComponent(product)}`, {
+        signal: controller.signal,
+      })
+        .then(async (response) => {
+          const payload = await response.json();
+          if (!response.ok) {
+            const message =
+              payload && typeof payload.error === "string"
+                ? payload.error
+                : "The selected SIF report could not be loaded.";
+            throw new Error(message);
+          }
+          return parseSifHoldingsPreview(payload);
+        })
+        .then((preview) => {
+          setSifHoldingsByProduct((current) => ({
+            ...current,
+            [product]: { status: "ready", ...preview },
+          }));
+        })
+        .catch((error: unknown) => {
+          if (controller.signal.aborted) return;
+          setSifHoldingsByProduct((current) => ({
+            ...current,
+            [product]: {
+              status: "error",
+              message:
+                error instanceof Error
+                  ? error.message
+                  : "The holdings data could not be read.",
+            },
+          }));
+        });
+    }
+
+    return () => controller.abort();
+  }, [selectedSifProductsKey]);
 
   function handleGenerateReport(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -362,12 +547,17 @@ export default function SifPmsAifPage() {
                                   {aifError || (aifLoading ? "Loading names from the uploaded SEBI registry…" : `${aifOptions.length.toLocaleString("en-IN")} unique AIF names from the uploaded registry`)}
                                 </p>
                               )}
+                              {selection.category === "SIF" && selection.investment && (
+                                <SifHoldingsPreview
+                                  state={sifHoldingsByProduct[selection.investment]}
+                                />
+                              )}
                           </div>
                         )}
                       </div>
                     );
                   })}
-                  {hasCompleteSelection && (
+                  {hasCompleteSelection && !sifHoldingsLoading && (
                     <div className="flex justify-end pt-1">
                       <button
                         type="submit"

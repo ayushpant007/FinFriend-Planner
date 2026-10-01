@@ -513,6 +513,9 @@ function SifResearchReport({
   const categoryLabel = String(data.product_category ?? data.product_type ?? category ?? "Specialised Investment Fund");
   const asOf = firstValue(current, ["as_of"]) ?? firstValue(data.performance, ["as_of"]);
   const returns = findReturns(data);
+  const portfolio = isRecord(data.portfolio) ? data.portfolio : {};
+  const holdings = getHoldings(data);
+  const totalHoldings = numberValue(portfolio.total_holdings);
   const strategyRows = getSifStrategyParameters(data);
   const riskMetrics = isRecord(data.risk_metrics) ? data.risk_metrics : {};
   const riskBand = firstValue(riskMetrics, ["risk_band"]) ?? getRiskLabel(data);
@@ -625,6 +628,46 @@ function SifResearchReport({
                 </div>
               ))}
             </div>
+          </section>
+
+          <section>
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <SifSectionTitle>Portfolio holdings</SifSectionTitle>
+              <p className="text-[11px] text-[#7c858e] dark:text-slate-400">
+                {totalHoldings !== null
+                  ? `Showing ${holdings.length} disclosed positions of ${totalHoldings} total.`
+                  : `${holdings.length} disclosed positions.`}
+              </p>
+            </div>
+            {holdings.length > 0 ? (
+              <div className="mt-4 overflow-hidden rounded-[4px] border border-[#e0e2e4] dark:border-slate-700">
+                <div className="grid grid-cols-[38px_minmax(0,1fr)_90px] bg-[#f7f7f5] px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#6e7882] dark:bg-slate-800 dark:text-slate-400">
+                  <span>#</span>
+                  <span>Security</span>
+                  <span className="text-right">% of NAV</span>
+                </div>
+                {holdings.map((holding, index) => (
+                  <div
+                    key={`${holding.name}-${index}`}
+                    className="grid grid-cols-[38px_minmax(0,1fr)_90px] gap-2 border-t border-[#eceef0] px-4 py-2.5 text-[12px] dark:border-slate-800"
+                  >
+                    <span className="text-[#7c858e] dark:text-slate-400">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="break-words font-medium text-[#101522] dark:text-slate-100">
+                      {holding.name}
+                    </span>
+                    <span className="text-right font-semibold text-[#1d6a4c]">
+                      {formatValue(holding.weight, "weight_percent")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-4 rounded-[4px] border border-[#e0e2e4] bg-[#fdfcf9] px-4 py-4 text-[12px] leading-5 text-[#6e7882] dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300">
+                Individual positions are not disclosed in this SIF research pack.
+              </p>
+            )}
           </section>
 
           <section>

@@ -268,21 +268,22 @@ function parseHoldings(lines: string[]) {
   const start = findIndex(lines, /^PORTFOLIO HOLDINGS/);
   if (start === -1) return { total: null, holdings: [] };
   const total = lines[start].match(/\bOF\s+(\d+)\)/i)?.[1] ?? null;
-  const header = findIndex(lines, "#", start + 1);
+  const header = findIndex(lines, /^#\s+SECURITY\b/i, start + 1);
   if (header === -1) return { total, holdings: [] };
   const end = findIndex(lines, /^Showing top|^IMPORTANT DISCLOSURES$/, header + 1);
   const section = lines.slice(header + 1, end === -1 ? lines.length : end);
   const holdings: JsonRecord[] = [];
-  for (let index = 0; index < section.length; index += 1) {
-    if (!/^\d+$/.test(section[index])) continue;
-    const name = section[index + 1];
-    if (!name || /^\d+$/.test(name)) continue;
-    const weightIndex = section.findIndex(
-      (value, candidateIndex) =>
-        candidateIndex > index + 1 && (/^[-+]?[\d.]+%$/.test(value) || value === "—"),
+  for (const line of section) {
+    const row = line.match(
+      /^(\d+)\s+(.+?)\s+([A-Z]{2}[A-Z0-9]{8,12}|—)(?:\s+(.+?))?\s+([-+]?(?:\d+(?:\.\d*)?|\.\d+)%|—)\s*$/i,
     );
-    const weight = weightIndex === -1 ? null : numberFrom(section[weightIndex]);
-    holdings.push({ name, weight_percent: weight });
+    if (!row) continue;
+    const name = row[2].trim();
+    if (!name) continue;
+    holdings.push({
+      name,
+      weight_percent: row[5] === "—" ? null : numberFrom(row[5]),
+    });
     if (holdings.length >= 25) break;
   }
   return { total, holdings };
