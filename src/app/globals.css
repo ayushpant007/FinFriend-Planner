@@ -154,6 +154,32 @@ body {
   .consolidated-product > article {
     min-height: auto !important;
   }
+
+  #consolidated-report-root .consolidated-report-heading {
+    position: static !important;
+    break-before: auto !important;
+    page-break-before: auto !important;
+  }
+
+  #consolidated-report-root .consolidated-product,
+  #consolidated-report-root .consolidated-product section {
+    break-before: auto !important;
+    page-break-before: auto !important;
+    break-after: auto !important;
+    page-break-after: auto !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  #consolidated-report-root .consolidated-product footer,
+  #consolidated-report-root .consolidated-product .report-brand-footer,
+  #consolidated-report-root .consolidated-product .report-important-disclosure {
+    display: none !important;
+  }
+
+  #consolidated-report-root .consolidated-product:not(:first-of-type) .report-sif-branding-header {
+    display: none !important;
+  }
 }
 
 /* =========================================

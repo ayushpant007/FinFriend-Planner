@@ -656,7 +656,7 @@ function SifResearchReport({
         <header className="relative border-b border-[#e0e2e4] bg-white dark:border-slate-800 dark:bg-slate-900">
           {showBrandingHeader && (
             <>
-              <div className="flex h-14 items-center justify-between bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-8 text-[11px] text-slate-300 sm:px-12">
+              <div className="report-sif-branding-header flex h-14 items-center justify-between bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-8 text-[11px] text-slate-300 sm:px-12">
                 <div className="flex items-center gap-3">
                   <div className="relative h-10 w-[142px] overflow-hidden rounded bg-white/95 shadow-[0_3px_12px_rgba(0,0,0,0.12)]">
                     <Image
@@ -1083,7 +1083,7 @@ function ImportantDisclosure({
 
   return (
     <section
-      className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-900"
+      className="report-important-disclosure mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-900"
       aria-labelledby="important-disclosure-title"
     >
       <div className="flex items-start gap-3">
@@ -1507,7 +1507,7 @@ function ConsolidatedProductReports({
   investorDetails: InvestorDetails;
 }) {
   return (
-    <main className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
+    <main id="consolidated-report-root" className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
       <div className="no-print">
         <AppHeader />
       </div>
