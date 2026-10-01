@@ -38,6 +38,12 @@ const SCHEME_CODE_FALLBACKS: Partial<Record<FundCsvCategory, Record<string, stri
     'Axis Short Duration Reg': '112354',
     'Kotak Low Duration Dir': '133810',
     'Kotak Low Duration Reg': '133805',
+    'SBI Savings Dir': '119821',
+    'SBI Savings Reg': '102503',
+    'HDFC Ultra Short Term Dir': '145034',
+    'HDFC Ultra Short Term Reg': '145040',
+    'ICICI Pru Short Term Dir': '120754',
+    'ICICI Pru Short Term': '101758',
   },
 };
 

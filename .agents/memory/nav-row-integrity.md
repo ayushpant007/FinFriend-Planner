@@ -14,3 +14,9 @@ Known scheme renames may be canonicalized during name validation when the select
 **Why:** AMFI can continue publishing NAVs under a scheme's earlier name after consumer-facing sources adopt a new name.
 
 **How to apply:** Add only narrow, verified old-name/new-name aliases before token comparison; never weaken plan checks or use the alias to replace the row's code.
+
+The legacy debt-fund source labels SBI Savings Fund as SBI Savings, while the live scheme provider identifies the current scheme as SBI Money Market Fund.
+
+**Why:** Strict identity checks otherwise reject verified SBI scheme codes because the AMC's current name differs from the source dataset's legacy label.
+
+**How to apply:** Canonicalize this exact SBI Savings → SBI Money Market name change before token comparison, while retaining the selected row's own code and plan checks.

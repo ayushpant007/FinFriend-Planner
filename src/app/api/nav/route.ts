@@ -3,6 +3,9 @@ import { NextResponse } from 'next/server';
 function normaliseSchemeName(name: string): string[] {
   return name
     .toLowerCase()
+    // SBI's legacy source rows call the current SBI Money Market Fund
+    // "SBI Savings"; preserve identity checks across that scheme rename.
+    .replace(/\bsbi\s+savings\b/g, 'sbi money market')
     .replace(/\babsl\b/g, 'aditya birla sun life')
     .replace(/\bicici\s+pru\b/g, 'icici prudential')
     // AMFI still publishes this fund under its earlier scheme name.
