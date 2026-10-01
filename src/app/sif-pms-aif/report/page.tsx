@@ -511,6 +511,9 @@ function SifResearchReport({
   const metadata = isRecord(data.data_metadata) ? data.data_metadata : {};
   const fundHouse = getFundHouse(data);
   const categoryLabel = String(data.product_category ?? data.product_type ?? category ?? "Specialised Investment Fund");
+  const managerNames = getManagers(data)
+    .map((manager) => (hasValue(manager.name) ? String(manager.name).trim() : ""))
+    .filter((name) => name.length > 0);
   const asOf = firstValue(current, ["as_of"]) ?? firstValue(data.performance, ["as_of"]);
   const returns = findReturns(data);
   const portfolio = isRecord(data.portfolio) ? data.portfolio : {};
@@ -571,6 +574,16 @@ function SifResearchReport({
             <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b39a66]">Fund research pack</p>
             <h1 className="relative mt-5 max-w-4xl font-serif text-3xl font-bold leading-tight tracking-[-0.035em] text-[#101522] sm:text-[40px] dark:text-white">{title}</h1>
             <p className="relative mt-2 text-[15px] text-[#53606c] dark:text-slate-400">{String(fundHouse ?? "Data Not Available")}</p>
+            {managerNames.length > 0 && (
+              <div className="relative mt-4 flex max-w-4xl flex-col gap-1 rounded-md border border-[#e4e0d6] bg-[#fdfcf9] px-3 py-2.5 sm:flex-row sm:items-baseline sm:gap-3 dark:border-slate-700 dark:bg-slate-800/70">
+                <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8c7445] dark:text-[#d8c08b]">
+                  Fund manager{managerNames.length === 1 ? "" : "s"}
+                </span>
+                <span className="text-sm font-semibold leading-6 text-[#14263d] dark:text-slate-100">
+                  {managerNames.join(", ")}
+                </span>
+              </div>
+            )}
             <p className="relative mt-3 text-[12px] text-[#7c858e] dark:text-slate-500">{categoryLabel}</p>
           </div>
         </header>
