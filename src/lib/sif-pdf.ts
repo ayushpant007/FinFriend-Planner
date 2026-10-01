@@ -289,6 +289,107 @@ function parseHoldings(lines: string[]) {
   return { total, holdings };
 }
 
+function splitManagerColumns(line: string) {
+  return line
+    .trim()
+    .split(/\s{3,}|\s*\|\s*/)
+    .map((cell) => cell.trim())
+    .filter(Boolean);
+}
+
+function isManagerRole(value: string) {
+  return /\b(?:fund\s+manager|portfolio\s+manager|investment\s+manager|manager|vice\s+president|president|chief|director|officer|cio|cfo|head|portion|analyst|management|equity|fixed\s+income|debt|commodit(?:y|ies))\b/i.test(
+    value,
+  );
+}
+
+function isPersonName(value: string) {
+  const candidate = value.trim();
+  if (
+    candidate.length > 80 ||
+    /[\d₹%]/.test(candidate) ||
+    /\b(?:fund|long[\s-]?short|research|sifscan)\b/i.test(candidate) ||
+    isManagerRole(candidate)
+  ) {
+    return false;
+  }
+  return /^[\p{L}][\p{L}.'’\-]*(?:\s+[\p{L}][\p{L}.'’\-]*){1,5}$/u.test(candidate);
+}
+
+function parseFundManagers(text: string): JsonRecord[] {
+  const sourceLines = text
+    .split(/\r?\n/)
+    .map((line) => line.replace(/\f/g, "").trimEnd());
+  const start = sourceLines.findIndex(
+    (line) => compactHeading(line.trim()) === "FUNDMANAGEMENT",
+  );
+  if (start === -1) return [];
+
+  const end = sourceLines.findIndex((line, index) => {
+    if (index <= start) return false;
+    const key = compactHeading(line.trim());
+    return (
+      /^SIFscan Research\b/i.test(line.trim()) ||
+      SECTION_HEADINGS.some(
+        (heading) =>
+          heading !== "FUND MANAGEMENT" && key === compactHeading(heading),
+      )
+    );
+  });
+  const section = sourceLines.slice(start + 1, end === -1 ? undefined : end);
+  const managers: JsonRecord[] = [];
+  const seenNames = new Set<string>();
+  let pendingNames: string[] = [];
+
+  const addManager = (name: string, role: string) => {
+    const cleanedName = name.trim();
+    const key = cleanedName.toLocaleLowerCase();
+    if (!cleanedName || seenNames.has(key)) return;
+    seenNames.add(key);
+    managers.push({ name: cleanedName, role: role.trim() || "Fund Manager" });
+  };
+
+  const flushPendingNames = (roles: string[] = []) => {
+    pendingNames.forEach((name, index) => {
+      const role = roles.length
+        ? roles[Math.min(index, roles.length - 1)]
+        : "Fund Manager";
+      addManager(name, role);
+    });
+    pendingNames = [];
+  };
+
+  for (const sourceLine of section) {
+    const line = sourceLine.trim();
+    if (!line || /^SIFscan Research\b/i.test(line)) continue;
+
+    const inlineManager = line.match(
+      /^(?:fund\s+manager|portfolio\s+manager)\s*[:—-]\s*(.+)$/i,
+    );
+    if (inlineManager && isPersonName(inlineManager[1])) {
+      addManager(inlineManager[1], "Fund Manager");
+      continue;
+    }
+
+    const cells = splitManagerColumns(line);
+    if (cells.some(isManagerRole)) {
+      flushPendingNames(cells.filter(isManagerRole));
+      continue;
+    }
+
+    const names = cells.filter(isPersonName);
+    if (names.length) {
+      if (pendingNames.length) flushPendingNames();
+      pendingNames = names;
+    } else if (pendingNames.length) {
+      flushPendingNames();
+    }
+  }
+
+  flushPendingNames();
+  return managers;
+}
+
 export function parseSifPdf(text: string, product: InvestmentProduct, fileName: string): JsonRecord {
   const lines = cleanLines(text);
   const titleIndex = findIndex(lines, "F U N D R E S E A R C H P A C K");
@@ -368,7 +469,7 @@ export function parseSifPdf(text: string, product: InvestmentProduct, fileName: 
         ? `Top holdings extracted from the selected PDF. Total disclosed holdings: ${holdings.total}.`
         : null,
     },
-    fund_managers: [],
+    fund_managers: parseFundManagers(text),
     investment_highlights: [
       { title: "Latest NAV", description: nav.raw ?? null },
       { title: "Expense ratio", description: expenseRatio.raw ?? null },
