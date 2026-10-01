@@ -51,6 +51,17 @@ function compactHeading(value: string) {
   return value.toUpperCase().replace(/[^A-Z0-9]+/g, "");
 }
 
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function inlineValue(line: string, label: string) {
+  const match = line.match(
+    new RegExp(`^\\s*${escapeRegExp(label)}(?:\\s+|$)(.*)$`, "i"),
+  );
+  return match?.[1]?.trim() ?? null;
+}
+
 function nextLine(lines: string[], index: number, skipPattern?: RegExp) {
   for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
     const value = lines[cursor];
@@ -61,8 +72,20 @@ function nextLine(lines: string[], index: number, skipPattern?: RegExp) {
 }
 
 function valueAfter(lines: string[], heading: string | RegExp, start = 0) {
-  const index = findIndex(lines, heading, start);
-  return index === -1 ? null : nextLine(lines, index);
+  const index =
+    typeof heading === "string"
+      ? lines.findIndex(
+          (line, cursor) =>
+            cursor >= start &&
+            compactHeading(line).startsWith(compactHeading(heading)),
+        )
+      : findIndex(lines, heading, start);
+  if (index === -1) return null;
+  if (typeof heading === "string") {
+    const value = inlineValue(lines[index], heading);
+    if (value) return value;
+  }
+  return nextLine(lines, index);
 }
 
 function numberFrom(value: string | null) {
@@ -71,21 +94,14 @@ function numberFrom(value: string | null) {
   return match ? Number(match[0]) : null;
 }
 
-function isPercentage(value: string) {
-  return /^[-+]?\d+(?:\.\d+)?%$/.test(value);
-}
-
 function isAsOf(value: string) {
   return /^as of /i.test(value);
 }
 
-function asOfAfter(lines: string[], index: number) {
-  const candidate = lines[index + 2];
-  return candidate?.match(/^as of (.+)$/i)?.[1] ?? null;
-}
-
 function parseTopMetrics(lines: string[]) {
-  const start = findIndex(lines, "LATEST NAV");
+  const start = lines.findIndex((line) =>
+    compactHeading(line).includes("LATESTNAV"),
+  );
   if (start === -1) {
     return {
       nav: { raw: null, value: null, asOf: null },
@@ -95,36 +111,46 @@ function parseTopMetrics(lines: string[]) {
     };
   }
 
-  const endCandidates = ["1M RETURN", "1 Month", "PERFORMANCE RETURNS"]
-    .map((heading) => findIndex(lines, heading, start + 1))
-    .filter((index) => index !== -1);
-  const end = endCandidates.length ? Math.min(...endCandidates) : lines.length;
-  const section = lines.slice(start, end);
-  const headerIndexes = ["LATEST NAV", "AUM", "EXPENSE RATIO", "MIN. INVESTMENT"]
-    .map((heading) => findIndex(section, heading))
-    .filter((index) => index !== -1);
-  const values = section
-    .slice(headerIndexes.length ? Math.max(...headerIndexes) + 1 : 1)
-    .filter((line) => line !== "RETURN");
+  const end = lines.findIndex(
+    (line, index) =>
+      index > start &&
+      (compactHeading(line).includes("1MRETURN") ||
+        compactHeading(line).includes("PERFORMANCERETURNS")),
+  );
+  const section = lines.slice(start + 1, end === -1 ? lines.length : end);
+  const navIndex = section.findIndex((line) => /₹\s*[\d,]+(?:\.\d+)?/.test(line));
+  const navMatch = navIndex === -1
+    ? null
+    : section[navIndex].match(/₹\s*[\d,]+(?:\.\d+)?/);
+  const navRaw = firstNonPlaceholder(navMatch?.[0] ?? null);
+  const navAsOf = navIndex === -1
+    ? null
+    : section.slice(navIndex + 1).find(isAsOf)?.replace(/^as of /i, "") ?? null;
 
-  const navRaw = firstNonPlaceholder(values[0]);
-  const navAsOfIndex = values.findIndex(isAsOf);
-  const navAsOf = navAsOfIndex === -1 ? null : values[navAsOfIndex].replace(/^as of /i, "");
-  const aumStart = navAsOfIndex === -1 ? 1 : navAsOfIndex + 1;
-  const aumEnd = values.findIndex((value, index) => index >= aumStart && (isAsOf(value) || isPercentage(value)));
-  const aumLines = values.slice(aumStart, aumEnd === -1 ? values.length : aumEnd);
-  const aumRaw = firstNonPlaceholder(aumLines.join(" ").trim());
-  const expenseIndex = values.findIndex((value, index) => index >= aumStart && isPercentage(value));
-  const expenseRaw = firstNonPlaceholder(expenseIndex === -1 ? null : values[expenseIndex]);
+  const aumIndex = section.findIndex((line) =>
+    /₹\s*[\d,]+(?:\.\d+)?\s*(?:Cr|Crores?)\b/i.test(line),
+  );
+  const aumRaw = firstNonPlaceholder(aumIndex === -1 ? null : section[aumIndex]);
+  const aumAsOf = aumIndex === -1
+    ? null
+    : section.slice(aumIndex + 1).find(isAsOf)?.replace(/^as of /i, "") ?? null;
+
+  const expenseIndex = section.findIndex(
+    (line) => !/^Regular:/i.test(line) && /[-+]?\d+(?:\.\d+)?\s*%/.test(line),
+  );
+  const expenseMatch =
+    expenseIndex === -1
+      ? null
+      : section[expenseIndex].match(/[-+]?\d+(?:\.\d+)?\s*%/);
+  const expenseRaw = firstNonPlaceholder(expenseMatch?.[0] ?? null);
   const minimumRaw = firstNonPlaceholder(
-    values
-      .slice(expenseIndex === -1 ? 0 : expenseIndex + 1)
-      .find((value) => !isAsOf(value) && !/^Regular:/i.test(value)),
+    section.find((line) => /₹\s*[\d,]+(?:\.\d+)?\s*(?:L|Lakhs?)\b/i.test(line)) ??
+      null,
   );
 
   return {
     nav: { raw: navRaw, value: numberFrom(navRaw ?? null), asOf: navAsOf },
-    aum: { raw: aumRaw, value: numberFrom(aumRaw ?? null), asOf: null },
+    aum: { raw: aumRaw, value: numberFrom(aumRaw ?? null), asOf: aumAsOf },
     expenseRatio: { raw: expenseRaw, value: numberFrom(expenseRaw ?? null), asOf: null },
     minimumInvestment: { raw: minimumRaw, value: numberFrom(minimumRaw ?? null), asOf: null },
   };
@@ -164,9 +190,14 @@ function parseStrategyParameters(lines: string[]) {
   ];
   const result: JsonRecord = {};
   for (const label of labels) {
-    const index = section.indexOf(label);
+    const normalizedLabel = compactHeading(label);
+    const index = section.findIndex((line) =>
+      compactHeading(line).startsWith(normalizedLabel),
+    );
     if (index === -1) continue;
-    const value = firstNonPlaceholder(section[index + 1]);
+    const value = firstNonPlaceholder(
+      inlineValue(section[index], label) ?? nextLine(section, index),
+    );
     if (value) result[label.toLowerCase().replace(/[^a-z]+/g, "_")] = value;
   }
   return result;
@@ -174,28 +205,26 @@ function parseStrategyParameters(lines: string[]) {
 
 function parsePerformance(lines: string[]) {
   const labels = [
-    ["1_month", /^(1M RETURN|1 Month)$/i],
-    ["3_month", /^(3M RETURN|3 Months)$/i],
-    ["6_month", /^(6M RETURN|6 Months)$/i],
-    ["1_year", /^(1Y RETURN|1 Year)$/i],
-    ["since_inception", /^(SINCE INCEPTION|Since Inception)$/i],
+    ["1_month", /^(?:1M RETURN|1\s*Month)\s*(.*)$/i],
+    ["3_month", /^(?:3M RETURN|3\s*Months?)\s*(.*)$/i],
+    ["6_month", /^(?:6M RETURN|6\s*Months?)\s*(.*)$/i],
+    ["1_year", /^(?:1Y RETURN|1\s*Year)\s*(.*)$/i],
+    ["since_inception", /^Since\s+Inception\s*(.*)$/i],
   ] as const;
   const returns: JsonRecord = {};
-  const indexes = labels.map(([, heading]) => findIndex(lines, heading)).filter((index) => index !== -1);
-  if (!indexes.length) return returns;
-  const endCandidates = SECTION_HEADINGS
-    .map((heading) => findIndex(lines, heading, Math.min(...indexes) + 1))
+  const start = findIndex(lines, "PERFORMANCE RETURNS");
+  if (start === -1) return returns;
+  const endCandidates = ["RISK PROFILE", "PORTFOLIO ALLOCATION", "IMPORTANT DISCLOSURES"]
+    .map((heading) => findIndex(lines, heading, start + 1))
     .filter((index) => index !== -1);
   const end = endCandidates.length ? Math.min(...endCandidates) : lines.length;
-  const values = lines
-    .slice(Math.min(...indexes), end)
-    .filter(
-      (line) =>
-        !labels.some(([, heading]) => heading.test(line)) &&
-        line !== "RETURN",
-    );
-  labels.forEach(([key], index) => {
-    const value = firstNonPlaceholder(values[index]);
+  const section = lines.slice(start + 1, end);
+
+  labels.forEach(([key, pattern]) => {
+    const index = section.findIndex((line) => pattern.test(line));
+    if (index === -1) return;
+    const match = section[index].match(pattern);
+    const value = firstNonPlaceholder(match?.[1]?.trim() || nextLine(section, index));
     if (value) returns[key] = numberFrom(value);
   });
   return returns;
@@ -219,16 +248,19 @@ function parseNavHistory(lines: string[]) {
   if (start === -1) return null;
   const end = findIndex(lines, "PERFORMANCE RETURNS", start + 1);
   const section = lines.slice(start + 1, end === -1 ? lines.length : end);
-  const dates = section.filter((line) => /^\d{4}-\d{2}-\d{2}$/.test(line));
-  const lowLine = section.find((line) => /^Low:/i.test(line));
-  const highLine = section.find((line) => /^High:/i.test(line));
+  const sectionText = section.join(" ");
+  const dates = [...sectionText.matchAll(/\b\d{4}-\d{2}-\d{2}\b/g)].map(
+    ([date]) => date,
+  );
+  const lowRaw = sectionText.match(/\bLow:\s*(₹?\s*[\d,]+(?:\.\d+)?)/i)?.[1] ?? null;
+  const highRaw = sectionText.match(/\bHigh:\s*(₹?\s*[\d,]+(?:\.\d+)?)/i)?.[1] ?? null;
   return {
     start_date: dates[0] ?? null,
     end_date: dates[1] ?? null,
-    low: numberFrom(lowLine ?? null),
-    low_raw: lowLine?.replace(/^Low:\s*/i, "") ?? null,
-    high: numberFrom(highLine ?? null),
-    high_raw: highLine?.replace(/^High:\s*/i, "") ?? null,
+    low: numberFrom(lowRaw),
+    low_raw: lowRaw,
+    high: numberFrom(highRaw),
+    high_raw: highRaw,
   };
 }
 
