@@ -47,6 +47,32 @@ const SCHEME_CODE_FALLBACKS: Partial<Record<FundCsvCategory, Record<string, stri
   },
 };
 
+// MFAPI-verified growth plans for this scheme are not represented in the
+// debt metrics CSV. Keep the selector/NAV identity usable without borrowing
+// metrics from a different HDFC debt scheme.
+const MANUAL_FUND_RECORDS: FundCsvRecord[] = [
+  {
+    category: 'Debt',
+    schemeCode: '118942',
+    fundName: 'HDFC Ultra Short To Short Term Fund',
+    schemeName: 'HDFC Ultra Short To Short Term Fund - Direct Plan - Growth Option',
+    isin: '',
+    plan: 'Direct',
+    schemeCategory: 'Ultra Short to Short Term',
+    raw: {},
+  },
+  {
+    category: 'Debt',
+    schemeCode: '102452',
+    fundName: 'HDFC Ultra Short To Short Term Fund',
+    schemeName: 'HDFC Ultra Short To Short Term Fund - Regular Plan - Growth Option',
+    isin: '',
+    plan: 'Regular',
+    schemeCategory: 'Ultra Short to Short Term',
+    raw: {},
+  },
+];
+
 let cache: { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] } | null = null;
 let cacheSignature = '';
 
@@ -183,6 +209,12 @@ function loadAll(): { byCode: Map<string, FundCsvRecord>; all: FundCsvRecord[] }
         byCode.set(schemeCode, record);
       }
     }
+  }
+
+  for (const record of MANUAL_FUND_RECORDS) {
+    if (byCode.has(record.schemeCode)) continue;
+    all.push(record);
+    byCode.set(record.schemeCode, record);
   }
 
   console.log(`[funds-csv] Loaded ${all.length} fund rows across ${FILES.length} CSVs`);

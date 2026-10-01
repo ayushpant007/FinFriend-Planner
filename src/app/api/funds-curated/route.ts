@@ -46,6 +46,41 @@ const SCHEME_CODE_FALLBACKS_BY_FILE: Record<string, Record<string, string>> = {
   },
 };
 
+// The debt CSV uses abbreviated labels. Publish clear names that match what
+// investors search for in Fund Allocation, while retaining the exact source
+// labels for the code fallback lookup.
+const SCHEME_NAME_OVERRIDES_BY_FILE: Record<string, Record<string, string>> = {
+  'Debt_Funds.csv': {
+    'SBI Savings Dir': 'SBI Saving Fund - Direct Plan - Growth',
+    'SBI Savings Reg': 'SBI Saving Fund - Regular Plan - Growth',
+    'ICICI Pru Short Term Dir': 'ICICI Short Term Fund - Direct Plan - Growth',
+    'ICICI Pru Short Term': 'ICICI Short Term Fund - Regular Plan - Growth',
+  },
+};
+
+// HDFC Ultra Short to Short Term Fund is a separate scheme from HDFC Ultra
+// Short Term Fund. Its rows are absent from the debt metrics CSV.
+const ADDITIONAL_CURATED_SCHEMES: MutualFundScheme[] = [
+  {
+    category: 'Debt Scheme',
+    type: 'Ultra Short to Short Term',
+    fundName: 'HDFC',
+    schemeName: 'HDFC Ultra Short To Short Term Fund - Direct Plan - Growth Option',
+    schemeCode: '118942',
+    plan: 'Direct',
+    primaryBenchmark: '',
+  },
+  {
+    category: 'Debt Scheme',
+    type: 'Ultra Short to Short Term',
+    fundName: 'HDFC',
+    schemeName: 'HDFC Ultra Short To Short Term Fund - Regular Plan - Growth Option',
+    schemeCode: '102452',
+    plan: 'Regular',
+    primaryBenchmark: '',
+  },
+];
+
 export async function GET() {
   const fundsDir = path.join(process.cwd(), 'Mutual Fund');
   const files = [
@@ -69,10 +104,12 @@ export async function GET() {
 
       if (parsed.data && parsed.data.length > 0) {
         parsed.data.forEach((row: any) => {
-          const schemeName = row['Fund Name'] || row['fund_name'] || row[''] || '';
+          const rawSchemeName = row['Fund Name'] || row['fund_name'] || row[''] || '';
+          const schemeName =
+            SCHEME_NAME_OVERRIDES_BY_FILE[file.name]?.[rawSchemeName.trim()] ||
+            rawSchemeName;
           const rawType = row['Category'] || row['category'] || row['bm'] || '';
           const type = rawType.replace(/^(Debt|Hybrid|Solution|Commodities):\s*/i, '').trim();
-          const rawSchemeName = row['Fund Name'] || row['fund_name'] || row[''] || '';
           const plan = row['Plan'] || row['plan'] || '';
           const canUseFallback = /^(direct|regular)$/i.test(plan.trim());
           const schemeCode =
@@ -84,11 +121,11 @@ export async function GET() {
               : '') ||
             '';
           
-          let fundName = schemeName.split(' ')[0] || 'Unknown';
+          let fundName = rawSchemeName.split(' ')[0] || 'Unknown';
           
           // Try to match specific AMC names to get correct 'Mutual Fund' categorisation
           for (const amc of AMC_NAMES) {
-            if (schemeName.toLowerCase().startsWith(amc.toLowerCase())) {
+            if (rawSchemeName.toLowerCase().startsWith(amc.toLowerCase())) {
               fundName = amc;
               break;
             }
@@ -109,6 +146,8 @@ export async function GET() {
       }
     }
   }
+
+  allFunds.push(...ADDITIONAL_CURATED_SCHEMES);
 
   return NextResponse.json(allFunds, {
     headers: {
