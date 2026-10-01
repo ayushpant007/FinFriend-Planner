@@ -13,7 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { InvestmentCategory, investmentOptions } from "@/lib/sif-pms-aif";
+import {
+  InvestmentCategory,
+  investmentOptions,
+  isInvestmentCategory,
+} from "@/lib/sif-pms-aif";
 import type { AifRegistryEntry } from "@/lib/aif-registry";
 import {
   INVESTOR_DETAILS_SESSION_KEY,
@@ -179,9 +183,13 @@ export default function SifPmsAifPage() {
     const state = sifHoldingsByProduct[product];
     return !state || state.status === "loading";
   });
-  const hasCompleteSelection = selections.some(
-    (selection) => selection.category && selection.investment,
+  const completeSelections = selections.filter(
+    (
+      selection,
+    ): selection is { category: InvestmentCategory; investment: string } =>
+      isInvestmentCategory(selection.category) && Boolean(selection.investment.trim()),
   );
+  const hasCompleteSelection = completeSelections.length > 0;
 
   useEffect(() => {
     const products = JSON.parse(selectedSifProductsKey) as string[];
@@ -235,11 +243,8 @@ export default function SifPmsAifPage() {
 
   function handleGenerateReport(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const selection = selections.find(
-      (currentSelection) => currentSelection.category && currentSelection.investment,
-    );
-    if (!selection) {
-      setSubmitError("Choose an investment category and product before generating a report.");
+    if (completeSelections.length === 0) {
+      setSubmitError("Choose at least one investment category and product before generating a report.");
       return;
     }
 
@@ -263,9 +268,10 @@ export default function SifPmsAifPage() {
     }
 
     setSubmitError("");
-    const query = new URLSearchParams({
-      category: selection.category,
-      product: selection.investment,
+    const query = new URLSearchParams();
+    completeSelections.forEach((selection) => {
+      query.append("category", selection.category);
+      query.append("product", selection.investment.trim());
     });
     router.push(`/sif-pms-aif/report?${query.toString()}`);
   }
@@ -377,7 +383,12 @@ export default function SifPmsAifPage() {
 
               <div className="border-t border-border pt-6">
                 <div className="flex items-center justify-between gap-4">
-                  <h2 className="text-lg font-semibold">Choose Investment Category</h2>
+                  <div>
+                    <h2 className="text-lg font-semibold">Choose Investment Category</h2>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      Every completed product row will appear in the consolidated report.
+                    </p>
+                  </div>
                   <button
                     type="button"
                     onClick={() =>

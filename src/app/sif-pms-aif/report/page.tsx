@@ -39,6 +39,37 @@ import {
 
 type JsonRecord = Record<string, unknown>;
 
+type ReportSelection = {
+  id: string;
+  category: InvestmentCategory;
+  product: string;
+};
+
+function parseReportSelections(queryString: string) {
+  const params = new URLSearchParams(queryString);
+  const categories = params.getAll("category");
+  const products = params.getAll("product");
+  const selectionCount = Math.max(categories.length, products.length);
+  const selections: ReportSelection[] = [];
+  let invalidCount = 0;
+
+  for (let index = 0; index < selectionCount; index += 1) {
+    const category = categories[index];
+    const product = products[index]?.trim();
+    if (!isInvestmentCategory(category) || !product) {
+      invalidCount += 1;
+      continue;
+    }
+    selections.push({
+      id: `selection-${index}-${category}-${product}`,
+      category,
+      product,
+    });
+  }
+
+  return { selections, invalidCount };
+}
+
 const PERIOD_ORDER = [
   "1_day",
   "1_month",
@@ -531,13 +562,16 @@ function SifResearchReport({
   category,
   router,
   investorDetails,
+  embedded = false,
 }: {
   data: JsonRecord;
   title: string;
   category: InvestmentCategory | null;
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
+  embedded?: boolean;
 }) {
+  const ReportRoot = embedded ? "article" : "main";
   const current = isRecord(data.current_data) ? data.current_data : {};
   const nav = isRecord(current.nav) ? current.nav : {};
   const aum = isRecord(current.aum) ? current.aum : {};
@@ -610,20 +644,22 @@ function SifResearchReport({
     : null;
 
   return (
-    <main className="sif-report-page min-h-screen bg-[#f7f7f5] text-[#101522] dark:bg-slate-950 dark:text-slate-100">
-      <div className="no-print border-b border-[#d8b76f] bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-5 py-3 text-white sm:px-8">
-        <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4">
-          <button type="button" onClick={() => router.push("/sif-pms-aif")} className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-300 transition hover:text-white">
-            ← Back to selection
-          </button>
-          <div className="flex items-center gap-3">
-            <span className="hidden text-[11px] tracking-[0.03em] text-slate-400 sm:inline">Financial Friend · SIF research pack</span>
-            <button type="button" onClick={() => window.print()} className="rounded border border-white/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition hover:border-[#d8b76f] hover:text-[#e5c886]">
-              <Download className="mr-1.5 inline h-3.5 w-3.5" /> Print / PDF
+    <ReportRoot className="sif-report-page min-h-screen bg-[#f7f7f5] text-[#101522] dark:bg-slate-950 dark:text-slate-100">
+      {!embedded && (
+        <div className="no-print border-b border-[#d8b76f] bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-5 py-3 text-white sm:px-8">
+          <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4">
+            <button type="button" onClick={() => router.push("/sif-pms-aif")} className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-300 transition hover:text-white">
+              ← Back to selection
             </button>
+            <div className="flex items-center gap-3">
+              <span className="hidden text-[11px] tracking-[0.03em] text-slate-400 sm:inline">Financial Friend · SIF research pack</span>
+              <button type="button" onClick={() => window.print()} className="rounded border border-white/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition hover:border-[#d8b76f] hover:text-[#e5c886]">
+                <Download className="mr-1.5 inline h-3.5 w-3.5" /> Print / PDF
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="mx-auto max-w-[1180px] bg-white shadow-[0_20px_70px_rgba(16,21,34,0.08)] dark:bg-slate-900 dark:shadow-none">
         <header className="relative border-b border-[#e0e2e4] bg-white dark:border-slate-800 dark:bg-slate-900">
@@ -667,7 +703,7 @@ function SifResearchReport({
           </div>
         </header>
 
-        {hasInvestorDetails(investorDetails) && (
+        {!embedded && hasInvestorDetails(investorDetails) && (
           <div className="px-8 pt-5 sm:px-12">
             <InvestorDetailsPanel details={investorDetails} />
           </div>
@@ -816,7 +852,7 @@ function SifResearchReport({
           <p className="font-medium text-[#b08e4e]">financialfriend.in</p>
         </footer>
       </div>
-    </main>
+    </ReportRoot>
   );
 }
 
@@ -825,17 +861,24 @@ function PmsSourceReport({
   productName,
   router,
   investorDetails,
+  embedded = false,
 }: {
   data: JsonRecord;
   productName: string;
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
+  embedded?: boolean;
 }) {
+  const ReportRoot = embedded ? "article" : "main";
   const sourceUrl = String(data.sourceUrl ?? "");
   const title = String(data.title ?? productName);
   const description = String(data.description ?? "");
-  const headings = asList(data.headings).filter((item): item is string => typeof item === "string");
-  const paragraphs = asList(data.paragraphs).filter((item): item is string => typeof item === "string");
+  const headings = asList(data.headings).filter(
+    (item): item is string => typeof item === "string" && item.trim().length > 0,
+  );
+  const paragraphs = asList(data.paragraphs).filter(
+    (item): item is string => typeof item === "string" && item.trim().length > 0,
+  );
   const tables = asList(data.tables)
     .filter(Array.isArray)
     .map((table) =>
@@ -845,22 +888,27 @@ function PmsSourceReport({
     )
     .filter((table) => table.length > 0);
   const fetchedAt = data.fetchedAt ? formatDate(data.fetchedAt) : "Just now";
+  const hasReadableText =
+    (typeof data.description === "string" && data.description.trim().length > 0) ||
+    paragraphs.some((paragraph) => paragraph.trim().length > 0);
 
   return (
-    <main className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
-      <div className="no-print border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-          <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]">
-            <ArrowLeft className="h-4 w-4" /> Back to PMS selection
-          </button>
-          <div className="flex items-center gap-3">
-            <span className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-[#0b7772] sm:inline">Financial Friend · live source view</span>
-            <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-              <Download className="h-4 w-4" /> Print / save PDF
+    <ReportRoot className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
+      {!embedded && (
+        <div className="no-print border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+            <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]">
+              <ArrowLeft className="h-4 w-4" /> Back to PMS selection
             </button>
+            <div className="flex items-center gap-3">
+              <span className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-[#0b7772] sm:inline">Financial Friend · live source view</span>
+              <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+                <Download className="h-4 w-4" /> Print / save PDF
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="mx-auto max-w-6xl px-6 py-10 sm:py-14">
         <header className="overflow-hidden rounded-3xl bg-[#10243d] p-7 text-white shadow-[0_20px_60px_rgba(16,36,61,0.18)] sm:p-10">
@@ -874,9 +922,11 @@ function PmsSourceReport({
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7a66d]">Fetched source</p>
               <p className="mt-2 font-semibold text-white">{String(data.sourceName ?? "PMS source")}</p>
               <p className="mt-1 text-xs text-slate-400">{fetchedAt}</p>
-              <p className="mt-2 text-xs text-slate-400">
-                URL status: {String(data.urlVerification ?? "Not specified")}
-              </p>
+              {hasDisplayValue(data.urlVerification) && (
+                <p className="mt-2 text-xs text-slate-400">
+                  URL status: {String(data.urlVerification)}
+                </p>
+              )}
               {(sourceUrl.startsWith("https://") || sourceUrl.startsWith("http://")) && (
                 <a
                   href={sourceUrl}
@@ -891,48 +941,56 @@ function PmsSourceReport({
           </div>
         </header>
 
-        <div className="mt-7">
+        {!embedded && hasInvestorDetails(investorDetails) && (
+          <div className="mt-7">
           <InvestorDetailsPanel details={investorDetails} />
-        </div>
+          </div>
+        )}
 
-        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(260px,0.65fr)]">
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
-            <div className="mb-6 flex items-center justify-between gap-4 border-b border-slate-200 pb-4 dark:border-slate-800">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0b7772]">Source page content</p>
-                <h2 className="mt-1 font-heading text-xl font-semibold">Information fetched from the selected URL</h2>
-              </div>
-              <span className="hidden rounded-full bg-[#e4f1ef] px-3 py-1.5 text-xs font-semibold text-[#0b7772] sm:inline-flex">No local PMS template</span>
-            </div>
-            {description && <p className="rounded-xl bg-[#f4f8f8] p-4 text-sm leading-6 text-slate-600 dark:bg-slate-800/70 dark:text-slate-300">{description}</p>}
-            {paragraphs.length > 0 ? (
-              <div className="mt-6 space-y-4">
-                {paragraphs.map((paragraph, index) => (
-                  <p key={`${paragraph.slice(0, 24)}-${index}`} className="text-sm leading-7 text-slate-600 dark:text-slate-300">{paragraph}</p>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-6 text-sm text-slate-500">The source page did not expose readable paragraph content.</p>
-            )}
-          </section>
-
-          <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0b7772]">Sections found</p>
-            <h2 className="mt-1 font-heading text-xl font-semibold">Source headings</h2>
-            {headings.length > 0 ? (
-              <div className="mt-5 space-y-2">
-                {headings.map((heading, index) => (
-                  <div key={`${heading}-${index}`} className="flex gap-3 border-b border-slate-100 pb-3 text-sm last:border-0 dark:border-slate-800">
-                    <span className="font-heading text-xs font-bold text-[#d29b5d]">{String(index + 1).padStart(2, "0")}</span>
-                    <span className="text-slate-600 dark:text-slate-300">{heading}</span>
+        {(hasReadableText || headings.length > 0) && (
+          <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(260px,0.65fr)]">
+            {hasReadableText && (
+              <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
+                <div className="mb-6 flex items-center justify-between gap-4 border-b border-slate-200 pb-4 dark:border-slate-800">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0b7772]">Source page content</p>
+                    <h2 className="mt-1 font-heading text-xl font-semibold">Information fetched from the selected URL</h2>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-5 text-sm text-slate-500">No headings were exposed by the source page.</p>
+                  <span className="hidden rounded-full bg-[#e4f1ef] px-3 py-1.5 text-xs font-semibold text-[#0b7772] sm:inline-flex">No local PMS template</span>
+                </div>
+                {description && <p className="rounded-xl bg-[#f4f8f8] p-4 text-sm leading-6 text-slate-600 dark:bg-slate-800/70 dark:text-slate-300">{description}</p>}
+                {paragraphs.some((paragraph) => paragraph.trim().length > 0) && (
+                  <div className="mt-6 space-y-4">
+                    {paragraphs.filter((paragraph) => paragraph.trim().length > 0).map((paragraph, index) => (
+                      <p key={`${paragraph.slice(0, 24)}-${index}`} className="text-sm leading-7 text-slate-600 dark:text-slate-300">{paragraph}</p>
+                    ))}
+                  </div>
+                )}
+              </section>
             )}
-          </aside>
-        </div>
+
+            {headings.length > 0 && (
+              <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0b7772]">Sections found</p>
+                <h2 className="mt-1 font-heading text-xl font-semibold">Source headings</h2>
+                <div className="mt-5 space-y-2">
+                  {headings.map((heading, index) => (
+                    <div key={`${heading}-${index}`} className="flex gap-3 border-b border-slate-100 pb-3 text-sm last:border-0 dark:border-slate-800">
+                      <span className="font-heading text-xs font-bold text-[#d29b5d]">{String(index + 1).padStart(2, "0")}</span>
+                      <span className="text-slate-600 dark:text-slate-300">{heading}</span>
+                    </div>
+                  ))}
+                </div>
+              </aside>
+            )}
+          </div>
+        )}
+
+        {!hasReadableText && headings.length === 0 && tables.length === 0 && (
+          <p className="mt-7 rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+            The selected source did not expose readable product details. Use the source link above to review its current information.
+          </p>
+        )}
 
         {tables.length > 0 && (
           <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
@@ -966,7 +1024,7 @@ function PmsSourceReport({
           This PMS view displays content fetched from the selected source. Verify current details before making any investment decision.
         </p>
       </div>
-    </main>
+    </ReportRoot>
   );
 }
 
@@ -1017,30 +1075,20 @@ function AifAssumptionCard({
   );
 }
 
-function AifUnavailableGrid({ fields }: { fields: string[] }) {
-  return (
-    <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
-      {fields.map((field) => (
-        <div key={field} className="border-b border-slate-100 pb-4 dark:border-slate-800">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">{field}</p>
-          <p className="mt-1.5 text-sm font-semibold text-slate-400">Data Not Available</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function AifStandardReport({
   data,
   productName,
   router,
   investorDetails,
+  embedded = false,
 }: {
   data: JsonRecord;
   productName: string;
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
+  embedded?: boolean;
 }) {
+  const ReportRoot = embedded ? "article" : "main";
   const entry = isRecord(data.entry) ? data.entry : {};
   const value = (key: string) => {
     const current = entry[key];
@@ -1052,6 +1100,16 @@ function AifStandardReport({
   const status = value("validityTo") === "Data Not Available"
     ? "Data Not Available"
     : `Registered · validity ${value("validityTo")}`;
+  const registryRows = [
+    { label: "AIF name", value: value("name"), source: "Uploaded registry" },
+    { label: "SEBI registration number", value: value("registrationNumber"), source: "Uploaded registry" },
+    { label: "AIF category", value: value("category"), source: "Decoded from the AIF category in the registration number" },
+    { label: "Investment manager", value: "Data Not Available", source: "Not provided in the uploaded workbook" },
+    { label: "Registration date", value: formatDate(value("registrationDate")), source: "Uploaded registry" },
+    { label: "Status", value: status, source: "Based on the registry validity field" },
+    { label: "Contact person", value: value("contactPerson"), source: "Uploaded registry" },
+    { label: "Registered address", value: address || "Data Not Available", source: "Uploaded registry" },
+  ].filter((row) => hasDisplayValue(row.value));
   const standardBasics = [
     ["Minimum investment", "₹1 Crore*"],
     ["Investment horizon", "5+ Years*"],
@@ -1060,38 +1118,19 @@ function AifStandardReport({
     ["Risk level", "Very High Risk*"],
     ["Investment style", "Long-Term Wealth Creation*"],
   ] as const;
-  const unavailableStatistics = [
-    "AUM",
-    "NAV",
-    "1Y Return",
-    "3Y Return",
-    "5Y Return",
-    "CAGR",
-    "Sharpe Ratio",
-    "Alpha",
-    "Beta",
-    "Volatility",
-    "Actual Minimum Investment",
-    "Management Fee",
-    "Performance Fee",
-    "Exit Load",
-    "Actual Lock-in Period",
-    "Benchmark",
-    "Top Holdings",
-    "Sector Allocation",
-  ];
-
   return (
-    <main className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
-      <AppHeader />
-      <div className="no-print mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pb-2 pt-8">
-        <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]">
-          <ArrowLeft className="h-4 w-4" /> Back to investment selection
-        </button>
-        <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-          <Download className="h-4 w-4" /> Print / save PDF
-        </button>
-      </div>
+    <ReportRoot className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
+      {!embedded && <AppHeader />}
+      {!embedded && (
+        <div className="no-print mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pb-2 pt-8">
+          <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]">
+            <ArrowLeft className="h-4 w-4" /> Back to investment selection
+          </button>
+          <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+            <Download className="h-4 w-4" /> Print / save PDF
+          </button>
+        </div>
+      )}
 
       <div className="mx-auto max-w-7xl space-y-6 px-6 pb-16 pt-4">
         <section className="relative overflow-hidden rounded-3xl bg-[#10243d] px-6 py-10 text-white shadow-[0_20px_60px_rgba(16,36,61,0.25)] sm:px-10 sm:py-12">
@@ -1107,9 +1146,11 @@ function AifStandardReport({
               <h1 className="mt-5 max-w-4xl font-heading text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl">{productName}</h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">Registry-backed identity details with a consistent illustrative analysis framework.</p>
               <div className="mt-7 flex flex-wrap gap-2.5">
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-medium text-slate-200">
-                  <Landmark className="h-3.5 w-3.5 text-[#78d2c9]" /> {value("category")}
-                </span>
+                {hasDisplayValue(value("category")) && (
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-medium text-slate-200">
+                    <Landmark className="h-3.5 w-3.5 text-[#78d2c9]" /> {value("category")}
+                  </span>
+                )}
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-medium text-slate-200">
                   <ShieldAlert className="h-3.5 w-3.5 text-[#d7a66d]" /> Very High Risk*
                 </span>
@@ -1123,22 +1164,15 @@ function AifStandardReport({
           </div>
         </section>
 
-        <InvestorDetailsPanel details={investorDetails} />
+        {!embedded && hasInvestorDetails(investorDetails) && (
+          <InvestorDetailsPanel details={investorDetails} />
+        )}
 
-        <ReportSection number="01" icon={Info} title="AIF registry information" description="Basic details shown from the uploaded SEBI registration workbook.">
-          <AifInfoGrid
-            rows={[
-              { label: "AIF name", value: value("name"), source: "Uploaded registry" },
-              { label: "SEBI registration number", value: value("registrationNumber"), source: "Uploaded registry" },
-              { label: "AIF category", value: value("category"), source: "Decoded from the AIF category in the registration number" },
-              { label: "Investment manager", value: "Data Not Available", source: "Not provided in the uploaded workbook" },
-              { label: "Registration date", value: formatDate(value("registrationDate")), source: "Uploaded registry" },
-              { label: "Status", value: status, source: "Based on the registry validity field" },
-              { label: "Contact person", value: value("contactPerson"), source: "Uploaded registry" },
-              { label: "Registered address", value: address || "Data Not Available", source: "Uploaded registry" },
-            ]}
-          />
-        </ReportSection>
+        {registryRows.length > 0 && (
+          <ReportSection number="01" icon={Info} title="AIF registry information" description="Basic details shown from the uploaded SEBI registration workbook.">
+            <AifInfoGrid rows={registryRows} />
+          </ReportSection>
+        )}
 
         <ReportSection number="02" icon={WalletCards} title="Investment basics" description="The same standardized assumptions are used for every AIF report.">
           <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-100">
@@ -1168,10 +1202,6 @@ function AifStandardReport({
           </div>
         </ReportSection>
 
-        <ReportSection number="05" icon={BarChart3} title="Fund statistics and terms" description="The uploaded registry does not provide these product-level figures, so they are not estimated.">
-          <AifUnavailableGrid fields={unavailableStatistics} />
-        </ReportSection>
-
         <section className="rounded-2xl border border-amber-300 bg-amber-50 p-6 sm:p-8 dark:border-amber-900/60 dark:bg-amber-950/20">
           <div className="flex items-start gap-4">
             <Info className="mt-0.5 h-5 w-5 shrink-0 text-amber-700 dark:text-amber-300" />
@@ -1182,6 +1212,319 @@ function AifStandardReport({
             </div>
           </div>
         </section>
+      </div>
+    </ReportRoot>
+  );
+}
+
+function InvestmentProductReport({
+  selection,
+  router,
+  investorDetails,
+  embedded = false,
+}: {
+  selection: ReportSelection;
+  router: ReturnType<typeof useRouter>;
+  investorDetails: InvestorDetails;
+  embedded?: boolean;
+}) {
+  const sifProduct =
+    selection.category === "SIF"
+      ? getInvestmentProduct("SIF", selection.product)
+      : null;
+  const hasSource =
+    selection.category === "SIF"
+      ? Boolean(sifProduct?.fileName)
+      : Boolean(selection.product.trim());
+  const reportUrl =
+    selection.category === "PMS"
+      ? `/api/pms-report?product=${encodeURIComponent(selection.product)}`
+      : selection.category === "SIF"
+        ? `/api/sif-report?product=${encodeURIComponent(sifProduct?.label ?? selection.product)}`
+        : `/api/aif-report?product=${encodeURIComponent(selection.product)}`;
+  const [data, setData] = useState<JsonRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [errorSourceUrl, setErrorSourceUrl] = useState("");
+  const [retryToken, setRetryToken] = useState(0);
+  const StateRoot = embedded ? "section" : "main";
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+
+    if (!hasSource) {
+      setData(null);
+      setLoading(false);
+      setError("The selected SIF product could not be matched to an available research pack.");
+      setErrorSourceUrl("");
+      return () => {
+        active = false;
+        controller.abort();
+      };
+    }
+
+    setLoading(true);
+    setData(null);
+    setError("");
+    setErrorSourceUrl("");
+
+    fetch(reportUrl, { signal: controller.signal })
+      .then(async (response) => {
+        const payload: unknown = await response.json().catch(() => null);
+        if (!response.ok) {
+          const message =
+            isRecord(payload) && typeof payload.error === "string"
+              ? payload.error
+              : "The selected product report could not be loaded.";
+          const sourceError = new Error(message) as Error & { sourceUrl?: string };
+          sourceError.sourceUrl =
+            isRecord(payload) && typeof payload.sourceUrl === "string"
+              ? payload.sourceUrl
+              : "";
+          throw sourceError;
+        }
+        if (!isRecord(payload)) {
+          throw new Error("The selected product report returned unreadable data.");
+        }
+        return payload;
+      })
+      .then((nextData) => {
+        if (active) setData(nextData);
+      })
+      .catch((caughtError: unknown) => {
+        if (!active || controller.signal.aborted) return;
+        const sourceError = caughtError as Error & { sourceUrl?: string };
+        setError(
+          sourceError?.message ||
+            (selection.category === "PMS"
+              ? "We could not fetch the selected PMS source page."
+              : "We could not read the selected product data."),
+        );
+        setErrorSourceUrl(sourceError?.sourceUrl ?? "");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [hasSource, reportUrl, retryToken, selection.category]);
+
+  if (loading) {
+    return (
+      <StateRoot
+        aria-label={`Loading ${selection.product} report`}
+        className={
+          embedded
+            ? "rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900"
+            : "min-h-screen bg-[#f4f7f8] px-6 py-12 dark:bg-slate-950"
+        }
+      >
+        {!embedded && <AppHeader />}
+        <div className={embedded ? "space-y-6" : "mx-auto max-w-7xl space-y-6"}>
+          <div className="h-8 w-2/3 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
+          <div className="h-40 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-900" />
+        </div>
+      </StateRoot>
+    );
+  }
+
+  if (!data || error) {
+    return (
+      <StateRoot
+        aria-label={`${selection.product} report could not be loaded`}
+        className={
+          embedded
+            ? ""
+            : "min-h-screen bg-[#f4f7f8] px-6 py-12 dark:bg-slate-950"
+        }
+      >
+        {!embedded && <AppHeader />}
+        <div
+          className={
+            embedded
+              ? "rounded-xl border border-red-200 bg-white p-5 dark:border-red-900 dark:bg-slate-900"
+              : "mx-auto max-w-xl rounded-2xl border border-red-200 bg-white p-8 text-center shadow-xl dark:border-red-900 dark:bg-slate-900"
+          }
+        >
+          <XCircle className="mx-auto h-10 w-10 text-red-500" />
+          <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-red-600">
+            {selection.category} report
+          </p>
+          <h2 className="mt-2 text-lg font-semibold text-[#14263d] dark:text-slate-100">
+            {selection.product}
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+            {error || "No report data was found for this selection."}
+          </p>
+          {selection.category === "PMS" &&
+            errorSourceUrl &&
+            (errorSourceUrl.startsWith("https://") ||
+              errorSourceUrl.startsWith("http://")) && (
+              <a
+                href={errorSourceUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex items-center gap-2 text-xs font-medium text-[#0b7772] underline underline-offset-2"
+              >
+                Open the selected source <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            )}
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            {hasSource && (
+              <button
+                type="button"
+                onClick={() => setRetryToken((value) => value + 1)}
+                className="rounded-xl bg-[#0b7772] px-4 py-2.5 text-sm font-semibold text-white"
+              >
+                Try again
+              </button>
+            )}
+            {!embedded && (
+              <button
+                type="button"
+                onClick={() => router.push("/sif-pms-aif")}
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-[#14263d] dark:border-slate-700 dark:text-slate-100"
+              >
+                <ArrowLeft className="h-4 w-4" /> Return to selection
+              </button>
+            )}
+          </div>
+        </div>
+      </StateRoot>
+    );
+  }
+
+  if (selection.category === "PMS") {
+    return (
+      <PmsSourceReport
+        data={data}
+        productName={selection.product}
+        router={router}
+        investorDetails={investorDetails}
+        embedded={embedded}
+      />
+    );
+  }
+
+  if (selection.category === "AIF") {
+    return (
+      <AifStandardReport
+        data={data}
+        productName={selection.product}
+        router={router}
+        investorDetails={investorDetails}
+        embedded={embedded}
+      />
+    );
+  }
+
+  return (
+    <SifResearchReport
+      data={data}
+      title={getReportTitle(data)}
+      category="SIF"
+      router={router}
+      investorDetails={investorDetails}
+      embedded={embedded}
+    />
+  );
+}
+
+function ConsolidatedProductReports({
+  selections,
+  invalidCount,
+  router,
+  investorDetails,
+}: {
+  selections: ReportSelection[];
+  invalidCount: number;
+  router: ReturnType<typeof useRouter>;
+  investorDetails: InvestorDetails;
+}) {
+  return (
+    <main className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
+      <div className="no-print">
+        <AppHeader />
+      </div>
+      <div className="no-print mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-5 pb-4 pt-6 sm:px-8">
+        <button
+          type="button"
+          onClick={() => router.push("/sif-pms-aif")}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]"
+        >
+          <ArrowLeft className="h-4 w-4" /> Back to product selection
+        </button>
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+        >
+          <Download className="h-4 w-4" /> Print all reports
+        </button>
+      </div>
+
+      <div className="mx-auto max-w-[1180px] px-4 pb-12 sm:px-8">
+        <header className="mb-7 border-b border-slate-200 pb-5 dark:border-slate-800">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0b7772]">
+            Financial Friend · consolidated research
+          </p>
+          <h1 className="mt-2 font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+            Selected investment reports
+          </h1>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            {selections.length} {selections.length === 1 ? "product" : "products"} · shown in selection order
+          </p>
+        </header>
+
+        {hasInvestorDetails(investorDetails) && (
+          <div className="mb-7">
+            <InvestorDetailsPanel details={investorDetails} />
+          </div>
+        )}
+
+        {invalidCount > 0 && (
+          <p
+            className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200"
+            role="status"
+          >
+            {invalidCount} incomplete or invalid selection{invalidCount === 1 ? " was" : "s were"} omitted.
+          </p>
+        )}
+
+        {selections.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-8 text-center dark:border-slate-800 dark:bg-slate-900">
+            <h2 className="font-heading text-xl font-semibold">No valid products were selected</h2>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              Return to the product selector and choose at least one PMS, AIF or SIF product.
+            </p>
+          </div>
+        ) : (
+          selections.map((selection, index) => (
+            <section
+              key={selection.id}
+              className="consolidated-product border-b border-slate-200 pb-8 pt-7 first:pt-0 last:border-b-0 dark:border-slate-800"
+            >
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-[#e4f1ef] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#0b7772] dark:bg-teal-950/50 dark:text-teal-300">
+                  Product {index + 1} of {selections.length}
+                </span>
+                <span className="rounded-full border border-slate-200 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                  {selection.category}
+                </span>
+              </div>
+              <InvestmentProductReport
+                selection={selection}
+                router={router}
+                investorDetails={investorDetails}
+                embedded
+              />
+            </section>
+          ))
+        )}
       </div>
     </main>
   );
@@ -1262,8 +1605,18 @@ function AllocationBars({ rows }: { rows: { label: string; value: number; range?
 function SifPmsAifReportContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryParam = searchParams.get("category");
-  const productParam = searchParams.get("product");
+  const queryString = searchParams.toString();
+  const { selections, invalidCount } = useMemo(
+    () => parseReportSelections(queryString),
+    [queryString],
+  );
+  const singleSelection =
+    selections.length === 1 && invalidCount === 0 ? selections[0] : null;
+  const isConsolidatedSelection = selections.length > 1 || invalidCount > 0;
+  const categoryParam =
+    singleSelection?.category ?? searchParams.get("category");
+  const productParam =
+    singleSelection?.product ?? searchParams.get("product");
   const category = isInvestmentCategory(categoryParam) ? categoryParam : null;
   const product = category ? getInvestmentProduct(category, productParam) : null;
   const isPmsSelection = category === "PMS" && Boolean(productParam);
@@ -1296,6 +1649,15 @@ function SifPmsAifReportContent() {
 
   useEffect(() => {
     let active = true;
+    if (isConsolidatedSelection) {
+      setData(null);
+      setLoading(false);
+      setError("");
+      setErrorSourceUrl("");
+      return () => {
+        active = false;
+      };
+    }
     if (!hasSource || !category) {
       setData(null);
       setLoading(false);
@@ -1342,7 +1704,15 @@ function SifPmsAifReportContent() {
     return () => {
       active = false;
     };
-  }, [category, hasSource, product?.fileName, product?.label, productParam, retryToken]);
+  }, [
+    category,
+    hasSource,
+    isConsolidatedSelection,
+    product?.fileName,
+    product?.label,
+    productParam,
+    retryToken,
+  ]);
 
   const metrics = useMemo(() => (data ? getMetrics(data) : []), [data]);
   const allocationRows = useMemo(() => (data ? getAllocationRows(data) : []), [data]);
@@ -1357,6 +1727,17 @@ function SifPmsAifReportContent() {
   const scheme = data && isRecord(data.scheme_details) ? data.scheme_details : null;
   const term = data && isRecord(data.fund_term) ? data.fund_term : null;
   const hasSelection = Boolean(categoryParam && productParam);
+
+  if (isConsolidatedSelection) {
+    return (
+      <ConsolidatedProductReports
+        selections={selections}
+        invalidCount={invalidCount}
+        router={router}
+        investorDetails={investorDetails}
+      />
+    );
+  }
 
   if (!hasSelection) {
     return (
