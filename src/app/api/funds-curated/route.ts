@@ -40,6 +40,9 @@ const SCHEME_CODE_FALLBACKS_BY_FILE: Record<string, Record<string, string>> = {
     'HDFC Low Duration Reg': '102452',
     'SBI Savings Reg': '102503',
     'ICICI Pru Short Term': '101758',
+    'ICICI Pru Savings': '101619',
+    'Nippon India Ultra Short Duration Reg': '143493',
+    'Sundaram Ultra Short Duration Reg': '149535',
   },
 };
 
