@@ -1,5 +1,6 @@
 - [NAV row integrity](nav-row-integrity.md) — NAV must use the selected fund row's scheme code and reject provider responses for a different scheme or plan.
 - [SIF PDF extraction](sif-pdf-extraction.md) — Bundle pre-extracted SIF text and parse inline column values; the PMS URL CSV is not a SIF data source.
+- [SIF report display target](sif-report-display-target.md) — For report layout requests, distinguish the in-app screen after Generate Report from print/PDF output.
 - [Investment report investor details](investment-report-investor-details.md) — Keep investor PII out of report URLs and include form details in every printable product report.
 - [PMS source availability](pms-source-availability.md) — Keep CSV URL verification separate from live fetch status; preserve source links and upstream 404/timeouts.
 - [AIF registry ingestion](aif-registry-ingestion.md) — Pre-extract the uploaded legacy workbook into deduplicated JSON and keep unsupported fund statistics unavailable.

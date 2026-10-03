@@ -399,6 +399,31 @@ function SifSectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
+function SifBrandingHeader() {
+  return (
+    <>
+      <div className="report-sif-branding-header flex h-14 items-center justify-between bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-8 text-[11px] text-slate-300 sm:px-12">
+        <div className="flex items-center gap-3">
+          <div className="relative h-10 w-[142px] overflow-hidden rounded bg-white/95 shadow-[0_3px_12px_rgba(0,0,0,0.12)]">
+            <Image
+              src={financialFriendLogo}
+              alt="Financial Friend"
+              width={132}
+              height={132}
+              priority
+              className="absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2"
+            />
+          </div>
+          <span className="h-4 w-px bg-white/30" />
+          <span>Research</span>
+        </div>
+        <span>{formatDate(new Date().toISOString())}</span>
+      </div>
+      <div className="h-1 bg-[#d8b76f]" />
+    </>
+  );
+}
+
 function SifMetric({
   label,
   value,
@@ -635,7 +660,7 @@ function SifResearchReport({
     { label: "Complexity", value: complexity },
   ].filter((row) => hasDisplayValue(row.value));
   return (
-    <ReportRoot className="sif-report-page min-h-screen bg-[#f7f7f5] text-[#101522] dark:bg-slate-950 dark:text-slate-100">
+    <ReportRoot className={`sif-report-page ${embedded ? "" : "min-h-screen"} bg-[#f7f7f5] text-[#101522] dark:bg-slate-950 dark:text-slate-100`}>
       {!embedded && (
         <div className="no-print border-b border-[#d8b76f] bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-5 py-3 text-white sm:px-8">
           <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4">
@@ -655,26 +680,9 @@ function SifResearchReport({
       <div className="mx-auto max-w-[1180px] bg-white shadow-[0_20px_70px_rgba(16,21,34,0.08)] dark:bg-slate-900 dark:shadow-none">
         <header className="relative border-b border-[#e0e2e4] bg-white dark:border-slate-800 dark:bg-slate-900">
           {showBrandingHeader && (
-            <>
-              <div className="report-sif-branding-header flex h-14 items-center justify-between bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-8 text-[11px] text-slate-300 sm:px-12">
-                <div className="flex items-center gap-3">
-                  <div className="relative h-10 w-[142px] overflow-hidden rounded bg-white/95 shadow-[0_3px_12px_rgba(0,0,0,0.12)]">
-                    <Image
-                      src={financialFriendLogo}
-                      alt="Financial Friend"
-                      width={132}
-                      height={132}
-                      priority
-                      className="absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2"
-                    />
-                  </div>
-                  <span className="h-4 w-px bg-white/30" />
-                  <span>Research</span>
-                </div>
-                <span>{formatDate(new Date().toISOString())}</span>
-              </div>
-              <div className="h-1 bg-[#d8b76f]" />
-            </>
+            <div className={embedded ? "hidden print:block" : undefined}>
+              <SifBrandingHeader />
+            </div>
           )}
           <div className="relative overflow-hidden px-8 pb-8 pt-9 sm:px-12 sm:pb-10">
             <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full border-[24px] border-[#c9ad70]/[0.08]" />
@@ -887,7 +895,7 @@ function PmsSourceReport({
     paragraphs.some((paragraph) => paragraph.trim().length > 0);
 
   return (
-    <ReportRoot className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
+    <ReportRoot className={`${embedded ? "" : "min-h-screen"} bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100`}>
       {!embedded && (
         <div className="no-print border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
@@ -1177,7 +1185,7 @@ function AifStandardReport({
     ["Investment style", "Long-Term Wealth Creation*"],
   ] as const;
   return (
-    <ReportRoot className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
+    <ReportRoot className={`${embedded ? "" : "min-h-screen"} bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100`}>
       {!embedded && <AppHeader />}
       {!embedded && (
         <div className="no-print mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pb-2 pt-8">
@@ -1506,6 +1514,8 @@ function ConsolidatedProductReports({
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
 }) {
+  const hasSifSelection = selections.some((selection) => selection.category === "SIF");
+
   return (
     <main id="consolidated-report-root" className="min-h-screen bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100">
       <div className="no-print">
@@ -1527,6 +1537,12 @@ function ConsolidatedProductReports({
           <Download className="h-4 w-4" /> Print all reports
         </button>
       </div>
+
+      {hasSifSelection && (
+        <div className="mx-auto mb-5 max-w-[1180px] px-4 sm:px-8 print:hidden">
+          <SifBrandingHeader />
+        </div>
+      )}
 
       <div className="mx-auto max-w-[1180px] px-4 pb-12 sm:px-8">
         <header className="consolidated-report-heading mb-7 border-b border-slate-200 pb-5 dark:border-slate-800">
@@ -1567,7 +1583,7 @@ function ConsolidatedProductReports({
           selections.map((selection, index) => (
             <section
               key={selection.id}
-              className="consolidated-product border-b border-slate-200 pb-8 pt-7 first:pt-0 last:border-b-0 dark:border-slate-800"
+              className="consolidated-product border-b border-slate-200 pb-5 pt-4 first:pt-0 last:border-b-0 dark:border-slate-800 print:pb-8 print:pt-7 print:first:pt-0"
             >
               <div className="mb-4 flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-[#e4f1ef] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#0b7772] dark:bg-teal-950/50 dark:text-teal-300">
