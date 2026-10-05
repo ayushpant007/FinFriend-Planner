@@ -31,6 +31,7 @@ export function ClientsSidebar({
   const { toast } = useToast();
   const [investors, setInvestors] = useState<Investor[]>([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"not-converted" | "converted">("not-converted");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
@@ -52,10 +53,22 @@ export function ClientsSidebar({
 
   const filteredInvestors = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return term ? investors.filter((client) =>
-      `${client.name} ${client.email} ${client.mobile || ""}`.toLowerCase().includes(term),
-    ) : investors;
-  }, [investors, search]);
+    return investors.filter((client) => {
+      const matchesStatus = statusFilter === "converted" ? client.converted : !client.converted;
+      const matchesSearch = !term ||
+        `${client.name} ${client.email} ${client.mobile || ""}`.toLowerCase().includes(term);
+      return matchesStatus && matchesSearch;
+    });
+  }, [investors, search, statusFilter]);
+
+  const notConvertedCount = useMemo(
+    () => investors.filter((client) => !client.converted).length,
+    [investors],
+  );
+  const convertedCount = useMemo(
+    () => investors.filter((client) => client.converted).length,
+    [investors],
+  );
 
   const setConverted = async (client: Investor, converted: boolean) => {
     setUpdating(client.id);
@@ -137,10 +150,36 @@ export function ClientsSidebar({
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search clients..." className="h-9 pl-9 bg-background" />
         </div>
+        <div className="mt-3 grid grid-cols-2 gap-1 rounded-md bg-muted/60 p-1" role="group" aria-label="Filter clients by conversion status">
+          <button
+            type="button"
+            aria-pressed={statusFilter === "not-converted"}
+            onClick={() => setStatusFilter("not-converted")}
+            className={`rounded px-2 py-1.5 text-xs font-medium transition-colors ${statusFilter === "not-converted" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            To convert <span className="ml-1 text-[11px]">({notConvertedCount})</span>
+          </button>
+          <button
+            type="button"
+            aria-pressed={statusFilter === "converted"}
+            onClick={() => setStatusFilter("converted")}
+            className={`rounded px-2 py-1.5 text-xs font-medium transition-colors ${statusFilter === "converted" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            Converted <span className="ml-1 text-[11px]">({convertedCount})</span>
+          </button>
+        </div>
       </div>
       <div className="flex-1 overflow-y-auto p-3">
         {loading ? <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin" /></div> : filteredInvestors.length === 0 ? (
-          <p className="px-2 py-8 text-center text-sm text-muted-foreground">No saved clients yet.</p>
+          <p className="px-2 py-8 text-center text-sm text-muted-foreground">
+            {search.trim()
+              ? "No clients match this search."
+              : investors.length === 0
+                ? "No saved clients yet."
+                : statusFilter === "converted"
+                  ? "No converted clients yet."
+                  : "No clients waiting to convert."}
+          </p>
         ) : filteredInvestors.map((client) => {
           const isOpen = expanded === client.id;
           return (

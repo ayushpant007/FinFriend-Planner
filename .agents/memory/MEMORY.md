@@ -7,3 +7,4 @@
 - [Supabase managed connection DDL](supabase-ddl-connection.md) — REST access works through the managed connector, but table migrations must be applied in Supabase SQL Editor.
 - [Supabase secret runtime](supabase-secret-runtime.md) — This app's report storage must use the configured Supabase Secrets directly; the managed connector may be unavailable at runtime.
 - [Fund CSV refresh compatibility](fund-csv-refresh-compatibility.md) — Updated holdings CSVs may omit scheme codes; resolve holdings by fund name and invalidate server caches when files change.
+- [Saved client conversion lists](saved-client-conversion-lists.md) — Conversion status should move clients between lists without deleting their investor or report records.
