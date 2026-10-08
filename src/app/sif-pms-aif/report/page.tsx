@@ -1996,16 +1996,21 @@ function SifPmsAifReportContent() {
   return (
     <main className="min-h-screen bg-[#f4f7f8] dark:bg-slate-950">
       <AppHeader />
-      <div className="no-print mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pb-2 pt-8">
+      <div className="no-print mx-auto flex max-w-7xl flex-col gap-3 px-6 pb-2 pt-8 sm:flex-row sm:items-center sm:justify-between">
         <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]">
           <ArrowLeft className="h-4 w-4" /> Back to product selection
         </button>
-        <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-          <Download className="h-4 w-4" /> Print / save PDF
-        </button>
+        <ReportActions
+          documentId="generic-report-document"
+          detailTargetId="generic-report-document"
+          fileName={`${title}_report.pdf`}
+        />
       </div>
 
-      <div className="mx-auto max-w-7xl space-y-6 px-6 pb-16 pt-4">
+      <div
+        id="generic-report-document"
+        className="mx-auto max-w-7xl space-y-6 px-6 pb-16 pt-4"
+      >
         <section className="relative overflow-hidden rounded-3xl bg-[#10243d] px-6 py-10 text-white shadow-[0_20px_60px_rgba(16,36,61,0.25)] sm:px-10 sm:py-12">
           <div className="absolute -right-24 -top-32 h-80 w-80 rounded-full border-[32px] border-[#2ba69b]/20" />
           <div className="absolute -bottom-40 right-24 h-80 w-80 rounded-full border border-[#d7a66d]/20" />
