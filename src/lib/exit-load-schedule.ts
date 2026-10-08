@@ -23,65 +23,7 @@ type ExitLoadTerm = {
 const DURATION_REGEX = /(\d+(?:\.\d+)?)\s*-?\s*(days?|months?|years?)\b/i;
 const NO_LOAD_PATTERN =
   /\b(?:no\s+exit\s+load|no\s+load|nil|zero(?:\s+exit\s+load)?|not\s+applicable)\b/i;
-const RATE_PATTERN = /(\d+(?:\.\d+)?)\s*(%|percent\b)/i;
-
-function findExitLoadRate(text: string) {
-  const explicitRatePatterns = [
-    /\bexit\s+load\b\s*(?::|[-–])?\s*(?:(?:of|at|@)\s*)?(\d+(?:\.\d+)?)\s*(?:%|percent\b)/i,
-    /\bload\s+(?:of|at|@)\s*(\d+(?:\.\d+)?)\s*(?:%|percent\b)/i,
-    /(\d+(?:\.\d+)?)\s*(?:%|percent\b)\s*(?:exit\s+load|load)\b/i,
-    /\b(?:charged|chargeable|payable|levied)\s*(?:at|of)?\s*(\d+(?:\.\d+)?)\s*(?:%|percent\b)/i,
-  ];
-
-  for (const pattern of explicitRatePatterns) {
-    const match = text.match(pattern);
-    if (match?.[1] && match.index !== undefined) {
-      return {
-        value: `${match[1]}%`,
-        index: match.index + match[0].indexOf(match[1]),
-      };
-    }
-  }
-
-  const fallback = text.match(RATE_PATTERN);
-  if (!fallback?.[1] || fallback.index === undefined) return null;
-  return {
-    value: `${fallback[1]}%`,
-    index: fallback.index,
-  };
-}
-
-function hasMixedNoLoadAndRate(clause: string) {
-  const noLoadMatch = clause.match(NO_LOAD_PATTERN);
-  const rateMatch = clause.match(RATE_PATTERN);
-  if (!noLoadMatch || !rateMatch || noLoadMatch.index === undefined || rateMatch.index === undefined) {
-    return false;
-  }
-
-  if (rateMatch.index < noLoadMatch.index) {
-    return true;
-  }
-
-  return /(?:exit\s+load|load)\s*(?::|-)?\s*(?:of\s+)?\d+(?:\.\d+)?\s*%/i.test(
-    clause.slice(noLoadMatch.index),
-  );
-}
-
-function hasUnscopedNoLoadException(clause: string) {
-  const normalized = normalizeTimeWords(clause.toLowerCase());
-  if (!NO_LOAD_PATTERN.test(normalized)) return false;
-
-  const hasTimeBoundary =
-    /\b(?:within|after|beyond|on or before|up to|upto|not later than|for the first|during the first|before|until|till)\s+\d+(?:\.\d+)?\s*(?:days?|months?|years?)\b/i.test(normalized) ||
-    /\bthereafter\b|\bafter\s+(?:that|this|such\s+period)\b/i.test(normalized);
-  if (hasTimeBoundary) return false;
-
-  return (
-    /\b(?:qualifying|eligible|certain|particular|specific|only|except|switch(?:ed|ing)?|stp|systematic|death|remaining|excess)\b/i.test(
-      normalized,
-    ) || /(?:up to|upto)\s+\d+(?:\.\d+)?\s*%/i.test(normalized)
-  );
-}
+const RATE_PATTERN = /\d+(?:\.\d+)?\s*%/i;
 
 function decodeHtmlEntity(entity: string) {
   const namedEntities: Record<string, string> = {
@@ -146,12 +88,15 @@ function parseTerm(clause: string): ExitLoadTerm | null {
   const normalized = normalizeTimeWords(clause.toLowerCase());
   const noLoadMatch = normalized.match(NO_LOAD_PATTERN);
   const isNoLoad = Boolean(noLoadMatch);
-  if (hasMixedNoLoadAndRate(normalized) || hasUnscopedNoLoadException(normalized)) return null;
+  const hasAmbiguousChargeAndExemption =
+    isNoLoad &&
+    /(?:exit\s+load(?:\s+of)?|load\s+(?:of|@))\s*\d+(?:\.\d+)?\s*%/i.test(normalized);
+  if (hasAmbiguousChargeAndExemption) return null;
 
-  const rateMatch = findExitLoadRate(normalized);
+  const rateMatch = normalized.match(RATE_PATTERN);
   if (!isNoLoad && !rateMatch) return null;
 
-  const value = isNoLoad ? "No Exit Load" : rateMatch!.value;
+  const value = isNoLoad ? "No Exit Load" : rateMatch![0].replace(/\s+/g, "");
   const betweenMatch = normalized.match(
     /\b(?:between|from)\s+(\d+(?:\.\d+)?)\s*-?\s*(days?|months?|years?)\s+(?:and|to)\s+(\d+(?:\.\d+)?)\s*-?\s*(days?|months?|years?)\b/i,
   );
@@ -213,15 +158,7 @@ function splitSourceTerms(source: string) {
     .replace(/[•●▪]/g, ";")
     .replace(/\n\s*[lI]\s+(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|\d+(?:\.\d+)?\s*%))/gi, "\n; ")
     .replace(
-      /\n+\s*(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|zero(?:\s+exit\s+load)?\b|not\s+applicable\b|\d+(?:\.\d+)?\s*%[^,;\n]{0,120}\b(?:within|after|beyond|between|from|thereafter|upto|up to|before|until|till)\b))/gi,
-      "; ",
-    )
-    .replace(
-      /(\d+(?:\.\d+)?\s*%[^,;\n]{0,120}\b(?:within|after|beyond|between|from|thereafter|upto|up to|before|until|till)\b[^,;\n]{0,100})\s+(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|zero(?:\s+exit\s+load)?\b|not\s+applicable\b))/gi,
-      "$1; ",
-    )
-    .replace(
-      /\s+(?:and|but|however|otherwise)\s+(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|\d+(?:\.\d+)?\s*%[^,;\n]{0,120}\b(?:within|after|beyond|between|from|thereafter|upto|up to|before|until|till)\b))/gi,
+      /\s+and\s+(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|\d+(?:\.\d+)?\s*%[^,;\n]{0,120}\b(?:within|after|beyond|between|from|thereafter|upto|up to|before|until|till)\b))/gi,
       "; ",
     )
     .replace(
@@ -229,7 +166,7 @@ function splitSourceTerms(source: string) {
       "; ",
     )
     .replace(
-      /\.(?=\s+(?:no\s+exit\s+load\b|no\s+load\b|nil\b|zero(?:\s+exit\s+load)?\b|not\s+applicable\b|\d+(?:\.\d+)?\s*%))/gi,
+      /\.(?=\s*(?:no\s+exit\s+load\b|no\s+load\b|nil\b|zero(?:\s+exit\s+load)?\b|not\s+applicable\b|\d+(?:\.\d+)?\s*%))/gi,
       ";",
     )
     .replace(/\s+/g, " ")
@@ -322,9 +259,13 @@ function describeTerm(term: ExitLoadTerm) {
 
 export function parseExitLoadSchedule(source: string | null | undefined): ExitLoadScheduleEntry[] {
   const clauses = typeof source === "string" ? splitSourceTerms(source) : [];
-  const hasAmbiguousClause = clauses.some(
-    (clause) => hasMixedNoLoadAndRate(clause) || hasUnscopedNoLoadException(clause),
-  );
+  const hasAmbiguousClause = clauses.some((clause) => {
+    const noLoadMatch = clause.match(NO_LOAD_PATTERN);
+    return Boolean(
+      noLoadMatch &&
+      /(?:exit\s+load(?:\s+of)?|load\s+(?:of|@))\s*\d+(?:\.\d+)?\s*%/i.test(clause),
+    );
+  });
   const terms = clauses.map(parseTerm).filter((term): term is ExitLoadTerm => term !== null);
   applyTierStarts(terms);
   const positiveBoundaries = terms
@@ -346,7 +287,7 @@ export function parseExitLoadSchedule(source: string | null | undefined): ExitLo
         return {
           key: checkpoint.key,
           label: checkpoint.label,
-          value: "Source wording includes a condition that cannot be assigned to a time period; see the original terms.",
+          value: "Source wording combines a rate and a no-load condition; see the original terms.",
           status: "partial",
         };
       }
@@ -360,7 +301,7 @@ export function parseExitLoadSchedule(source: string | null | undefined): ExitLo
       key: checkpoint.key,
       label: checkpoint.label,
       value: hasAmbiguousClause
-        ? `${value}; another source clause has a condition that cannot be assigned to a time period, so it was not applied as a global value.`
+        ? `${value}; another source clause combines a rate and a no-load condition, so that clause was not assigned to a period.`
         : termsCoverWindow
           ? value
           : `${value}; Other timing in this period is not specified by source.`,
