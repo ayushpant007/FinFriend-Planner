@@ -44,6 +44,7 @@ export interface FundAuditFund {
   matchNote: string;
   matchedFund: MutualFundScheme | null;
   possibleMatches: MutualFundScheme[];
+  possibleMatchCount: number;
   sourceDetails: Record<string, string>;
   holdingsPreview: Record<string, string>[];
 }
@@ -56,6 +57,7 @@ export interface FundAuditFileData {
 export interface FundAuditSnapshot {
   generatedAt: string;
   backendFundCount: number;
+  backendCodeCollisionCount: number;
   summary: {
     fileCount: number;
     sourceRows: number;
@@ -158,6 +160,7 @@ function getSignature(): string {
 function indexBackendFunds(funds: MutualFundScheme[]) {
   const byCode = new Map<string, MutualFundScheme[]>();
   const byName = new Map<string, MutualFundScheme[]>();
+  const uniqueFunds = new Map<string, MutualFundScheme>();
 
   function add(index: Map<string, MutualFundScheme[]>, key: string, fund: MutualFundScheme) {
     const entries = index.get(key) ?? [];
@@ -165,7 +168,8 @@ function indexBackendFunds(funds: MutualFundScheme[]) {
       (entry) =>
         entry.schemeCode === fund.schemeCode &&
         entry.schemeName === fund.schemeName &&
-        entry.plan === fund.plan,
+        entry.plan === fund.plan &&
+        entry.type === fund.type,
     );
     if (!duplicate) entries.push(fund);
     index.set(key, entries);
@@ -173,15 +177,29 @@ function indexBackendFunds(funds: MutualFundScheme[]) {
 
   for (const fund of funds) {
     const category = normalizeText(fund.category);
-    add(
-      byCode,
-      `${category}|${normalizeSchemeCode(fund.schemeCode)}`,
-      fund,
-    );
+    const uniqueKey = [
+      category,
+      normalizeSchemeCode(fund.schemeCode),
+      normalizeText(fund.schemeName),
+      normalizeText(fund.plan),
+      normalizeText(fund.type),
+    ].join("|");
+    uniqueFunds.set(uniqueKey, fund);
+    const schemeCode = normalizeSchemeCode(fund.schemeCode);
+    if (schemeCode) add(byCode, `${category}|${schemeCode}`, fund);
     add(byName, `${category}|${normalizeText(fund.schemeName)}`, fund);
   }
 
-  return { byCode, byName };
+  const codeCollisionCount = Array.from(byCode.values()).filter(
+    (entries) => entries.length > 1,
+  ).length;
+
+  return {
+    byCode,
+    byName,
+    funds: Array.from(uniqueFunds.values()),
+    codeCollisionCount,
+  };
 }
 
 function findMatch(
@@ -190,7 +208,12 @@ function findMatch(
   indexes: ReturnType<typeof indexBackendFunds>,
 ): Pick<
   FundAuditFund,
-  "status" | "matchMethod" | "matchNote" | "matchedFund" | "possibleMatches"
+  | "status"
+  | "matchMethod"
+  | "matchNote"
+  | "matchedFund"
+  | "possibleMatches"
+  | "possibleMatchCount"
 > {
   const categoryKey = normalizeText(apiCategory);
   const nameKey = `${categoryKey}|${normalizeText(group.sourceFundName)}`;
@@ -207,7 +230,8 @@ function findMatch(
       matchMethod: null,
       matchNote: "This source key contains conflicting name, plan, or category values.",
       matchedFund: null,
-      possibleMatches: exactNameMatches,
+      possibleMatches: exactNameMatches.slice(0, 20),
+      possibleMatchCount: exactNameMatches.length,
     };
   }
 
@@ -220,6 +244,17 @@ function findMatch(
         (!group.sourcePlan || normalizeText(fund.plan) === normalizeText(group.sourcePlan)),
     );
 
+    if (codeMatches.length > 1) {
+      return {
+        status: "conflict",
+        matchMethod: null,
+        matchNote:
+          "The backend reuses this scheme code for multiple fund or plan records; no mapping was auto-assigned.",
+        matchedFund: null,
+        possibleMatches: codeMatches.slice(0, 20),
+        possibleMatchCount: codeMatches.length,
+      };
+    }
     if (verifiedCodeMatches.length === 1) {
       return {
         status: "matched",
@@ -227,6 +262,7 @@ function findMatch(
         matchNote: "Scheme code, fund name, and plan agree with the backend API.",
         matchedFund: verifiedCodeMatches[0],
         possibleMatches: [],
+        possibleMatchCount: 0,
       };
     }
     if (verifiedCodeMatches.length > 1) {
@@ -235,7 +271,8 @@ function findMatch(
         matchMethod: null,
         matchNote: "More than one API record has the same scheme code, name, and plan.",
         matchedFund: null,
-        possibleMatches: verifiedCodeMatches,
+        possibleMatches: verifiedCodeMatches.slice(0, 20),
+        possibleMatchCount: verifiedCodeMatches.length,
       };
     }
     if (codeMatches.length > 0) {
@@ -244,7 +281,8 @@ function findMatch(
         matchMethod: null,
         matchNote: "The scheme code exists in the API, but its fund name or plan differs.",
         matchedFund: null,
-        possibleMatches: codeMatches,
+        possibleMatches: codeMatches.slice(0, 20),
+        possibleMatchCount: codeMatches.length,
       };
     }
     if (exactNameMatches.length > 0) {
@@ -253,7 +291,8 @@ function findMatch(
         matchMethod: null,
         matchNote: "The fund name exists in the API, but the scheme code does not agree.",
         matchedFund: null,
-        possibleMatches: planMatches.length > 0 ? planMatches : exactNameMatches,
+        possibleMatches: (planMatches.length > 0 ? planMatches : exactNameMatches).slice(0, 20),
+        possibleMatchCount: planMatches.length > 0 ? planMatches.length : exactNameMatches.length,
       };
     }
     return {
@@ -262,18 +301,36 @@ function findMatch(
       matchNote: "No scheme-code or exact-name match was found in this API category.",
       matchedFund: null,
       possibleMatches: [],
+      possibleMatchCount: 0,
     };
   }
 
   if (planMatches.length === 1) {
+    const candidate = planMatches[0];
+    const candidateCodeMatches =
+      indexes.byCode.get(
+        `${normalizeText(candidate.category)}|${normalizeSchemeCode(candidate.schemeCode)}`,
+      ) ?? [];
+    if (candidateCodeMatches.length > 1) {
+      return {
+        status: "conflict",
+        matchMethod: null,
+        matchNote:
+          "The exact name matches, but the backend scheme code is reused by multiple records.",
+        matchedFund: null,
+        possibleMatches: candidateCodeMatches.slice(0, 20),
+        possibleMatchCount: candidateCodeMatches.length,
+      };
+    }
     return {
       status: "matched",
       matchMethod: group.sourcePlan ? "exact-name-and-plan" : "exact-name",
       matchNote: group.sourcePlan
         ? "Exact fund name and plan match the backend API."
         : "Exact full fund name match the backend API.",
-      matchedFund: planMatches[0],
+      matchedFund: candidate,
       possibleMatches: [],
+      possibleMatchCount: 0,
     };
   }
   if (planMatches.length > 1) {
@@ -282,7 +339,8 @@ function findMatch(
       matchMethod: null,
       matchNote: "Multiple API schemes have this exact fund name and plan.",
       matchedFund: null,
-      possibleMatches: planMatches,
+      possibleMatches: planMatches.slice(0, 20),
+      possibleMatchCount: planMatches.length,
     };
   }
   if (exactNameMatches.length > 0) {
@@ -291,7 +349,8 @@ function findMatch(
       matchMethod: null,
       matchNote: "The fund name exists in the API, but its plan does not agree.",
       matchedFund: null,
-      possibleMatches: exactNameMatches,
+      possibleMatches: exactNameMatches.slice(0, 20),
+      possibleMatchCount: exactNameMatches.length,
     };
   }
   return {
@@ -300,6 +359,7 @@ function findMatch(
     matchNote: "No exact full-name match was found in this API category.",
     matchedFund: null,
     possibleMatches: [],
+    possibleMatchCount: 0,
   };
 }
 
@@ -405,7 +465,7 @@ function buildFile(
       spec.kind === "holdings"
         ? `name:${normalizeText(name)}`
         : schemeCode
-          ? `code:${normalizeSchemeCode(schemeCode)}`
+          ? `code:${normalizeSchemeCode(schemeCode)}|name:${normalizeText(name)}|plan:${normalizeText(plan)}|isin:${normalizeText(isin)}`
           : `name:${normalizeText(name)}|plan:${normalizeText(plan)}|isin:${normalizeText(isin)}`;
     const existing = groups.get(groupKey);
     if (existing) {
@@ -474,7 +534,8 @@ export function getFundFileAuditSnapshot(): FundAuditSnapshot {
 
   const snapshot: FundAuditSnapshot = {
     generatedAt: new Date().toISOString(),
-    backendFundCount: apiFunds.length,
+    backendFundCount: indexes.funds.length,
+    backendCodeCollisionCount: indexes.codeCollisionCount,
     summary: {
       fileCount: files.length,
       sourceRows: sum("sourceRows"),

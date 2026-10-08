@@ -62,6 +62,7 @@ interface FundAuditRecord {
   matchNote: string;
   matchedFund: BackendFund | null;
   possibleMatches: BackendFund[];
+  possibleMatchCount: number;
   sourceDetails: Record<string, string>;
   holdingsPreview: Record<string, string>[];
 }
@@ -70,6 +71,7 @@ interface AuditSummaryResponse {
   generatedAt: string;
   backendApi: string;
   backendFundCount: number;
+  backendCodeCollisionCount: number;
   summary: {
     fileCount: number;
     sourceRows: number;
@@ -164,21 +166,28 @@ function DetailPanel({ record }: { record: FundAuditRecord }) {
         {record.possibleMatches.length > 0 && (
           <div>
             <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              API candidates — review required
+              API candidates ({formatCount(record.possibleMatchCount)}) — review required
             </h4>
             <div className="space-y-2">
               {record.possibleMatches.map((candidate) => (
                 <div
-                  key={`${candidate.category}-${candidate.schemeCode}-${candidate.schemeName}-${candidate.plan}`}
+                  key={`${candidate.category}-${candidate.schemeCode}-${candidate.schemeName}-${candidate.plan}-${candidate.type}`}
                   className="rounded-lg border border-border bg-card px-3 py-2 text-sm"
                 >
                   <p className="font-medium">{candidate.schemeName}</p>
                   <p className="mt-1 text-xs text-muted-foreground">
                     Scheme code {candidate.schemeCode || "—"} · {candidate.plan || "Plan not set"}
+                    {candidate.type ? ` · ${candidate.type}` : ""}
                   </p>
                 </div>
               ))}
             </div>
+            {record.possibleMatchCount > record.possibleMatches.length && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Showing the first {record.possibleMatches.length} of{" "}
+                {formatCount(record.possibleMatchCount)} candidates.
+              </p>
+            )}
           </div>
         )}
         {sourceDetails.length > 0 && (
@@ -290,6 +299,7 @@ export default function FundFileAuditPage() {
     const loadDetails = async () => {
       setDetailLoading(true);
       setDetailError("");
+      setDetailData(null);
       try {
         const response = await fetch(`/api/fund-file-audit?${params.toString()}`, {
           cache: "no-store",
@@ -391,9 +401,9 @@ export default function FundFileAuditPage() {
           <>
             <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <MetricCard
-                label="Backend API schemes"
+                label="Backend API records"
                 value={formatCount(summaryData.backendFundCount)}
-                note="Records available to match"
+                note={`${formatCount(summaryData.backendCodeCollisionCount)} reused scheme codes need review`}
                 icon={FileSearch}
               />
               <MetricCard
@@ -425,11 +435,24 @@ export default function FundFileAuditPage() {
               <p>Last refreshed {formatTimestamp(summaryData.generatedAt)}</p>
             </div>
 
-            <div className="mt-7 rounded-2xl border border-sky-200 bg-sky-50/80 p-4 text-sm text-sky-900 dark:border-sky-900 dark:bg-sky-950/30 dark:text-sky-100">
+            <div
+              className={`mt-7 rounded-2xl border p-4 text-sm ${
+                summaryData.backendCodeCollisionCount > 0
+                  ? "border-amber-200 bg-amber-50/80 text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100"
+                  : "border-sky-200 bg-sky-50/80 text-sky-900 dark:border-sky-900 dark:bg-sky-950/30 dark:text-sky-100"
+              }`}
+            >
               Fund-list files count distinct schemes; holdings files count distinct fund names, not
               holdings rows. Rows without a fund name or a fund-list scheme code/Direct-Regular plan
-              are excluded. Matches use scheme codes first, then exact full names and plans. No
-              fuzzy guess is auto-mapped.
+              are excluded. Matches require a unique scheme code plus agreeing name and plan, or an
+              exact full-name/plan fallback. No fuzzy guess is auto-mapped.
+              {summaryData.backendCodeCollisionCount > 0 && (
+                <p className="mt-2 font-medium">
+                  The backend reuses {formatCount(summaryData.backendCodeCollisionCount)} scheme
+                  codes across multiple API records. Those entries are marked as conflicts instead
+                  of being treated as verified matches.
+                </p>
+              )}
             </div>
 
             <div className="mt-7 grid items-start gap-6 xl:grid-cols-[310px_minmax(0,1fr)]">

@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
           generatedAt: snapshot.generatedAt,
           backendApi: "/api/funds-curated",
           backendFundCount: snapshot.backendFundCount,
+          backendCodeCollisionCount: snapshot.backendCodeCollisionCount,
           summary: snapshot.summary,
           files: snapshot.files.map((file) => file.summary),
         },
