@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import Image from 'next/image';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { EXIT_LOAD_CHECKPOINTS, parseExitLoadSchedule, type ExitLoadScheduleEntry } from '@/lib/exit-load-schedule';
 import { AssetAllocationChart } from '../charts/AssetAllocationChart';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { getAssetAllocation, calculateAge } from '@/lib/calculations';
@@ -72,6 +73,7 @@ type FundExitLoadResult = {
     fundName: string;
     status: 'available' | 'unavailable' | 'unverified';
     exitLoad: string | null;
+    exitLoadSchedule: ExitLoadScheduleEntry[] | null;
     message: string;
     sourceUrl: string | null;
 };
@@ -797,6 +799,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
             ...fund,
             status: 'unavailable',
             exitLoad: null,
+            exitLoadSchedule: null,
             message: 'Exit Load data could not be checked against the source right now.',
             sourceUrl: null,
           })));
@@ -1552,20 +1555,47 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                         </p>
                         {uniqueExitLoadAllocations.map((allocation) => {
                             const lookup = exitLoadResults.find((item) => item.allocationId === allocation.id);
+                            const schedule = lookup?.status === 'available' && lookup.exitLoad
+                                ? lookup.exitLoadSchedule ?? parseExitLoadSchedule(lookup.exitLoad)
+                                : null;
                             return (
                                 <div key={allocation.id} className="rounded-md border border-gray-200 p-3 print-avoid-break">
                                     <div className="font-semibold text-gray-900">
                                         {allocation.schemeName || allocation.fundName}
                                         {allocation.planType ? ` · ${allocation.planType}` : ''}
                                     </div>
-                                    <div className="mt-1 text-gray-600">Exit load</div>
-                                    <div className="whitespace-pre-line break-words text-gray-900">
-                                        {isLoadingExitLoads
-                                            ? 'Checking AMFI scheme details…'
-                                            : lookup?.status === 'available' && lookup.exitLoad
-                                                ? lookup.exitLoad
-                                                : lookup?.message || 'Exit Load could not be verified for this scheme.'}
+                                    <div className="mt-2 overflow-x-auto">
+                                        <table className="w-full min-w-[360px] border-collapse text-left">
+                                            <thead>
+                                                <tr className="border-b border-gray-200 text-gray-600">
+                                                    <th scope="col" className="py-1 pr-3 font-medium">Redemption checkpoint</th>
+                                                    <th scope="col" className="py-1 font-medium">Applicable Exit Load</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {EXIT_LOAD_CHECKPOINTS.map((checkpoint, index) => (
+                                                    <tr key={checkpoint.key} className="border-b border-gray-100 last:border-0">
+                                                        <th scope="row" className="py-1 pr-3 font-medium text-gray-700">{checkpoint.label}</th>
+                                                        <td className="whitespace-pre-line break-words py-1 text-gray-900">
+                                                            {isLoadingExitLoads
+                                                                ? 'Checking AMFI scheme details…'
+                                                                : schedule?.[index]?.value
+                                                                    || lookup?.message
+                                                                    || 'Exit Load could not be verified for this scheme.'}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
                                     </div>
+                                    <p className="mt-2 text-[10px] text-gray-600">
+                                        Checkpoint values follow the verified source terms; exact wording is retained below.
+                                    </p>
+                                    {lookup?.exitLoad && (
+                                        <p className="mt-1 whitespace-pre-line break-words text-[10px] text-gray-700">
+                                            <span className="font-semibold">Source terms: </span>{lookup.exitLoad}
+                                        </p>
+                                    )}
                                     {lookup?.sourceUrl && (
                                         <a
                                             href={lookup.sourceUrl}

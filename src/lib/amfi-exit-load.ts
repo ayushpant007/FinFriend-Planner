@@ -3,6 +3,10 @@ import {
   type MutualFundScheme,
 } from "@/lib/curated-mutual-funds";
 import { getAllFundCsvRecords } from "@/lib/funds-csv";
+import {
+  parseExitLoadSchedule,
+  type ExitLoadScheduleEntry,
+} from "@/lib/exit-load-schedule";
 
 const AMFI_SCHEME_DETAILS_URL = "https://www.amfiindia.com/otherdata/scheme-details";
 const AMFI_SCHEME_LIST_URL = "https://www.amfiindia.com/api/populate-scheme";
@@ -28,6 +32,7 @@ export interface FundExitLoadResult {
   fundName: string;
   status: "available" | "unavailable" | "unverified";
   exitLoad: string | null;
+  exitLoadSchedule: ExitLoadScheduleEntry[] | null;
   message: string;
   sourceUrl: string | null;
 }
@@ -350,6 +355,7 @@ function result(
     fundName: input.fundName,
     status,
     exitLoad,
+    exitLoadSchedule: exitLoad ? parseExitLoadSchedule(exitLoad) : null,
     message,
     sourceUrl,
   };

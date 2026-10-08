@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { ReportActions } from "@/components/sif-pms-aif/ReportActions";
+import { parseExitLoadSchedule } from "@/lib/exit-load-schedule";
 const financialFriendLogo = "/financial-friend-logo.png";
 import {
   getInvestmentProduct,
@@ -632,6 +633,9 @@ function SifResearchReport({
       : "";
   const minimumInvestment = getPath(data, "scheme_details.minimum_initial_investment");
   const exitLoad = getPath(data, "scheme_details.exit_load");
+  const exitLoadSchedule = hasDisplayValue(exitLoad)
+    ? parseExitLoadSchedule(String(exitLoad))
+    : [];
   const summaryMetrics = [
     {
       label: "Latest NAV",
@@ -762,14 +766,29 @@ function SifResearchReport({
           {hasDisplayValue(exitLoad) && (
             <section>
               <SifSectionTitle>Fees &amp; charges</SifSectionTitle>
-              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] border-b border-[#eceef0] py-3 text-[12px] dark:border-slate-800 sm:grid-cols-[28%_72%]">
-                <span className="text-[#6e7882] dark:text-slate-400">Exit load</span>
-                <span className="whitespace-pre-line break-words font-semibold text-[#101522] dark:text-slate-100">
-                  {String(exitLoad)}
-                </span>
+              <div className="overflow-x-auto rounded-md border border-[#eceef0] dark:border-slate-800">
+                <table className="w-full min-w-[420px] border-collapse text-left text-[11px]">
+                  <thead className="bg-[#f6f7f8] dark:bg-slate-900">
+                    <tr>
+                      <th scope="col" className="px-3 py-2 font-semibold text-[#6e7882] dark:text-slate-400">Redemption checkpoint</th>
+                      <th scope="col" className="px-3 py-2 font-semibold text-[#6e7882] dark:text-slate-400">Applicable Exit Load</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {exitLoadSchedule.map((period) => (
+                      <tr key={period.key} className="border-t border-[#eceef0] dark:border-slate-800">
+                        <th scope="row" className="px-3 py-2 font-medium text-[#101522] dark:text-slate-100">{period.label}</th>
+                        <td className="whitespace-pre-line break-words px-3 py-2 font-semibold text-[#101522] dark:text-slate-100">{period.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
               <p className="mt-2 text-[10px] text-[#7c858e] dark:text-slate-500">
-                Details are transcribed from the selected SIF research pack.
+                Checkpoint values follow the research-pack terms. The original source wording is retained below.
+              </p>
+              <p className="mt-1 whitespace-pre-line break-words text-[10px] text-[#6e7882] dark:text-slate-400">
+                <span className="font-semibold">Source terms: </span>{String(exitLoad)}
               </p>
             </section>
           )}

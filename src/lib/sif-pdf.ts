@@ -1,4 +1,5 @@
 import type { InvestmentProduct } from "@/lib/sif-pms-aif";
+import { parseExitLoadSchedule } from "@/lib/exit-load-schedule";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -486,6 +487,7 @@ export function parseSifPdf(text: string, product: InvestmentProduct, fileName: 
       minimum_initial_investment: minimumInvestment.raw,
       expense_ratio: expenseRatio.raw,
       exit_load: exitLoad,
+      exit_load_schedule: exitLoad ? parseExitLoadSchedule(exitLoad) : null,
       structure: "Open Ended",
     },
     current_data: {
