@@ -2,7 +2,7 @@ export type ExitLoadScheduleEntry = {
   key: "15-days" | "3-months" | "1-year";
   label: string;
   value: string;
-  status: "specified" | "not-specified";
+  status: "specified" | "partial" | "not-specified";
 };
 
 export const EXIT_LOAD_CHECKPOINTS = [
@@ -13,6 +13,7 @@ export const EXIT_LOAD_CHECKPOINTS = [
 
 type ExitLoadTerm = {
   value: string;
+  sourceClause: string;
   isNoLoad: boolean;
   mode: "within" | "after" | "range" | "thereafter" | "global";
   startMonths?: number;
@@ -57,6 +58,7 @@ function parseTerm(clause: string): ExitLoadTerm | null {
   if (betweenMatch) {
     return {
       value,
+      sourceClause: clause,
       isNoLoad,
       mode: "range",
       startMonths: durationInMonths(betweenMatch[1], betweenMatch[2]),
@@ -82,6 +84,7 @@ function parseTerm(clause: string): ExitLoadTerm | null {
   ) {
     return {
       value,
+      sourceClause: clause,
       isNoLoad,
       mode: "range",
       startMonths: afterDuration,
@@ -90,16 +93,16 @@ function parseTerm(clause: string): ExitLoadTerm | null {
   }
 
   if (afterDuration !== null) {
-    return { value, isNoLoad, mode: "after", startMonths: afterDuration };
+    return { value, sourceClause: clause, isNoLoad, mode: "after", startMonths: afterDuration };
   }
   if (withinDuration !== null) {
-    return { value, isNoLoad, mode: "within", endMonths: withinDuration };
+    return { value, sourceClause: clause, isNoLoad, mode: "within", endMonths: withinDuration };
   }
   if (/\bthereafter\b/i.test(normalized)) {
-    return { value, isNoLoad, mode: "thereafter" };
+    return { value, sourceClause: clause, isNoLoad, mode: "thereafter" };
   }
 
-  return { value, isNoLoad, mode: "global" };
+  return { value, sourceClause: clause, isNoLoad, mode: "global" };
 }
 
 function splitSourceTerms(source: string) {
@@ -117,37 +120,89 @@ function splitSourceTerms(source: string) {
     .filter(Boolean);
 }
 
-function termMatches(term: ExitLoadTerm, months: number, thereafterBoundary: number | null) {
-  switch (term.mode) {
-    case "within":
-      return term.endMonths !== undefined && months <= term.endMonths;
-    case "after":
-      return term.startMonths !== undefined && months > term.startMonths;
-    case "range":
-      return term.startMonths !== undefined &&
-        term.endMonths !== undefined &&
-        months > term.startMonths &&
-        months <= term.endMonths;
-    case "thereafter":
-      return thereafterBoundary !== null && months > thereafterBoundary;
-    case "global":
-      return true;
+function applyTierStarts(terms: ExitLoadTerm[]) {
+  const increasingWithinTiers = terms
+    .filter((term) => !term.isNoLoad && term.mode === "within" && term.endMonths !== undefined)
+    .sort((left, right) => (left.endMonths ?? 0) - (right.endMonths ?? 0));
+
+  let previousEnd = 0;
+  for (const term of increasingWithinTiers) {
+    if (previousEnd > 0 && (term.endMonths ?? 0) > previousEnd && term.startMonths === undefined) {
+      term.startMonths = previousEnd;
+    }
+    previousEnd = Math.max(previousEnd, term.endMonths ?? 0);
   }
 }
 
-function termSpecificity(term: ExitLoadTerm, thereafterBoundary: number | null) {
-  if (term.mode === "within") return term.endMonths ?? Number.POSITIVE_INFINITY;
-  if (term.mode === "after") return Number.MAX_SAFE_INTEGER - (term.startMonths ?? 0);
-  if (term.mode === "range") return (term.endMonths ?? 0) - (term.startMonths ?? 0);
-  if (term.mode === "thereafter" && thereafterBoundary !== null) {
-    return Number.MAX_SAFE_INTEGER - thereafterBoundary;
+type TimeSegment = { start: number; end: number } | null;
+
+function termSegment(term: ExitLoadTerm, thereafterBoundary: number | null): TimeSegment {
+  switch (term.mode) {
+    case "within":
+      return term.endMonths === undefined
+        ? null
+        : { start: term.startMonths ?? 0, end: term.endMonths };
+    case "after":
+      return term.startMonths === undefined
+        ? null
+        : { start: term.startMonths, end: Number.POSITIVE_INFINITY };
+    case "range":
+      return term.startMonths === undefined || term.endMonths === undefined
+        ? null
+        : { start: term.startMonths, end: term.endMonths };
+    case "thereafter":
+      return thereafterBoundary === null
+        ? null
+        : { start: thereafterBoundary, end: Number.POSITIVE_INFINITY };
+    case "global":
+      return term.isNoLoad ? { start: 0, end: Number.POSITIVE_INFINITY } : null;
   }
-  return Number.POSITIVE_INFINITY;
+}
+
+function termIntersectsWindow(term: ExitLoadTerm, checkpointMonths: number, thereafterBoundary: number | null) {
+  if (term.mode === "global") return true;
+  const segment = termSegment(term, thereafterBoundary);
+  return segment !== null && segment.start < checkpointMonths && segment.end > 0;
+}
+
+function windowIsFullyCovered(terms: ExitLoadTerm[], checkpointMonths: number, thereafterBoundary: number | null) {
+  const segments = terms
+    .map((term) => termSegment(term, thereafterBoundary))
+    .filter((segment): segment is Exclude<TimeSegment, null> => segment !== null)
+    .filter((segment) => segment.start < checkpointMonths && segment.end > 0)
+    .sort((left, right) => left.start - right.start);
+
+  let coveredThrough = 0;
+  for (const segment of segments) {
+    if (segment.start > coveredThrough + 1e-9) return false;
+    coveredThrough = Math.max(coveredThrough, segment.end);
+    if (coveredThrough >= checkpointMonths) return true;
+  }
+  return false;
+}
+
+function describeTerm(term: ExitLoadTerm) {
+  const normalizedClause = normalizeTimeWords(term.sourceClause);
+  const range = normalizedClause.match(
+    /\b(?:between|from)\s+\d+(?:\.\d+)?\s*-?\s*(?:days?|months?|years?)\s+(?:and|to)\s+\d+(?:\.\d+)?\s*-?\s*(?:days?|months?|years?)\b/i,
+  );
+  const timingPhrases = [
+    ...normalizedClause.matchAll(
+      /\b(?:on or before|within|up to|upto|not later than|for the first|during the first|before|until|till|after|beyond)\s+\d+(?:\.\d+)?\s*-?\s*(?:days?|months?|years?)\b/gi,
+    ),
+  ].map((match) => match[0].replace(/\s+/g, " ").trim());
+  const timing = range?.[0] || timingPhrases.join(" and ") || (/\bthereafter\b/i.test(normalizedClause) ? "thereafter" : "");
+
+  if (term.isNoLoad) return timing ? `No Exit Load ${timing}` : "No Exit Load";
+  return timing
+    ? `${term.value} ${timing}`
+    : `${term.value} (time period not specified)`;
 }
 
 export function parseExitLoadSchedule(source: string | null | undefined): ExitLoadScheduleEntry[] {
   const clauses = typeof source === "string" ? splitSourceTerms(source) : [];
   const terms = clauses.map(parseTerm).filter((term): term is ExitLoadTerm => term !== null);
+  applyTierStarts(terms);
   const positiveBoundaries = terms
     .filter((term) => !term.isNoLoad)
     .flatMap((term) => [
@@ -159,26 +214,22 @@ export function parseExitLoadSchedule(source: string | null | undefined): ExitLo
     : null;
 
   return EXIT_LOAD_CHECKPOINTS.map((checkpoint) => {
-    const matchingTerms = terms
-      .filter((term) => termMatches(term, checkpoint.months, thereafterBoundary))
-      .sort((left, right) =>
-        termSpecificity(left, thereafterBoundary) - termSpecificity(right, thereafterBoundary),
-      );
-    const selected = matchingTerms[0];
-    if (selected) {
-      const value = selected.isNoLoad
-        ? selected.value
-        : selected.mode === "global"
-          ? `${selected.value} (time period not specified)`
-          : selected.value;
-      return { key: checkpoint.key, label: checkpoint.label, value, status: "specified" };
+    const matchingTerms = terms.filter((term) =>
+      termIntersectsWindow(term, checkpoint.months, thereafterBoundary),
+    );
+    if (matchingTerms.length === 0) {
+      return { key: checkpoint.key, label: checkpoint.label, value: "Not specified by source", status: "not-specified" };
     }
 
+    const termsCoverWindow = windowIsFullyCovered(terms, checkpoint.months, thereafterBoundary);
+    const value = matchingTerms.map(describeTerm).join("; ");
     return {
       key: checkpoint.key,
       label: checkpoint.label,
-      value: "Not specified by source",
-      status: "not-specified",
+      value: termsCoverWindow
+        ? value
+        : `${value}; Other timing in this period is not specified by source.`,
+      status: termsCoverWindow ? "specified" : "partial",
     };
   });
 }

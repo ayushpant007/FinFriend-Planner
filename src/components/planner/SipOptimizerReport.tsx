@@ -1569,7 +1569,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                                             <thead>
                                                 <tr className="border-b border-gray-200 text-gray-600">
                                                     <th scope="col" className="py-1 pr-3 font-medium">Redemption checkpoint</th>
-                                                    <th scope="col" className="py-1 font-medium">Applicable Exit Load</th>
+                                        <th scope="col" className="py-1 font-medium">Applicable Exit Load terms</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -1589,7 +1589,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                                         </table>
                                     </div>
                                     <p className="mt-2 text-[10px] text-gray-600">
-                                        Checkpoint values follow the verified source terms; exact wording is retained below.
+                                        Each row includes all disclosed tiers within that cumulative period. The 3-month checkpoint maps to 90 days; exact source wording is retained below.
                                     </p>
                                     {lookup?.exitLoad && (
                                         <p className="mt-1 whitespace-pre-line break-words text-[10px] text-gray-700">

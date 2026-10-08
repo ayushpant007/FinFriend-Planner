@@ -771,7 +771,7 @@ function SifResearchReport({
                   <thead className="bg-[#f6f7f8] dark:bg-slate-900">
                     <tr>
                       <th scope="col" className="px-3 py-2 font-semibold text-[#6e7882] dark:text-slate-400">Redemption checkpoint</th>
-                      <th scope="col" className="px-3 py-2 font-semibold text-[#6e7882] dark:text-slate-400">Applicable Exit Load</th>
+                      <th scope="col" className="px-3 py-2 font-semibold text-[#6e7882] dark:text-slate-400">Applicable Exit Load terms</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -785,7 +785,7 @@ function SifResearchReport({
                 </table>
               </div>
               <p className="mt-2 text-[10px] text-[#7c858e] dark:text-slate-500">
-                Checkpoint values follow the research-pack terms. The original source wording is retained below.
+                Each row includes all disclosed tiers within that cumulative period. The 3-month checkpoint maps to 90 days; the original source wording is retained below.
               </p>
               <p className="mt-1 whitespace-pre-line break-words text-[10px] text-[#6e7882] dark:text-slate-400">
                 <span className="font-semibold">Source terms: </span>{String(exitLoad)}
