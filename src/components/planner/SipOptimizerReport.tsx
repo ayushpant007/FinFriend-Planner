@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format } from 'date-fns';
 import Image from 'next/image';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { AssetAllocationChart } from '../charts/AssetAllocationChart';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
@@ -63,6 +63,17 @@ type AllocationReturns = {
     sevenYearReturn: string | null;
     tenYearReturn: string | null;
     currentNav: string | null;
+};
+
+type FundExitLoadResult = {
+    allocationId: string;
+    schemeCode: string;
+    schemeName: string;
+    fundName: string;
+    status: 'available' | 'unavailable' | 'unverified';
+    exitLoad: string | null;
+    message: string;
+    sourceUrl: string | null;
 };
 
 const fetchAllocationReturns = async (alloc: FundAllocation): Promise<AllocationReturns | null> => {
@@ -736,10 +747,74 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
   const [hybridChartData, setHybridChartData] = useState<ChartDataPoint[] | null>(data.chartDataCache?.hybrid ?? null);
   const [solutionOrientedChartData, setSolutionOrientedChartData] = useState<ChartDataPoint[] | null>(data.chartDataCache?.solutionOriented ?? null);
   const [otherChartData, setOtherChartData] = useState<ChartDataPoint[] | null>(data.chartDataCache?.other ?? null);
+
+  const [exitLoadResults, setExitLoadResults] = useState<FundExitLoadResult[]>([]);
+  const [isLoadingExitLoads, setIsLoadingExitLoads] = useState((data.fundAllocations?.length ?? 0) > 0);
+  const exitLoadLookupRequestRef = useRef<Promise<void>>(Promise.resolve());
+  const uniqueExitLoadAllocations = useMemo(() => {
+    const seen = new Set<string>();
+    return (data.fundAllocations ?? []).filter((allocation) => {
+      const key = `${allocation.schemeCode}|${allocation.fundName}|${allocation.schemeName}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [data.fundAllocations]);
+
+  useEffect(() => {
+    const funds = uniqueExitLoadAllocations.map((allocation) => ({
+      allocationId: allocation.id,
+      schemeCode: String(allocation.schemeCode ?? ''),
+      schemeName: String(allocation.schemeName ?? ''),
+      fundName: String(allocation.fundName ?? ''),
+      planType: String(allocation.planType ?? ''),
+    }));
+
+    if (funds.length === 0) {
+      setExitLoadResults([]);
+      setIsLoadingExitLoads(false);
+      exitLoadLookupRequestRef.current = Promise.resolve();
+      return;
+    }
+
+    let cancelled = false;
+    setIsLoadingExitLoads(true);
+    const request = (async () => {
+      try {
+        const response = await fetch('/api/fund-exit-load', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ funds }),
+        });
+        if (!response.ok) throw new Error('Exit Load lookup failed.');
+        const payload = await response.json() as { results?: FundExitLoadResult[] };
+        if (!cancelled) {
+          setExitLoadResults(Array.isArray(payload.results) ? payload.results : []);
+        }
+      } catch {
+        if (!cancelled) {
+          setExitLoadResults(funds.map((fund) => ({
+            ...fund,
+            status: 'unavailable',
+            exitLoad: null,
+            message: 'Exit Load data could not be checked against the source right now.',
+            sourceUrl: null,
+          })));
+        }
+      } finally {
+        if (!cancelled) setIsLoadingExitLoads(false);
+      }
+    })();
+    exitLoadLookupRequestRef.current = request;
+
+    return () => {
+      cancelled = true;
+    };
+  }, [uniqueExitLoadAllocations]);
   
 
   const handlePrint = () => {
-    window.print();
+    void exitLoadLookupRequestRef.current.then(() => window.print());
   };
 
   const handleDownload = async () => {
@@ -751,6 +826,9 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
     try {
         setIsGenerating(true);
         toast({ title: "Generating PDF", description: "Capturing high-fidelity report... This may take a moment." });
+
+        // Include the verified Exit Load lookup in the downloaded report.
+        await exitLoadLookupRequestRef.current;
 
         // Wait for all charts and dynamic content to settle
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1462,6 +1540,45 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                                 ))}
                             </TableBody>
                         </Table>
+                    </CardContent>
+                 </Card>
+                 <Card className="mt-4">
+                    <CardHeader>
+                        <CardTitle className="text-base">Exit Load Details</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3 text-xs">
+                        <p className="text-gray-600">
+                            Values are shown only after the selected scheme code, fund, and plan match the source records. Unavailable data is not treated as nil.
+                        </p>
+                        {uniqueExitLoadAllocations.map((allocation) => {
+                            const lookup = exitLoadResults.find((item) => item.allocationId === allocation.id);
+                            return (
+                                <div key={allocation.id} className="rounded-md border border-gray-200 p-3 print-avoid-break">
+                                    <div className="font-semibold text-gray-900">
+                                        {allocation.schemeName || allocation.fundName}
+                                        {allocation.planType ? ` · ${allocation.planType}` : ''}
+                                    </div>
+                                    <div className="mt-1 text-gray-600">Exit load</div>
+                                    <div className="whitespace-pre-line break-words text-gray-900">
+                                        {isLoadingExitLoads
+                                            ? 'Checking AMFI scheme details…'
+                                            : lookup?.status === 'available' && lookup.exitLoad
+                                                ? lookup.exitLoad
+                                                : lookup?.message || 'Exit Load could not be verified for this scheme.'}
+                                    </div>
+                                    {lookup?.sourceUrl && (
+                                        <a
+                                            href={lookup.sourceUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="mt-1 inline-block text-[10px] text-blue-700 underline print:text-black"
+                                        >
+                                            Source: AMFI Scheme Details
+                                        </a>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </CardContent>
                  </Card>
             </section>

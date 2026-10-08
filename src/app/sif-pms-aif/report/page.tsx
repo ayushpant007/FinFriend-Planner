@@ -631,6 +631,7 @@ function SifResearchReport({
       ? `${numberValue(expense.value)!.toFixed(2)}%`
       : "";
   const minimumInvestment = getPath(data, "scheme_details.minimum_initial_investment");
+  const exitLoad = getPath(data, "scheme_details.exit_load");
   const summaryMetrics = [
     {
       label: "Latest NAV",
@@ -755,6 +756,21 @@ function SifResearchReport({
                   </div>
                 ))}
               </div>
+            </section>
+          )}
+
+          {hasDisplayValue(exitLoad) && (
+            <section>
+              <SifSectionTitle>Fees &amp; charges</SifSectionTitle>
+              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] border-b border-[#eceef0] py-3 text-[12px] dark:border-slate-800 sm:grid-cols-[28%_72%]">
+                <span className="text-[#6e7882] dark:text-slate-400">Exit load</span>
+                <span className="whitespace-pre-line break-words font-semibold text-[#101522] dark:text-slate-100">
+                  {String(exitLoad)}
+                </span>
+              </div>
+              <p className="mt-2 text-[10px] text-[#7c858e] dark:text-slate-500">
+                Details are transcribed from the selected SIF research pack.
+              </p>
             </section>
           )}
 

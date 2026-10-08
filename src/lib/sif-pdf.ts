@@ -156,6 +156,19 @@ function parseTopMetrics(lines: string[]) {
   };
 }
 
+function parseExitLoad(lines: string[]) {
+  const feeLine = lines.find(
+    (line) => /^fees?\s*:/i.test(line) && /\bexit\s+load\b/i.test(line),
+  );
+  if (!feeLine) return null;
+
+  const feeText = feeLine.replace(/^fees?\s*:\s*/i, "").trim();
+  if (/^no\s+exit\s+load\b/i.test(feeText)) return "No exit load";
+
+  const details = feeText.replace(/^exit\s+load\s*:?\s*/i, "").trim();
+  return firstNonPlaceholder(details);
+}
+
 function collectSection(lines: string[], heading: string) {
   const start = findIndex(lines, heading);
   if (start === -1) return null;
@@ -426,6 +439,7 @@ export function parseSifPdf(text: string, product: InvestmentProduct, fileName: 
   const fundHouse = lines[titleIndex + 2] ?? "Data Not Available";
   const category = lines[titleIndex + 3] ?? "Specialised Investment Fund";
   const { nav, aum, expenseRatio, minimumInvestment } = parseTopMetrics(lines);
+  const exitLoad = parseExitLoad(lines);
   const returns = parsePerformance(lines);
   const navHistory = parseNavHistory(lines);
   const objective = collectSection(lines, "INVESTMENT OBJECTIVE");
@@ -471,6 +485,7 @@ export function parseSifPdf(text: string, product: InvestmentProduct, fileName: 
     scheme_details: {
       minimum_initial_investment: minimumInvestment.raw,
       expense_ratio: expenseRatio.raw,
+      exit_load: exitLoad,
       structure: "Open Ended",
     },
     current_data: {
