@@ -2,7 +2,7 @@
 
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useRouter, usePathname } from "next/navigation";
-import { PieChart, LayoutDashboard, Construction } from "lucide-react";
+import { PieChart, LayoutDashboard, Construction, ClipboardList } from "lucide-react";
 import Image from "next/image";
 
 const logoUrl = "/finfriend-planner-logo.png";
@@ -12,6 +12,7 @@ export function AppHeader() {
   const pathname = usePathname();
 
   const isAllocation = pathname === "/allocation";
+  const isFundFileAudit = pathname === "/fund-file-audit";
 
   return (
     <header className="glass-header sticky top-0 z-[100] w-full">
@@ -48,6 +49,17 @@ export function AppHeader() {
             >
               <PieChart className="h-4 w-4" />
               <span>Fund Allocation</span>
+            </button>
+          )}
+          {!isFundFileAudit && (
+            <button
+              onClick={() => router.push("/fund-file-audit")}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 glass-button-outline"
+              title="Audit mutual fund source files against the backend API"
+              aria-label="Fund File Audit"
+            >
+              <ClipboardList className="h-4 w-4" />
+              <span className="hidden xl:inline">Fund File Audit</span>
             </button>
           )}
           <button
