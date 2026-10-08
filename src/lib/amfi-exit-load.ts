@@ -4,6 +4,7 @@ import {
 } from "@/lib/curated-mutual-funds";
 import { getAllFundCsvRecords } from "@/lib/funds-csv";
 import {
+  normalizeExitLoadText,
   parseExitLoadSchedule,
   type ExitLoadScheduleEntry,
 } from "@/lib/exit-load-schedule";
@@ -107,6 +108,23 @@ function normalizeSchemeBase(value: string) {
     .trim();
 }
 
+const VERIFIED_SCHEME_RENAMES = [
+  {
+    selectedName: "hdfc hybrid equity",
+    providerName: "hdfc aggressive hybrid",
+  },
+];
+
+function isVerifiedSchemeRename(selectedName: string, providerName: string) {
+  const selectedBase = normalizeSchemeBase(selectedName);
+  const providerBase = normalizeSchemeBase(providerName);
+  return VERIFIED_SCHEME_RENAMES.some(
+    (rename) =>
+      (rename.selectedName === selectedBase && rename.providerName === providerBase) ||
+      (rename.providerName === selectedBase && rename.selectedName === providerBase),
+  );
+}
+
 function planFrom(value: string) {
   if (/\b(?:direct|dir)\b/i.test(value)) return "direct";
   if (/\b(?:regular|reg|ret)\b/i.test(value)) return "regular";
@@ -118,6 +136,15 @@ function optionFrom(value: string) {
   if (/\bgrowth\b/i.test(value)) return "growth";
   if (/\bbonus\b/i.test(value)) return "bonus";
   return null;
+}
+
+function isPlanlessEtf(selected: MutualFundScheme, meta: Record<string, unknown>) {
+  // ETF rows can carry Direct/Regular labels in the local CSV although both providers expose one planless variant.
+  return (
+    /\betf\b/i.test(selected.schemeName) &&
+    /\betfs?\b/i.test(String(meta.scheme_category ?? "")) &&
+    !planFrom(String(meta.scheme_name ?? ""))
+  );
 }
 
 function extractJsonArrayProperty(payload: string, propertyName: string): unknown[] | null {
@@ -295,15 +322,20 @@ function isSamePlanVariant(
   selectedPlan: string,
   localIsin: string | null,
   variant: Record<string, unknown>,
+  planlessEtf: boolean,
 ) {
   const providerName = String(meta.scheme_name ?? "");
   const providerPlan = planFrom(providerName);
   const variantPlan = planFrom(String(variant.Plan ?? ""));
-  if (!providerPlan || providerPlan !== selectedPlan || variantPlan !== providerPlan) return false;
+  if (planlessEtf) {
+    if (providerPlan || variantPlan) return false;
+  } else if (!providerPlan || providerPlan !== selectedPlan || variantPlan !== providerPlan) {
+    return false;
+  }
 
   const providerOption = optionFrom(providerName);
   const variantOption = optionFrom(String(variant.Option ?? ""));
-  if (providerOption && variantOption !== providerOption) return false;
+  if (providerOption && variantOption && variantOption !== providerOption) return false;
 
   const variantIsins = [
     variant.ISIN_Div_Payout_ISIN_Growth,
@@ -313,6 +345,7 @@ function isSamePlanVariant(
     .map((value) => value.trim().toUpperCase());
 
   if (localIsin) return variantIsins.includes(localIsin.toUpperCase());
+  if (providerOption && !variantOption) return false;
 
   const providerIsins = [meta.isin_growth, meta.isin_div_reinvestment]
     .filter((value): value is string => typeof value === "string" && value.trim() !== "")
@@ -325,10 +358,11 @@ function isSamePlanVariant(
 }
 
 function extractExitLoad(schemeLoad: string) {
-  const match = schemeLoad.match(/\bexit\s+load\b\s*[:\-–]?\s*/i);
+  const normalizedSchemeLoad = normalizeExitLoadText(schemeLoad);
+  const match = normalizedSchemeLoad.match(/\bexit\s+load\b\s*[:\-–]?\s*/i);
   if (!match || match.index === undefined) return null;
 
-  let details = schemeLoad.slice(match.index + match[0].length);
+  let details = normalizedSchemeLoad.slice(match.index + match[0].length);
   details = details
     .replace(/\r/g, "")
     .replace(/\n\s*[lI]\s+(?=No\s+Exit\s+Load)/gi, "\n• ")
@@ -366,10 +400,12 @@ async function resolveOne(
   curatedFunds: MutualFundScheme[],
 ): Promise<FundExitLoadResult> {
   const schemeCode = input.schemeCode.trim();
+  const requestedPlan = input.planType ? planFrom(input.planType) : null;
   const sourceRowMatches = curatedFunds.filter(
     (fund) =>
       fund.schemeCode === schemeCode &&
       normalizedSourceLabel(fund.schemeName) === normalizedSourceLabel(input.schemeName) &&
+      (!requestedPlan || (planFrom(fund.plan) ?? planFrom(fund.schemeName)) === requestedPlan) &&
       (!input.fundName || normalizeFundHouse(fund.fundName) === normalizeFundHouse(input.fundName)),
   );
   const sourceIdentities = new Set(
@@ -420,11 +456,11 @@ async function resolveOne(
     const meta = await getMfapiMetadata(schemeCode);
     const providerName = String(meta.scheme_name ?? "");
     const providerHouse = String(meta.fund_house ?? "");
+    const planlessEtf = isPlanlessEtf(selected, meta);
     if (
       String(meta.scheme_code) !== schemeCode ||
       normalizeFundHouse(providerHouse) !== normalizeFundHouse(selected.fundName) ||
-      normalizeSchemeBase(providerName) !== normalizeSchemeBase(selected.schemeName) ||
-      planFrom(providerName) !== selectedPlan
+      (!planlessEtf && planFrom(providerName) !== selectedPlan)
     ) {
       return result(
         input,
@@ -436,6 +472,28 @@ async function resolveOne(
     const providerIsins = [meta.isin_growth, meta.isin_div_reinvestment]
       .filter((value): value is string => typeof value === "string" && value.trim() !== "")
       .map((value) => value.trim().toUpperCase());
+    const localIsinMatchesProvider =
+      localIsin !== null && providerIsins.includes(localIsin.toUpperCase());
+    if (planlessEtf && !localIsinMatchesProvider) {
+      return result(
+        input,
+        "unverified",
+        "This ETF has no direct or regular plan in the provider. Its exact local ISIN is required to verify the selected row.",
+      );
+    }
+    const providerNameMatches =
+      normalizeSchemeBase(providerName) === normalizeSchemeBase(selected.schemeName);
+    const verifiedRename = isVerifiedSchemeRename(selected.schemeName, providerName);
+    if (
+      !providerNameMatches &&
+      (!verifiedRename || !localIsinMatchesProvider)
+    ) {
+      return result(
+        input,
+        "unverified",
+        "The provider name differs from the selected fund and is not a verified rename with a matching ISIN.",
+      );
+    }
     if (localIsin && !providerIsins.includes(localIsin.toUpperCase())) {
       return result(
         input,
@@ -465,36 +523,51 @@ async function resolveOne(
 
     const amfiHouse = houseMatches[0];
     const providerBase = normalizeSchemeBase(providerName);
-    const schemeMatches = (await getAmfiSchemes(amfiHouse.mf_id)).filter(
-      (scheme) => normalizeSchemeBase(scheme.scheme_name) === providerBase,
+    const selectedBase = normalizeSchemeBase(selected.schemeName);
+    const acceptedSchemeBases = new Set([providerBase, selectedBase]);
+    const schemeCandidates = (await getAmfiSchemes(amfiHouse.mf_id)).filter(
+      (scheme) => acceptedSchemeBases.has(normalizeSchemeBase(scheme.scheme_name)),
     );
-    if (schemeMatches.length !== 1) {
+    if (schemeCandidates.length === 0) {
       return result(
         input,
         "unverified",
-        "The selected scheme could not be uniquely matched to an AMFI scheme record.",
+        "The selected fund name could not be matched to an AMFI scheme record.",
       );
     }
 
-    const amfiScheme = schemeMatches[0];
-    const variants = await getAmfiVariants(amfiHouse.mf_id, amfiScheme.scheme_id);
-    const matchingVariants = variants.filter(
-      (variant) =>
-        normalizeSchemeBase(String(variant.Scheme_Name ?? "")) === providerBase &&
-        isSamePlanVariant(meta, selectedPlan, localIsin, variant),
+    const matchingAmfiSchemes = await Promise.all(
+      schemeCandidates.map(async (scheme) => {
+        const variants = await getAmfiVariants(amfiHouse.mf_id, scheme.scheme_id);
+        const matchingVariants = variants.filter(
+          (variant) =>
+            normalizeSchemeBase(String(variant.Scheme_Name ?? "")) ===
+              normalizeSchemeBase(scheme.scheme_name) &&
+            isSamePlanVariant(meta, selectedPlan, localIsin, variant, planlessEtf),
+        );
+        return { scheme, matchingVariants };
+      }),
     );
-    if (matchingVariants.length !== 1) {
+    const verifiedAmfiSchemes = matchingAmfiSchemes.filter(
+      (candidate) => candidate.matchingVariants.length === 1,
+    );
+    if (
+      verifiedAmfiSchemes.length !== 1 ||
+      matchingAmfiSchemes.reduce((count, candidate) => count + candidate.matchingVariants.length, 0) !== 1
+    ) {
       return result(
         input,
         "unverified",
-        "AMFI did not return one matching plan and option for this scheme code.",
+        "AMFI did not return one matching fund, plan, option, and ISIN for this scheme code.",
       );
     }
 
+    const amfiScheme = verifiedAmfiSchemes[0].scheme;
     const detail = await getAmfiSchemeDetails(amfiHouse.mf_id, amfiScheme.scheme_id);
     if (
       normalizeFundHouse(String(detail.MF_Name ?? "")) !== selectedHouseKey ||
-      normalizeSchemeBase(String(detail.Scheme_Name ?? "")) !== providerBase
+      normalizeSchemeBase(String(detail.Scheme_Name ?? "")) !==
+        normalizeSchemeBase(amfiScheme.scheme_name)
     ) {
       return result(input, "unverified", "The AMFI scheme details did not match the selected fund.");
     }
@@ -502,10 +575,13 @@ async function resolveOne(
     const schemeLoad = typeof detail.Scheme_load === "string" ? detail.Scheme_load : "";
     const exitLoad = extractExitLoad(schemeLoad);
     if (!exitLoad) {
+      const explicitlyNotApplicable = /^\s*(?:n\s*\/?\s*a|not\s+applicable)\.?\s*$/i.test(schemeLoad);
       return result(
         input,
         "unavailable",
-        "AMFI has no Exit Load entry for this scheme. Missing data is not treated as nil.",
+        explicitlyNotApplicable
+          ? "AMFI marks Exit Load as not applicable but provides no rate or period. No Exit Load value is inferred."
+          : "AMFI has no Exit Load entry for this scheme. Missing data is not treated as nil.",
         null,
         SOURCE_URL,
       );

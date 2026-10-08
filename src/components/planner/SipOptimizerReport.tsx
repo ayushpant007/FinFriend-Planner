@@ -20,8 +20,7 @@ import { getFundReturns } from '@/ai/flows/fund-returns-flow';
 import { getModelPortfolioData } from '@/ai/flows/model-portfolio-flow';
 import { PortfolioNiftyChart } from '../charts/PortfolioNiftyChart';
 import { useToast } from '@/hooks/use-toast';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { createPaginatedReportPdf } from '@/lib/paginated-report-pdf';
 import { ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, ReferenceLine } from 'recharts';
 
 
@@ -756,7 +755,8 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
   const uniqueExitLoadAllocations = useMemo(() => {
     const seen = new Set<string>();
     return (data.fundAllocations ?? []).filter((allocation) => {
-      const key = `${allocation.schemeCode}|${allocation.fundName}|${allocation.schemeName}`;
+      const planType = String(allocation.planType ?? "").trim().toLowerCase().replace(/\s+/g, " ");
+      const key = `${allocation.schemeCode}|${allocation.fundName}|${allocation.schemeName}|${planType}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
@@ -828,7 +828,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
 
     try {
         setIsGenerating(true);
-        toast({ title: "Generating PDF", description: "Capturing high-fidelity report... This may take a moment." });
+        toast({ title: "Generating PDF", description: "Preparing the report pages... This may take a moment." });
 
         // Include the verified Exit Load lookup in the downloaded report.
         await exitLoadLookupRequestRef.current;
@@ -836,59 +836,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         // Wait for all charts and dynamic content to settle
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // CAPTURE ENTIRE REPORT AS ONE GIANT CANVAS (Puppeteer-style fidelity)
-        const canvas = await html2canvas(reportElement, {
-            scale: 2, // High resolution
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#FFFFFF',
-            logging: false,
-            windowWidth: 800,
-            onclone: (clonedDoc) => {
-                const el = clonedDoc.getElementById('report-container');
-                if (el) {
-                    el.style.width = '800px';
-                    el.style.margin = '0';
-                    el.style.padding = '20px';
-                    el.style.transform = 'none';
-                    el.style.height = 'auto';
-                    el.style.overflow = 'visible';
-                    // Ensure all cards are visible
-                    el.querySelectorAll('.card').forEach(c => {
-                        (c as HTMLElement).style.overflow = 'visible';
-                    });
-                    // Force recharts SVGs to fill their containers for ResponsiveContainer charts
-                    el.querySelectorAll('.recharts-responsive-container').forEach(c => {
-                        (c as HTMLElement).style.width = '100%';
-                        (c as HTMLElement).style.minWidth = '0';
-                    });
-                    el.querySelectorAll('.recharts-wrapper').forEach(c => {
-                        const wrapper = c as HTMLElement;
-                        const parentWidth = wrapper.parentElement?.getBoundingClientRect().width || 760;
-                        wrapper.style.width = `${parentWidth}px`;
-                    });
-                    el.querySelectorAll('.recharts-surface').forEach(c => {
-                        const svg = c as SVGElement;
-                        const parentWidth = (svg.parentElement?.getBoundingClientRect().width || 760);
-                        svg.setAttribute('width', String(parentWidth));
-                        svg.style.width = `${parentWidth}px`;
-                    });
-                }
-            }
-        });
-
-        const imgWidth = 210; // Use standard A4 width in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        const pdf = new jsPDF({
-            orientation: 'p',
-            unit: 'mm',
-            format: [imgWidth, imgHeight],
-            compress: true
-        });
-
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-        pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
+        const pdf = await createPaginatedReportPdf(reportElement);
 
         pdf.save(`${data.personalDetails.name.replace(/\s+/g, '_')}_financial_report.pdf`);
         toast({ title: "Success", description: "Report downloaded successfully!" });

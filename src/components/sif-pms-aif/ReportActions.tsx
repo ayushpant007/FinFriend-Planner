@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { ArrowRight, Download, LoaderCircle, Printer } from "lucide-react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { Button } from "@/components/ui/button";
+import { createPaginatedReportPdf } from "@/lib/paginated-report-pdf";
 
 type ReportActionsProps = {
   documentId: string;
@@ -67,81 +66,7 @@ export function ReportActions({
         window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()));
       });
 
-      const exportWidth = 800;
-      const currentWidth = reportElement.getBoundingClientRect().width || exportWidth;
-      const estimatedHeight = reportElement.scrollHeight * (exportWidth / currentWidth);
-      const scale = Math.min(1.5, 28000 / Math.max(exportWidth, estimatedHeight));
-      const canvas = await html2canvas(reportElement, {
-        scale,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        logging: false,
-        windowWidth: exportWidth,
-        onclone: (clonedDocument) => {
-          clonedDocument.documentElement.classList.remove("dark");
-          clonedDocument.body?.classList.remove("dark");
-          clonedDocument
-            .querySelectorAll<HTMLElement>('.no-print, [class~="print:hidden"]')
-            .forEach((element) => element.remove());
-
-          clonedDocument.querySelectorAll<HTMLElement>("[class]").forEach((element) => {
-            if (
-              element.classList.contains("hidden") &&
-              element.classList.contains("print:block")
-            ) {
-              element.style.display = "block";
-            }
-          });
-
-          const clonedReport = clonedDocument.getElementById(documentId);
-          if (clonedReport) {
-            clonedReport.style.width = `${exportWidth}px`;
-            clonedReport.style.maxWidth = "none";
-            clonedReport.style.minWidth = "0";
-            clonedReport.style.margin = "0";
-            clonedReport.style.boxSizing = "border-box";
-            clonedReport.style.height = "auto";
-            clonedReport.style.maxHeight = "none";
-            clonedReport.style.overflow = "visible";
-            clonedReport.style.backgroundColor = "#ffffff";
-          }
-        },
-      });
-
-      if (canvas.width === 0 || canvas.height === 0) {
-        throw new Error("The report produced an empty PDF image.");
-      }
-
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-        compress: true,
-      });
-      const margin = 10;
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const imageWidth = pageWidth - margin * 2;
-      const imageHeight = (canvas.height * imageWidth) / canvas.width;
-      const printableHeight = pageHeight - margin * 2;
-      const imageData = canvas.toDataURL("image/jpeg", 0.94);
-
-      let verticalOffset = 0;
-      while (verticalOffset < imageHeight) {
-        if (verticalOffset > 0) pdf.addPage();
-        pdf.addImage(
-          imageData,
-          "JPEG",
-          margin,
-          margin - verticalOffset,
-          imageWidth,
-          imageHeight,
-          "investment-report",
-          "FAST",
-        );
-        verticalOffset += printableHeight;
-      }
-
+      const pdf = await createPaginatedReportPdf(reportElement);
       pdf.save(getSafePdfName(fileName));
       setMessage("PDF downloaded.");
     } catch (error) {

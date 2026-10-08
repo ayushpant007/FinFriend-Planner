@@ -11,8 +11,7 @@ import { Button } from '../ui/button';
 import { Printer, FileText, Wallet, PiggyBank, ShieldCheck, TrendingUp, Bot, CheckCircle, AlertTriangle, Download, Share2, Info } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { createPaginatedReportPdf } from '@/lib/paginated-report-pdf';
 
 interface Props {
   data: ReportData;
@@ -42,65 +41,14 @@ export function Report({ data }: Props) {
         throw new Error("Report element not found");
     }
 
-    // Ensure we are at the top for clean capture
     window.scrollTo(0, 0);
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    const canvas = await html2canvas(reportElement, { 
-        scale: 2, 
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#FFFFFF',
-        logging: false,
-        onclone: (clonedDoc) => {
-            const el = clonedDoc.getElementById('report-section');
-            if (el) {
-                el.style.width = '800px';
-                el.style.margin = '0';
-                el.style.padding = '20px';
-                el.style.transform = 'none';
-                el.style.height = 'auto';
-                el.style.overflow = 'visible';
-                
-                // Ensure all cards are visible
-                el.querySelectorAll('.card').forEach(c => {
-                    (c as HTMLElement).style.overflow = 'visible';
-                });
-                
-                // Force recharts SVGs to fill their containers for ResponsiveContainer charts
-                el.querySelectorAll('.recharts-responsive-container').forEach(c => {
-                    (c as HTMLElement).style.width = '100%';
-                    (c as HTMLElement).style.minWidth = '0';
-                });
-                el.querySelectorAll('.recharts-wrapper').forEach(c => {
-                    const wrapper = c as HTMLElement;
-                    const parentWidth = wrapper.parentElement?.getBoundingClientRect().width || 760;
-                    wrapper.style.width = `${parentWidth}px`;
-                });
-                el.querySelectorAll('.recharts-surface').forEach(c => {
-                    const svg = c as SVGElement;
-                    const parentWidth = (svg.parentElement?.getBoundingClientRect().width || 760);
-                    svg.setAttribute('width', String(parentWidth));
-                    svg.style.width = `${parentWidth}px`;
-                });
-            }
-        }
+    await new Promise<void>((resolve) => {
+      window.requestAnimationFrame(() =>
+        window.requestAnimationFrame(() => resolve()),
+      );
     });
 
-    const imgWidth = 210; // Keep A4 width
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    const pdf = new jsPDF({
-        orientation: 'p',
-        unit: 'mm',
-        format: [imgWidth, imgHeight],
-        compress: true
-    });
-
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
-    
-    return pdf;
+    return createPaginatedReportPdf(reportElement);
   }
 
 

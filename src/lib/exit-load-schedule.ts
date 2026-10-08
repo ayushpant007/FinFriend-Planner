@@ -21,6 +21,103 @@ type ExitLoadTerm = {
 };
 
 const DURATION_REGEX = /(\d+(?:\.\d+)?)\s*-?\s*(days?|months?|years?)\b/i;
+const NO_LOAD_PATTERN =
+  /\b(?:no\s+exit\s+load|no\s+load|nil|zero(?:\s+exit\s+load)?|not\s+applicable)\b/i;
+const RATE_PATTERN = /(\d+(?:\.\d+)?)\s*(%|percent\b)/i;
+
+function findExitLoadRate(text: string) {
+  const explicitRatePatterns = [
+    /\bexit\s+load\b\s*(?::|[-–])?\s*(?:(?:of|at|@)\s*)?(\d+(?:\.\d+)?)\s*(?:%|percent\b)/i,
+    /\bload\s+(?:of|at|@)\s*(\d+(?:\.\d+)?)\s*(?:%|percent\b)/i,
+    /(\d+(?:\.\d+)?)\s*(?:%|percent\b)\s*(?:exit\s+load|load)\b/i,
+    /\b(?:charged|chargeable|payable|levied)\s*(?:at|of)?\s*(\d+(?:\.\d+)?)\s*(?:%|percent\b)/i,
+  ];
+
+  for (const pattern of explicitRatePatterns) {
+    const match = text.match(pattern);
+    if (match?.[1] && match.index !== undefined) {
+      return {
+        value: `${match[1]}%`,
+        index: match.index + match[0].indexOf(match[1]),
+      };
+    }
+  }
+
+  const fallback = text.match(RATE_PATTERN);
+  if (!fallback?.[1] || fallback.index === undefined) return null;
+  return {
+    value: `${fallback[1]}%`,
+    index: fallback.index,
+  };
+}
+
+function hasMixedNoLoadAndRate(clause: string) {
+  const noLoadMatch = clause.match(NO_LOAD_PATTERN);
+  const rateMatch = clause.match(RATE_PATTERN);
+  if (!noLoadMatch || !rateMatch || noLoadMatch.index === undefined || rateMatch.index === undefined) {
+    return false;
+  }
+
+  if (rateMatch.index < noLoadMatch.index) {
+    return true;
+  }
+
+  return /(?:exit\s+load|load)\s*(?::|-)?\s*(?:of\s+)?\d+(?:\.\d+)?\s*%/i.test(
+    clause.slice(noLoadMatch.index),
+  );
+}
+
+function hasUnscopedNoLoadException(clause: string) {
+  const normalized = normalizeTimeWords(clause.toLowerCase());
+  if (!NO_LOAD_PATTERN.test(normalized)) return false;
+
+  const hasTimeBoundary =
+    /\b(?:within|after|beyond|on or before|up to|upto|not later than|for the first|during the first|before|until|till)\s+\d+(?:\.\d+)?\s*(?:days?|months?|years?)\b/i.test(normalized) ||
+    /\bthereafter\b|\bafter\s+(?:that|this|such\s+period)\b/i.test(normalized);
+  if (hasTimeBoundary) return false;
+
+  return (
+    /\b(?:qualifying|eligible|certain|particular|specific|only|except|switch(?:ed|ing)?|stp|systematic|death|remaining|excess)\b/i.test(
+      normalized,
+    ) || /(?:up to|upto)\s+\d+(?:\.\d+)?\s*%/i.test(normalized)
+  );
+}
+
+function decodeHtmlEntity(entity: string) {
+  const namedEntities: Record<string, string> = {
+    "&nbsp;": " ",
+    "&#160;": " ",
+    "&amp;": "&",
+    "&lt;": "<",
+    "&gt;": ">",
+    "&quot;": "\"",
+    "&#34;": "\"",
+    "&#39;": "'",
+    "&apos;": "'",
+  };
+  const named = namedEntities[entity.toLowerCase()];
+  if (named !== undefined) return named;
+
+  const numeric = entity.match(/^&#(?:x([0-9a-f]+)|(\d+));$/i);
+  if (!numeric) return entity;
+  const codePoint = numeric[1]
+    ? Number.parseInt(numeric[1], 16)
+    : Number.parseInt(numeric[2], 10);
+  return Number.isFinite(codePoint) ? String.fromCodePoint(codePoint) : entity;
+}
+
+export function normalizeExitLoadText(source: string) {
+  return source
+    .replace(/<\s*br\s*\/?\s*>/gi, "\n")
+    .replace(/<\s*li\b[^>]*>/gi, "• ")
+    .replace(/<\/\s*(?:p|li|div|tr|h[1-6])\s*>/gi, "\n")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&(?:nbsp|amp|lt|gt|quot|apos);|&#(?:x[0-9a-f]+|\d+);/gi, decodeHtmlEntity)
+    .replace(/\r/g, "\n")
+    .replace(/[ \t]*\n[ \t]*/g, "\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+}
 
 function normalizeTimeWords(text: string) {
   return text
@@ -47,11 +144,14 @@ function findDurationAfter(text: string, index: number) {
 
 function parseTerm(clause: string): ExitLoadTerm | null {
   const normalized = normalizeTimeWords(clause.toLowerCase());
-  const isNoLoad = /\b(?:no\s+exit\s+load|no\s+load|nil|zero(?:\s+exit\s+load)?|not\s+applicable)\b/i.test(normalized);
-  const rateMatch = normalized.match(/(\d+(?:\.\d+)?)\s*%/);
+  const noLoadMatch = normalized.match(NO_LOAD_PATTERN);
+  const isNoLoad = Boolean(noLoadMatch);
+  if (hasMixedNoLoadAndRate(normalized) || hasUnscopedNoLoadException(normalized)) return null;
+
+  const rateMatch = findExitLoadRate(normalized);
   if (!isNoLoad && !rateMatch) return null;
 
-  const value = isNoLoad ? "No Exit Load" : rateMatch![0].replace(/\s+/g, "");
+  const value = isNoLoad ? "No Exit Load" : rateMatch!.value;
   const betweenMatch = normalized.match(
     /\b(?:between|from)\s+(\d+(?:\.\d+)?)\s*-?\s*(days?|months?|years?)\s+(?:and|to)\s+(\d+(?:\.\d+)?)\s*-?\s*(days?|months?|years?)\b/i,
   );
@@ -101,20 +201,41 @@ function parseTerm(clause: string): ExitLoadTerm | null {
   if (/\bthereafter\b/i.test(normalized)) {
     return { value, sourceClause: clause, isNoLoad, mode: "thereafter" };
   }
+  if (/\bafter\s+(?:that|this|such\s+period)\b/i.test(normalized)) {
+    return { value, sourceClause: clause, isNoLoad, mode: "thereafter" };
+  }
 
   return { value, sourceClause: clause, isNoLoad, mode: "global" };
 }
 
 function splitSourceTerms(source: string) {
-  return normalizeTimeWords(
-    source
-      .replace(/\r/g, " ")
-      .replace(/[•●]/g, ";")
-      .replace(/\s+and\s+(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|\d+(?:\.\d+)?\s*%))/gi, "; ")
-      .replace(/\.(?=\s*(?:no\s+exit\s+load\b|no\s+load\b|nil\b))/gi, ";")
-      .replace(/\s+/g, " ")
-      .trim(),
-  )
+  const normalized = normalizeTimeWords(normalizeExitLoadText(source))
+    .replace(/[•●▪]/g, ";")
+    .replace(/\n\s*[lI]\s+(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|\d+(?:\.\d+)?\s*%))/gi, "\n; ")
+    .replace(
+      /\n+\s*(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|zero(?:\s+exit\s+load)?\b|not\s+applicable\b|\d+(?:\.\d+)?\s*%[^,;\n]{0,120}\b(?:within|after|beyond|between|from|thereafter|upto|up to|before|until|till)\b))/gi,
+      "; ",
+    )
+    .replace(
+      /(\d+(?:\.\d+)?\s*%[^,;\n]{0,120}\b(?:within|after|beyond|between|from|thereafter|upto|up to|before|until|till)\b[^,;\n]{0,100})\s+(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|zero(?:\s+exit\s+load)?\b|not\s+applicable\b))/gi,
+      "$1; ",
+    )
+    .replace(
+      /\s+(?:and|but|however|otherwise)\s+(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|\d+(?:\.\d+)?\s*%[^,;\n]{0,120}\b(?:within|after|beyond|between|from|thereafter|upto|up to|before|until|till)\b))/gi,
+      "; ",
+    )
+    .replace(
+      /[,]\s*(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|zero(?:\s+exit\s+load)?\b|not\s+applicable\b|\d+(?:\.\d+)?\s*%[^,;\n]{0,120}\b(?:within|after|beyond|between|from|thereafter|upto|up to|before|until|till)\b))/gi,
+      "; ",
+    )
+    .replace(
+      /\.(?=\s+(?:no\s+exit\s+load\b|no\s+load\b|nil\b|zero(?:\s+exit\s+load)?\b|not\s+applicable\b|\d+(?:\.\d+)?\s*%))/gi,
+      ";",
+    )
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return normalized
     .split(";")
     .map((part) => part.trim())
     .filter(Boolean);
@@ -201,6 +322,9 @@ function describeTerm(term: ExitLoadTerm) {
 
 export function parseExitLoadSchedule(source: string | null | undefined): ExitLoadScheduleEntry[] {
   const clauses = typeof source === "string" ? splitSourceTerms(source) : [];
+  const hasAmbiguousClause = clauses.some(
+    (clause) => hasMixedNoLoadAndRate(clause) || hasUnscopedNoLoadException(clause),
+  );
   const terms = clauses.map(parseTerm).filter((term): term is ExitLoadTerm => term !== null);
   applyTierStarts(terms);
   const positiveBoundaries = terms
@@ -218,18 +342,29 @@ export function parseExitLoadSchedule(source: string | null | undefined): ExitLo
       termIntersectsWindow(term, checkpoint.months, thereafterBoundary),
     );
     if (matchingTerms.length === 0) {
+      if (hasAmbiguousClause) {
+        return {
+          key: checkpoint.key,
+          label: checkpoint.label,
+          value: "Source wording includes a condition that cannot be assigned to a time period; see the original terms.",
+          status: "partial",
+        };
+      }
       return { key: checkpoint.key, label: checkpoint.label, value: "Not specified by source", status: "not-specified" };
     }
 
     const termsCoverWindow = windowIsFullyCovered(terms, checkpoint.months, thereafterBoundary);
     const value = matchingTerms.map(describeTerm).join("; ");
+    const hasCompleteData = termsCoverWindow && !hasAmbiguousClause;
     return {
       key: checkpoint.key,
       label: checkpoint.label,
-      value: termsCoverWindow
-        ? value
-        : `${value}; Other timing in this period is not specified by source.`,
-      status: termsCoverWindow ? "specified" : "partial",
+      value: hasAmbiguousClause
+        ? `${value}; another source clause has a condition that cannot be assigned to a time period, so it was not applied as a global value.`
+        : termsCoverWindow
+          ? value
+          : `${value}; Other timing in this period is not specified by source.`,
+      status: hasCompleteData ? "specified" : "partial",
     };
   });
 }
