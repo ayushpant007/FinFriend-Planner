@@ -1099,7 +1099,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
 
 
         <section className="text-center py-6 bg-white pdf-section px-4 print:bg-white print-avoid-break overflow-visible pb-2">
-            <h1 className="text-xl font-bold text-gray-800 tracking-wide">Financial Planning Report</h1>
+            <h1 className="text-xl font-bold text-gray-800 tracking-wide">Financial Planning Proposal</h1>
         </section>
 
         {/* Investor Details */}
