@@ -9,7 +9,6 @@ import {
   CalendarDays,
   CheckCircle2,
   ChevronRight,
-  Download,
   ExternalLink,
   FileText,
   Globe2,
@@ -24,6 +23,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
+import { ReportActions } from "@/components/sif-pms-aif/ReportActions";
 const financialFriendLogo = "/financial-friend-logo.png";
 import {
   getInvestmentProduct,
@@ -663,21 +663,27 @@ function SifResearchReport({
     <ReportRoot className={`sif-report-page ${embedded ? "" : "min-h-screen"} bg-[#f7f7f5] text-[#101522] dark:bg-slate-950 dark:text-slate-100`}>
       {!embedded && (
         <div className="no-print border-b border-[#d8b76f] bg-[linear-gradient(110deg,#08172f_0%,#102a4a_55%,#0b1e3a_100%)] px-5 py-3 text-white sm:px-8">
-          <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4">
+          <div className="mx-auto flex max-w-[1180px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button type="button" onClick={() => router.push("/sif-pms-aif")} className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-300 transition hover:text-white">
               ← Back to selection
             </button>
-            <div className="flex items-center gap-3">
-              <span className="hidden text-[11px] tracking-[0.03em] text-slate-400 sm:inline">Financial Friend · SIF research pack</span>
-              <button type="button" onClick={() => window.print()} className="rounded border border-white/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition hover:border-[#d8b76f] hover:text-[#e5c886]">
-                <Download className="mr-1.5 inline h-3.5 w-3.5" /> Print / PDF
-              </button>
+            <div className="flex flex-wrap items-center justify-end gap-3">
+              <span className="hidden text-[11px] tracking-[0.03em] text-slate-400 xl:inline">Financial Friend · SIF research pack</span>
+              <ReportActions
+                documentId="sif-report-document"
+                detailTargetId="sif-report-document"
+                fileName={`${title}_report.pdf`}
+                tone="dark"
+              />
             </div>
           </div>
         </div>
       )}
 
-      <div className="mx-auto max-w-[1180px] bg-white shadow-[0_20px_70px_rgba(16,21,34,0.08)] dark:bg-slate-900 dark:shadow-none">
+      <div
+        id={embedded ? undefined : "sif-report-document"}
+        className="mx-auto max-w-[1180px] bg-white shadow-[0_20px_70px_rgba(16,21,34,0.08)] dark:bg-slate-900 dark:shadow-none"
+      >
         <header className="relative border-b border-[#e0e2e4] bg-white dark:border-slate-800 dark:bg-slate-900">
           {showBrandingHeader && (
             <div className={embedded ? "hidden print:block" : undefined}>
@@ -898,21 +904,26 @@ function PmsSourceReport({
     <ReportRoot className={`${embedded ? "" : "min-h-screen"} bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100`}>
       {!embedded && (
         <div className="no-print border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+          <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]">
               <ArrowLeft className="h-4 w-4" /> Back to PMS selection
             </button>
-            <div className="flex items-center gap-3">
-              <span className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-[#0b7772] sm:inline">Financial Friend · live source view</span>
-              <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-                <Download className="h-4 w-4" /> Print / save PDF
-              </button>
+            <div className="flex flex-wrap items-center justify-end gap-3">
+              <span className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-[#0b7772] xl:inline">Financial Friend · live source view</span>
+              <ReportActions
+                documentId="pms-report-document"
+                detailTargetId="pms-report-document"
+                fileName={`${productName}_report.pdf`}
+              />
             </div>
           </div>
         </div>
       )}
 
-      <div className="mx-auto max-w-6xl px-6 py-10 sm:py-14">
+      <div
+        id={embedded ? undefined : "pms-report-document"}
+        className="mx-auto max-w-6xl px-6 py-10 sm:py-14"
+      >
         <header className="overflow-hidden rounded-3xl bg-[#10243d] p-7 text-white shadow-[0_20px_60px_rgba(16,36,61,0.18)] sm:p-10">
           <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
             <div className="max-w-4xl">
@@ -1188,17 +1199,22 @@ function AifStandardReport({
     <ReportRoot className={`${embedded ? "" : "min-h-screen"} bg-[#f4f7f8] text-[#14263d] dark:bg-slate-950 dark:text-slate-100`}>
       {!embedded && <AppHeader />}
       {!embedded && (
-        <div className="no-print mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pb-2 pt-8">
+        <div className="no-print mx-auto flex max-w-7xl flex-col gap-3 px-6 pb-2 pt-8 sm:flex-row sm:items-center sm:justify-between">
           <button type="button" onClick={() => router.push("/sif-pms-aif")} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0b7772]">
             <ArrowLeft className="h-4 w-4" /> Back to investment selection
           </button>
-          <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-            <Download className="h-4 w-4" /> Print / save PDF
-          </button>
+          <ReportActions
+            documentId="aif-report-document"
+            detailTargetId="aif-report-document"
+            fileName={`${productName}_report.pdf`}
+          />
         </div>
       )}
 
-      <div className="mx-auto max-w-7xl space-y-6 px-6 pb-16 pt-4">
+      <div
+        id={embedded ? undefined : "aif-report-document"}
+        className="mx-auto max-w-7xl space-y-6 px-6 pb-16 pt-4"
+      >
         <section className="relative overflow-hidden rounded-3xl bg-[#10243d] px-6 py-10 text-white shadow-[0_20px_60px_rgba(16,36,61,0.25)] sm:px-10 sm:py-12">
           <div className="absolute -right-24 -top-32 h-80 w-80 rounded-full border-[32px] border-[#2ba69b]/20" />
           <div className="absolute -bottom-40 right-24 h-80 w-80 rounded-full border border-[#d7a66d]/20" />
@@ -1521,7 +1537,7 @@ function ConsolidatedProductReports({
       <div className="no-print">
         <AppHeader />
       </div>
-      <div className="no-print mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-5 pb-4 pt-6 sm:px-8">
+      <div className="no-print mx-auto flex max-w-[1180px] flex-col gap-3 px-5 pb-4 pt-6 sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <button
           type="button"
           onClick={() => router.push("/sif-pms-aif")}
@@ -1529,13 +1545,13 @@ function ConsolidatedProductReports({
         >
           <ArrowLeft className="h-4 w-4" /> Back to product selection
         </button>
-        <button
-          type="button"
-          onClick={() => window.print()}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-[#0b7772] hover:text-[#0b7772] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
-        >
-          <Download className="h-4 w-4" /> Print all reports
-        </button>
+        {selections.length > 0 && (
+          <ReportActions
+            documentId="consolidated-report-document"
+            detailTargetId="consolidated-report-document"
+            fileName="sif_pms_aif_reports.pdf"
+          />
+        )}
       </div>
 
       {hasSifSelection && (
@@ -1544,7 +1560,10 @@ function ConsolidatedProductReports({
         </div>
       )}
 
-      <div className="mx-auto max-w-[1180px] px-4 pb-12 sm:px-8">
+      <div
+        id="consolidated-report-document"
+        className="mx-auto max-w-[1180px] px-4 pb-12 sm:px-8"
+      >
         <header className="consolidated-report-heading mb-7 border-b border-slate-200 pb-5 dark:border-slate-800">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0b7772]">
             Financial Friend · consolidated research
