@@ -633,18 +633,29 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
 
       const reportId = `report_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
       try {
-        await fetch('/api/store-report', {
+        const storeResponse = await fetch('/api/store-report', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify({
            reportId,
            userId: personalDetails.email,
+           reportType: 'sip',
            plannerData: allPlannerData,
            sipReport: allocationReportData,
          }),
         });
+        if (!storeResponse.ok) {
+          const result = await storeResponse.json().catch(() => ({}));
+          throw new Error(result.error || 'The SIP proposal could not be saved.');
+        }
       } catch (storeError) {
         console.error('Error storing allocation report:', storeError);
+        toast({
+          title: "SIP proposal could not be saved",
+          description: storeError instanceof Error ? storeError.message : "Please try generating the proposal again.",
+          variant: "destructive",
+        });
+        return;
       }
       router.push(`/sip-optimizer-report?id=${reportId}`);
     } catch (error) {

@@ -165,6 +165,7 @@ export default function SifPmsAifPage() {
   const [pmsError, setPmsError] = useState("");
   const [aifError, setAifError] = useState("");
   const [submitError, setSubmitError] = useState("");
+  const [isSavingProposal, setIsSavingProposal] = useState(false);
   const [selections, setSelections] = useState<InvestmentSelection[]>([
     { category: "", investment: "" },
   ]);
@@ -241,7 +242,7 @@ export default function SifPmsAifPage() {
     return () => controller.abort();
   }, [selectedSifProductsKey]);
 
-  function handleGenerateReport(event: FormEvent<HTMLFormElement>) {
+  async function handleGenerateReport(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (completeSelections.length === 0) {
       setSubmitError("Choose at least one investment category and product before generating a report.");
@@ -257,23 +258,54 @@ export default function SifPmsAifPage() {
       amount: String(formData.get("amount") ?? "").trim(),
     };
 
+    if (!investorDetails.email) {
+      setSubmitError("Enter an email address so this proposal can be saved in Saved Clients.");
+      return;
+    }
+
+    setIsSavingProposal(true);
     try {
       window.sessionStorage.setItem(
         INVESTOR_DETAILS_SESSION_KEY,
         JSON.stringify(investorDetails),
       );
-    } catch {
-      setSubmitError("Investor details could not be saved in this browser tab. Please try again.");
-      return;
-    }
 
-    setSubmitError("");
-    const query = new URLSearchParams();
-    completeSelections.forEach((selection) => {
-      query.append("category", selection.category);
-      query.append("product", selection.investment.trim());
-    });
-    router.push(`/sif-pms-aif/report?${query.toString()}`);
+      const reportId = `investment_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      const response = await fetch("/api/store-investment-proposal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reportId,
+          investorDetails,
+          selections: completeSelections.map((selection) => ({
+            category: selection.category,
+            product: selection.investment.trim(),
+          })),
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(
+          typeof result.error === "string" ? result.error : "The proposal could not be saved.",
+        );
+      }
+
+      setSubmitError("");
+      const query = new URLSearchParams();
+      completeSelections.forEach((selection) => {
+        query.append("category", selection.category);
+        query.append("product", selection.investment.trim());
+      });
+      router.push(`/sif-pms-aif/report?${query.toString()}`);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "The proposal could not be saved. Please try again.",
+      );
+    } finally {
+      setIsSavingProposal(false);
+    }
   }
 
   useEffect(() => {
@@ -359,9 +391,9 @@ export default function SifPmsAifPage() {
 
                   <div className="space-y-2">
                     <label htmlFor="investor-email" className="text-sm font-medium">
-                      Email Address
+                      Email Address <span className="text-destructive">*</span>
                     </label>
-                    <Input id="investor-email" name="email" type="email" placeholder="Enter your email address" />
+                    <Input id="investor-email" name="email" type="email" required placeholder="Enter your email address" />
                   </div>
 
                   <div className="space-y-2">
@@ -572,10 +604,13 @@ export default function SifPmsAifPage() {
                     <div className="flex justify-end pt-1">
                       <button
                         type="submit"
-                        className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 glass-button-primary"
+                        disabled={isSavingProposal}
+                        className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 glass-button-primary disabled:cursor-wait disabled:opacity-60"
                       >
-                        <FileText className="h-4 w-4" />
-                        <span>Generate Report</span>
+                        {isSavingProposal
+                          ? <LoaderCircle className="h-4 w-4 animate-spin" />
+                          : <FileText className="h-4 w-4" />}
+                        <span>{isSavingProposal ? "Saving proposal…" : "Generate Report"}</span>
                       </button>
                     </div>
                   )}

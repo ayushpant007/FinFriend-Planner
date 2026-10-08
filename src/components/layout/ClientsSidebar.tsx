@@ -6,6 +6,37 @@ import { Check, ChevronDown, ChevronRight, Clock3, Eye, Loader2, Menu, Pencil, S
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import {
+  INVESTOR_DETAILS_SESSION_KEY,
+  normalizeInvestorDetails,
+} from "@/lib/sif-pms-aif-investor";
+
+const RESEARCH_CATEGORIES = ["sif", "pms", "aif"] as const;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isResearchCategory(value: unknown): value is "SIF" | "PMS" | "AIF" {
+  return value === "SIF" || value === "PMS" || value === "AIF";
+}
+
+function isResearchProposalType(reportType?: string | null) {
+  const categories = (reportType ?? "").toLowerCase().split("+");
+  return categories.length > 0 && categories.every((category) =>
+    RESEARCH_CATEGORIES.includes(category as (typeof RESEARCH_CATEGORIES)[number]),
+  );
+}
+
+function getReportTypeLabel(reportType?: string | null) {
+  const normalized = (reportType || "financial").toLowerCase();
+  if (normalized === "financial") return "FinFriend Planner";
+  if (normalized === "sip") return "SIP";
+  if (isResearchProposalType(normalized)) {
+    return normalized.split("+").map((category) => category.toUpperCase()).join(" / ");
+  }
+  return normalized.replace(/[_+]/g, " ").toUpperCase();
+}
 
 type Investor = {
   id: string;
@@ -17,6 +48,7 @@ type Investor = {
   reports: {
     reportId: string;
     generatedAt?: string | null;
+    reportType?: string | null;
   }[];
 };
 
@@ -46,6 +78,7 @@ export function ClientsSidebar({
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [openingReport, setOpeningReport] = useState<string | null>(null);
 
   const loadInvestors = async () => {
     try {
@@ -142,6 +175,70 @@ export function ClientsSidebar({
       window.location.href = "/planner";
     } catch (error: any) {
       toast({ title: "Report could not be loaded", description: error.message, variant: "destructive" });
+    }
+  };
+
+  const openReport = async (client: Investor, report: Investor["reports"][number]) => {
+    if (!isResearchProposalType(report.reportType)) {
+      router.push(`/sip-optimizer-report?id=${report.reportId}`);
+      return;
+    }
+
+    setOpeningReport(report.reportId);
+    try {
+      const response = await fetch(
+        `/api/investors/${encodeURIComponent(client.id)}/report?reportId=${encodeURIComponent(report.reportId)}`,
+        { cache: "no-store" },
+      );
+      const payload: unknown = await response.json();
+      if (!response.ok || !isRecord(payload) || !isRecord(payload.plannerData)) {
+        const message = isRecord(payload) && typeof payload.error === "string"
+          ? payload.error
+          : "The saved proposal could not be loaded.";
+        throw new Error(message);
+      }
+
+      const savedProposal = payload.plannerData.savedProposal;
+      if (!isRecord(savedProposal) || !Array.isArray(savedProposal.selections)) {
+        throw new Error("This saved proposal does not contain its product selections.");
+      }
+
+      const selections = savedProposal.selections.flatMap((item) => {
+        if (
+          !isRecord(item) ||
+          !isResearchCategory(item.category) ||
+          typeof item.product !== "string" ||
+          !item.product.trim()
+        ) {
+          return [];
+        }
+        return [{ category: item.category, product: item.product.trim() }];
+      });
+      if (selections.length === 0) {
+        throw new Error("This saved proposal has no valid product selections.");
+      }
+
+      const investorDetails = normalizeInvestorDetails(savedProposal.investorDetails);
+      if (!investorDetails.email) {
+        throw new Error("Investor details are missing from this saved proposal.");
+      }
+      window.sessionStorage.setItem(INVESTOR_DETAILS_SESSION_KEY, JSON.stringify(investorDetails));
+
+      const query = new URLSearchParams();
+      selections.forEach((selection) => {
+        query.append("category", selection.category);
+        query.append("product", selection.product);
+      });
+      onOpenChange(false);
+      router.push(`/sif-pms-aif/report?${query.toString()}`);
+    } catch (error) {
+      toast({
+        title: "Proposal could not be opened",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setOpeningReport(null);
     }
   };
 
@@ -263,27 +360,38 @@ export function ClientsSidebar({
                       <div className="space-y-1.5">
                         {client.reports.map((report) => (
                           <div key={report.reportId} className="rounded-md border bg-background px-2 py-2">
-                            <div className="mb-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
-                              <Clock3 className="h-3.5 w-3.5 shrink-0" />
-                              <span>{formatReportDate(report.generatedAt)}</span>
+                            <div className="mb-1.5 flex items-center justify-between gap-2 text-xs text-muted-foreground">
+                              <span className="flex min-w-0 items-center gap-1.5">
+                                <Clock3 className="h-3.5 w-3.5 shrink-0" />
+                                <span className="truncate">{formatReportDate(report.generatedAt)}</span>
+                              </span>
+                              <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                                {getReportTypeLabel(report.reportType)}
+                              </span>
                             </div>
-                            <div className="grid grid-cols-2 gap-1.5">
+                            <div className={`grid gap-1.5 ${report.reportType === "financial" || report.reportType === "sip" || !report.reportType ? "grid-cols-2" : "grid-cols-1"}`}>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 className="h-8 text-xs"
-                                onClick={() => router.push(`/sip-optimizer-report?id=${report.reportId}`)}
+                                disabled={openingReport === report.reportId}
+                                onClick={() => void openReport(client, report)}
                               >
-                                <Eye className="mr-1 h-3.5 w-3.5" /> View
+                                {openingReport === report.reportId
+                                  ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+                                  : <Eye className="mr-1 h-3.5 w-3.5" />}
+                                View
                               </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-8 text-xs"
-                                onClick={() => editClient(client, report.reportId)}
-                              >
-                                <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
-                              </Button>
+                              {(report.reportType === "financial" || report.reportType === "sip" || !report.reportType) && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-8 text-xs"
+                                  onClick={() => editClient(client, report.reportId)}
+                                >
+                                  <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
+                                </Button>
+                              )}
                             </div>
                           </div>
                         ))}

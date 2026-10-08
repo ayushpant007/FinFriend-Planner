@@ -15,6 +15,7 @@ function asInteger(value: unknown): number | null {
 
 export async function saveInvestorAndReport(input: {
   reportId: string;
+  reportType?: string;
   personalDetails: JsonObject;
   plannerData: JsonObject;
   detailedReport?: JsonObject | null;
@@ -67,7 +68,7 @@ export async function saveInvestorAndReport(input: {
       body: JSON.stringify({
         investor_id: investorId,
         report_id: input.reportId,
-        report_type: 'financial',
+        report_type: input.reportType ?? 'financial',
         planner_data: input.plannerData,
         detailed_report: input.detailedReport ?? null,
         sip_report: input.sipReport ?? null,
@@ -147,7 +148,7 @@ export async function getInvestorReport(reportId: string) {
 
 export async function listInvestors() {
   const result = await supabaseJson<JsonObject[]>(
-    '/rest/v1/investors?select=id,name,email,mobile,converted,updated_at,investor_reports(report_id,generated_at)&order=updated_at.desc',
+    '/rest/v1/investors?select=id,name,email,mobile,converted,updated_at,investor_reports(report_id,generated_at,report_type)&order=updated_at.desc',
   );
   if (!result.response.ok) {
     throw new Error(`Failed to load investors: ${JSON.stringify(result.data)}`);
@@ -168,6 +169,7 @@ export async function listInvestors() {
       reports: reports.map((report) => ({
         reportId: report.report_id,
         generatedAt: report.generated_at,
+        reportType: typeof report.report_type === 'string' ? report.report_type : null,
       })),
       latestReportId: reports[0]?.report_id ?? null,
     };

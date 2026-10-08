@@ -8,4 +8,5 @@
 - [Supabase secret runtime](supabase-secret-runtime.md) — This app's report storage must use the configured Supabase Secrets directly; the managed connector may be unavailable at runtime.
 - [Fund CSV refresh compatibility](fund-csv-refresh-compatibility.md) — Updated holdings CSVs may omit scheme codes; resolve holdings by fund name and invalidate server caches when files change.
 - [Saved client conversion lists](saved-client-conversion-lists.md) — Conversion status should move clients between lists without deleting their investor or report records.
+- [Saved proposal categories](saved-proposal-categories.md) — Keep SIP optimizer distinct from SIF research; the drawer must include both plus PMS and AIF.
 - [AMFI Exit Load verification](amfi-exit-load-source.md) — Use official AMFI scheme details only after exact code, fund, and plan validation; blank is unavailable, not nil.

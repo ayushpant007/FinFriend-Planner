@@ -30,7 +30,7 @@ function sanitizeForJSON(obj: any): any {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { reportId, userId, detailedReport, sipReport, plannerData } = body;
+    const { reportId, userId, detailedReport, sipReport, plannerData, reportType } = body;
 
     if (!reportId) {
       return NextResponse.json(
@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
 
     const investorResult = await saveInvestorAndReport({
       reportId,
+      reportType: reportType === 'sip' ? 'sip' : 'financial',
       personalDetails,
       plannerData: sanitizedPlannerData,
       detailedReport: sanitizedDetailedReport,
