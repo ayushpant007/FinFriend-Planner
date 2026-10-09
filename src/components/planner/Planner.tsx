@@ -127,6 +127,7 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
     solutionOrientedWeightAnalysis: true,
     othersWeightAnalysis: true,
     liquidAssetAllocation: true,
+    exitLoadDetails: false,
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -584,6 +585,7 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
         solutionOrientedWeightAnalysis: reportSections.solutionOrientedWeightAnalysis && fundAllocations.some(a => categoryMatches(a.fundCategory, 'Solution') && a.schemeCode),
         othersWeightAnalysis: reportSections.othersWeightAnalysis && fundAllocations.some(a => (categoryMatches(a.fundCategory, 'Other') || categoryMatches(a.fundCategory, 'Commodities')) && a.schemeCode),
         liquidAssetAllocation: reportSections.liquidAssetAllocation,
+        exitLoadDetails: reportSections.exitLoadDetails && fundAllocations.length > 0,
       };
 
       const allocationReportData: SipOptimizerReportData & { goalsWithCalculations: GoalWithCalculations[] } = {
@@ -1277,7 +1279,11 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
                   { id: 'equityWeightAnalysis', label: 'Equity Fund Weight Analysis', allocationOnly: true },
                   { id: 'debtWeightAnalysis', label: 'Debt Fund Weight Analysis', allocationOnly: true },
                   { id: 'hybridWeightAnalysis', label: 'Hybrid Fund Weight Analysis', allocationOnly: true },
-                ].filter(section => isAllocationView ? section.allocationOnly : true).map((section) => (
+                   { id: 'exitLoadDetails', label: 'Include Exit Load Details', allocationOnly: true },
+                 ].filter(section =>
+                   (isAllocationView ? section.allocationOnly : true) &&
+                   (section.id !== 'exitLoadDetails' || fundAllocations.length > 0)
+                 ).map((section) => (
                   <div key={section.id} className="flex items-center space-x-3 p-3 glass rounded-xl border border-transparent hover:border-primary/30 transition-all duration-200">
                     <Checkbox 
                       id={`section-${section.id}`} 

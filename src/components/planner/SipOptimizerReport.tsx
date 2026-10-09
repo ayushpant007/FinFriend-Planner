@@ -738,6 +738,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
     solutionOrientedWeightAnalysis: true,
     othersWeightAnalysis: true,
     liquidAssetAllocation: true,
+    exitLoadDetails: false,
     ...(data.sections ?? {}),
   };
 
@@ -1493,72 +1494,6 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                         </Table>
                     </CardContent>
                  </Card>
-                 <Card className="mt-4">
-                    <CardHeader>
-                        <CardTitle className="text-base">Exit Load Details</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3 text-xs">
-                        <p className="text-gray-600">
-                            Values are shown only after the selected scheme code, fund, and plan match the source records. Unavailable data is not treated as nil.
-                        </p>
-                        {uniqueExitLoadAllocations.map((allocation) => {
-                            const lookup = exitLoadResults.find((item) => item.allocationId === allocation.id);
-                            const schedule = lookup?.status === 'available' && lookup.exitLoad
-                                ? lookup.exitLoadSchedule ?? parseExitLoadSchedule(lookup.exitLoad)
-                                : null;
-                            return (
-                                <div key={allocation.id} className="rounded-md border border-gray-200 p-3 print-avoid-break">
-                                    <div className="font-semibold text-gray-900">
-                                        {allocation.schemeName || allocation.fundName}
-                                        {allocation.planType ? ` · ${allocation.planType}` : ''}
-                                    </div>
-                                    <div className="mt-2 overflow-x-auto">
-                                        <table className="w-full min-w-[360px] border-collapse text-left">
-                                            <thead>
-                                                <tr className="border-b border-gray-200 text-gray-600">
-                                                    <th scope="col" className="py-1 pr-3 font-medium">Redemption checkpoint</th>
-                                        <th scope="col" className="py-1 font-medium">Applicable Exit Load terms</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {EXIT_LOAD_CHECKPOINTS.map((checkpoint, index) => (
-                                                    <tr key={checkpoint.key} className="border-b border-gray-100 last:border-0">
-                                                        <th scope="row" className="py-1 pr-3 font-medium text-gray-700">{checkpoint.label}</th>
-                                                        <td className="whitespace-pre-line break-words py-1 text-gray-900">
-                                                            {isLoadingExitLoads
-                                                                ? 'Checking AMFI scheme details…'
-                                                                : schedule?.[index]?.value
-                                                                    || lookup?.message
-                                                                    || 'Exit Load could not be verified for this scheme.'}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <p className="mt-2 text-[10px] text-gray-600">
-                                        Each row includes all disclosed tiers within that cumulative period. The 3-month checkpoint maps to 90 days; exact source wording is retained below.
-                                    </p>
-                                    {lookup?.exitLoad && (
-                                        <p className="mt-1 whitespace-pre-line break-words text-[10px] text-gray-700">
-                                            <span className="font-semibold">Source terms: </span>{lookup.exitLoad}
-                                        </p>
-                                    )}
-                                    {lookup?.sourceUrl && (
-                                        <a
-                                            href={lookup.sourceUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="mt-1 inline-block text-[10px] text-blue-700 underline print:text-black"
-                                        >
-                                            Source: AMFI Scheme Details
-                                        </a>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </CardContent>
-                 </Card>
             </section>
  
              {sections.modelPortfolioAnalysis && (
@@ -1767,6 +1702,77 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                   )}
              </div>
              </>
+        )}
+
+        {sections.exitLoadDetails && data.fundAllocations && data.fundAllocations.length > 0 && (
+          <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Exit Load Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-xs">
+                <p className="text-gray-600">
+                  Values are shown only after the selected scheme code, fund, and plan match the source records. Unavailable data is not treated as nil.
+                </p>
+                {uniqueExitLoadAllocations.map((allocation) => {
+                  const lookup = exitLoadResults.find((item) => item.allocationId === allocation.id);
+                  const schedule = lookup?.status === "available" && lookup.exitLoad
+                    ? lookup.exitLoadSchedule ?? parseExitLoadSchedule(lookup.exitLoad)
+                    : null;
+                  return (
+                    <div key={allocation.id} className="rounded-md border border-gray-200 p-3 print-avoid-break">
+                      <div className="font-semibold text-gray-900">
+                        {allocation.schemeName || allocation.fundName}
+                        {allocation.planType ? ` · ${allocation.planType}` : ""}
+                      </div>
+                      <div className="mt-2 overflow-x-auto">
+                        <table className="w-full min-w-[360px] border-collapse text-left">
+                          <thead>
+                            <tr className="border-b border-gray-200 text-gray-600">
+                              <th scope="col" className="py-1 pr-3 font-medium">Redemption checkpoint</th>
+                              <th scope="col" className="py-1 font-medium">Applicable Exit Load terms</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {EXIT_LOAD_CHECKPOINTS.map((checkpoint, index) => (
+                              <tr key={checkpoint.key} className="border-b border-gray-100 last:border-0">
+                                <th scope="row" className="py-1 pr-3 font-medium text-gray-700">{checkpoint.label}</th>
+                                <td className="whitespace-pre-line break-words py-1 text-gray-900">
+                                  {isLoadingExitLoads
+                                    ? "Checking AMFI scheme details…"
+                                    : schedule?.[index]?.value
+                                      || lookup?.message
+                                      || "Exit Load could not be verified for this scheme."}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <p className="mt-2 text-[10px] text-gray-600">
+                        Each row includes all disclosed tiers within that cumulative period. The 3-month checkpoint maps to 90 days; exact source wording is retained below.
+                      </p>
+                      {lookup?.exitLoad && (
+                        <p className="mt-1 whitespace-pre-line break-words text-[10px] text-gray-700">
+                          <span className="font-semibold">Source terms: </span>{lookup.exitLoad}
+                        </p>
+                      )}
+                      {lookup?.sourceUrl && (
+                        <a
+                          href={lookup.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-block text-[10px] text-blue-700 underline print:text-black"
+                        >
+                          Source: AMFI Scheme Details
+                        </a>
+                      )}
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          </section>
         )}
 
         {sections.insurance && data.insuranceAnalysis && (data.insuranceAnalysis.lifeInsurance.quotes.length > 0 || data.insuranceAnalysis.healthInsurance.quotes.length > 0) && (

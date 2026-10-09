@@ -218,6 +218,7 @@ export interface ReportSections {
   hybridWeightAnalysis: boolean;
   solutionOrientedWeightAnalysis: boolean;
   othersWeightAnalysis: boolean;
+  exitLoadDetails: boolean;
 }
 
 export interface SipOptimizerReportData {
