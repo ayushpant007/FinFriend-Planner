@@ -10,3 +10,4 @@
 - [Saved client conversion lists](saved-client-conversion-lists.md) — Conversion status should move clients between lists without deleting their investor or report records.
 - [Saved proposal categories](saved-proposal-categories.md) — Keep SIP optimizer distinct from SIF research; the drawer must include both plus PMS and AIF.
 - [AMFI Exit Load verification](amfi-exit-load-source.md) — Use official AMFI scheme details only after exact code, fund, and plan validation; blank is unavailable, not nil.
+- [Headless browser validation](headless-browser-validation.md) — Select the actual app tab in Replit Chromium; CSS text transforms can foil case-sensitive visible-text checks.
