@@ -585,7 +585,7 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
         solutionOrientedWeightAnalysis: reportSections.solutionOrientedWeightAnalysis && fundAllocations.some(a => categoryMatches(a.fundCategory, 'Solution') && a.schemeCode),
         othersWeightAnalysis: reportSections.othersWeightAnalysis && fundAllocations.some(a => (categoryMatches(a.fundCategory, 'Other') || categoryMatches(a.fundCategory, 'Commodities')) && a.schemeCode),
         liquidAssetAllocation: reportSections.liquidAssetAllocation,
-        exitLoadDetails: reportSections.exitLoadDetails && fundAllocations.length > 0,
+        exitLoadDetails: false,
       };
 
       const allocationReportData: SipOptimizerReportData & { goalsWithCalculations: GoalWithCalculations[] } = {
@@ -1279,7 +1279,7 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
                   { id: 'equityWeightAnalysis', label: 'Equity Fund Weight Analysis', allocationOnly: true },
                   { id: 'debtWeightAnalysis', label: 'Debt Fund Weight Analysis', allocationOnly: true },
                   { id: 'hybridWeightAnalysis', label: 'Hybrid Fund Weight Analysis', allocationOnly: true },
-                   { id: 'exitLoadDetails', label: 'Include Exit Load Details', allocationOnly: true },
+                   { id: 'exitLoadDetails', label: 'Include Exit Load Details', allocationOnly: false },
                  ].filter(section =>
                    (isAllocationView ? section.allocationOnly : true) &&
                    (section.id !== 'exitLoadDetails' || fundAllocations.length > 0)

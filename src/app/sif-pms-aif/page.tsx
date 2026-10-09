@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, LoaderCircle, Plus, Trash2, WalletCards } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
@@ -166,6 +167,7 @@ export default function SifPmsAifPage() {
   const [aifError, setAifError] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [isSavingProposal, setIsSavingProposal] = useState(false);
+  const [includeExitLoadDetails, setIncludeExitLoadDetails] = useState(false);
   const [selections, setSelections] = useState<InvestmentSelection[]>([
     { category: "", investment: "" },
   ]);
@@ -296,6 +298,7 @@ export default function SifPmsAifPage() {
         query.append("category", selection.category);
         query.append("product", selection.investment.trim());
       });
+      query.set("includeExitLoadDetails", includeExitLoadDetails ? "1" : "0");
       router.push(`/sif-pms-aif/report?${query.toString()}`);
     } catch (error) {
       setSubmitError(
@@ -600,6 +603,21 @@ export default function SifPmsAifPage() {
                       </div>
                     );
                   })}
+                  {hasCompleteSelection && (
+                    <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+                      <Checkbox
+                        id="include-exit-load-details-sif-pms-aif"
+                        checked={includeExitLoadDetails}
+                        onCheckedChange={(checked) => setIncludeExitLoadDetails(checked === true)}
+                      />
+                      <label
+                        htmlFor="include-exit-load-details-sif-pms-aif"
+                        className="cursor-pointer text-sm font-medium leading-5"
+                      >
+                        Include Exit Load details in the report and PDF
+                      </label>
+                    </div>
+                  )}
                   {hasCompleteSelection && !sifHoldingsLoading && (
                     <div className="flex justify-end pt-1">
                       <button

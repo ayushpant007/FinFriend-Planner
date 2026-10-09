@@ -390,6 +390,109 @@ function ReportSection({
   );
 }
 
+function getPublishedExitLoadTerms(data: JsonRecord): string | null {
+  const directPaths = [
+    "scheme_details.exit_load",
+    "fees.exit_load",
+    "fee_details.exit_load",
+    "exit_load",
+    "exitLoad",
+    "entry.exit_load",
+    "entry.exitLoad",
+    "entry.Exit Load",
+  ];
+
+  for (const path of directPaths) {
+    const value = getPath(data, path);
+    if (hasDisplayValue(value)) {
+      return typeof value === "string" ? value.trim() : JSON.stringify(value) ?? String(value);
+    }
+  }
+
+  const entry = isRecord(data.entry) ? data.entry : {};
+  for (const [key, value] of Object.entries(entry)) {
+    if (key.toLowerCase().replace(/[^a-z]/g, "") === "exitload" && hasDisplayValue(value)) {
+      return typeof value === "string" ? value.trim() : JSON.stringify(value) ?? String(value);
+    }
+  }
+
+  const textBlocks = [
+    ...(typeof data.description === "string" ? [data.description] : []),
+    ...asList(data.paragraphs).filter((item): item is string => typeof item === "string"),
+  ];
+  const matchingParagraph = textBlocks.find((text) => /\bexit\s+load\b/i.test(text));
+  if (matchingParagraph) return matchingParagraph.trim();
+
+  for (const table of asList(data.tables)) {
+    for (const row of asList(table)) {
+      const cells = asList(row)
+        .filter((cell): cell is string => typeof cell === "string")
+        .map((cell) => cell.trim())
+        .filter(Boolean);
+      if (!cells.some((cell) => /\bexit\s+load\b/i.test(cell))) continue;
+      const detailCells = cells.filter((cell) => !/^exit\s+load\s*:?\s*$/i.test(cell));
+      if (detailCells.length > 0) return cells.join(" — ");
+    }
+  }
+
+  return null;
+}
+
+function ExitLoadDetailsContent({
+  sourceTerms,
+  unavailableMessage,
+}: {
+  sourceTerms: string | null;
+  unavailableMessage: string;
+}) {
+  if (!sourceTerms) {
+    return (
+      <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-100">
+        {unavailableMessage}
+      </p>
+    );
+  }
+
+  const schedule = parseExitLoadSchedule(sourceTerms);
+  return (
+    <div className="space-y-3">
+      <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-800">
+        <table className="w-full min-w-[420px] border-collapse text-left text-xs">
+          <thead className="bg-slate-50 dark:bg-slate-800">
+            <tr>
+              <th scope="col" className="px-3 py-2 font-semibold text-slate-500 dark:text-slate-400">
+                Redemption checkpoint
+              </th>
+              <th scope="col" className="px-3 py-2 font-semibold text-slate-500 dark:text-slate-400">
+                Source-reported Exit Load
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {schedule.map((period) => (
+              <tr key={period.key} className="border-t border-slate-100 dark:border-slate-700">
+                <th scope="row" className="px-3 py-2 font-medium text-slate-700 dark:text-slate-200">
+                  {period.label}
+                </th>
+                <td className="whitespace-pre-line break-words px-3 py-2 text-slate-700 dark:text-slate-200">
+                  {period.value}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
+        The source wording is retained below. Missing terms do not mean that no Exit Load applies.
+      </p>
+      <p className="whitespace-pre-line break-words rounded-lg bg-slate-50 px-3 py-2 text-xs leading-5 text-slate-600 dark:bg-slate-800/70 dark:text-slate-300">
+        <span className="font-semibold">Source terms: </span>
+        {sourceTerms}
+      </p>
+    </div>
+  );
+}
+
 function SifSectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <div className="report-section-heading mb-5 border-b-2 border-[#c9ad70] pb-2">
@@ -584,6 +687,7 @@ function SifResearchReport({
   investorDetails,
   embedded = false,
   showBrandingHeader = true,
+  includeExitLoadDetails = false,
 }: {
   data: JsonRecord;
   title: string;
@@ -592,6 +696,7 @@ function SifResearchReport({
   investorDetails: InvestorDetails;
   embedded?: boolean;
   showBrandingHeader?: boolean;
+  includeExitLoadDetails?: boolean;
 }) {
   const ReportRoot = embedded ? "article" : "main";
   const current = isRecord(data.current_data) ? data.current_data : {};
@@ -632,10 +737,7 @@ function SifResearchReport({
       ? `${numberValue(expense.value)!.toFixed(2)}%`
       : "";
   const minimumInvestment = getPath(data, "scheme_details.minimum_initial_investment");
-  const exitLoad = getPath(data, "scheme_details.exit_load");
-  const exitLoadSchedule = hasDisplayValue(exitLoad)
-    ? parseExitLoadSchedule(String(exitLoad))
-    : [];
+  const exitLoad = getPublishedExitLoadTerms(data);
   const summaryMetrics = [
     {
       label: "Latest NAV",
@@ -763,33 +865,13 @@ function SifResearchReport({
             </section>
           )}
 
-          {hasDisplayValue(exitLoad) && (
+          {includeExitLoadDetails && (
             <section>
-              <SifSectionTitle>Fees &amp; charges</SifSectionTitle>
-              <div className="overflow-x-auto rounded-md border border-[#eceef0] dark:border-slate-800">
-                <table className="w-full min-w-[420px] border-collapse text-left text-[11px]">
-                  <thead className="bg-[#f6f7f8] dark:bg-slate-900">
-                    <tr>
-                      <th scope="col" className="px-3 py-2 font-semibold text-[#6e7882] dark:text-slate-400">Redemption checkpoint</th>
-                      <th scope="col" className="px-3 py-2 font-semibold text-[#6e7882] dark:text-slate-400">Applicable Exit Load terms</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {exitLoadSchedule.map((period) => (
-                      <tr key={period.key} className="border-t border-[#eceef0] dark:border-slate-800">
-                        <th scope="row" className="px-3 py-2 font-medium text-[#101522] dark:text-slate-100">{period.label}</th>
-                        <td className="whitespace-pre-line break-words px-3 py-2 font-semibold text-[#101522] dark:text-slate-100">{period.value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="mt-2 text-[10px] text-[#7c858e] dark:text-slate-500">
-                Each row includes all disclosed tiers within that cumulative period. The 3-month checkpoint maps to 90 days; the original source wording is retained below.
-              </p>
-              <p className="mt-1 whitespace-pre-line break-words text-[10px] text-[#6e7882] dark:text-slate-400">
-                <span className="font-semibold">Source terms: </span>{String(exitLoad)}
-              </p>
+              <SifSectionTitle>Exit Load details</SifSectionTitle>
+              <ExitLoadDetailsContent
+                sourceTerms={exitLoad}
+                unavailableMessage="Exit Load terms are not present in the selected SIF source. This does not confirm that no Exit Load applies."
+              />
             </section>
           )}
 
@@ -905,34 +987,45 @@ function PmsSourceReport({
   router,
   investorDetails,
   embedded = false,
+  includeExitLoadDetails = false,
 }: {
   data: JsonRecord;
   productName: string;
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
   embedded?: boolean;
+  includeExitLoadDetails?: boolean;
 }) {
   const ReportRoot = embedded ? "article" : "main";
   const sourceUrl = String(data.sourceUrl ?? "");
   const title = String(data.title ?? productName);
   const description = String(data.description ?? "");
   const headings = asList(data.headings).filter(
-    (item): item is string => typeof item === "string" && item.trim().length > 0,
+    (item): item is string =>
+      typeof item === "string" &&
+      item.trim().length > 0 &&
+      !/\bexit\s+load\b/i.test(item),
   );
   const paragraphs = asList(data.paragraphs).filter(
-    (item): item is string => typeof item === "string" && item.trim().length > 0,
+    (item): item is string =>
+      typeof item === "string" &&
+      item.trim().length > 0 &&
+      !/\bexit\s+load\b/i.test(item),
   );
   const tables = asList(data.tables)
     .filter(Array.isArray)
     .map((table) =>
       table
         .filter(Array.isArray)
-        .map((row) => row.filter((cell): cell is string => typeof cell === "string")),
+        .map((row) => row.filter((cell): cell is string => typeof cell === "string"))
+        .filter((row) => !row.some((cell) => /\bexit\s+load\b/i.test(cell))),
     )
     .filter((table) => table.length > 0);
+  const displayDescription = /\bexit\s+load\b/i.test(description) ? "" : description;
   const fetchedAt = data.fetchedAt ? formatDate(data.fetchedAt) : "Just now";
+  const exitLoadTerms = getPublishedExitLoadTerms(data);
   const hasReadableText =
-    (typeof data.description === "string" && data.description.trim().length > 0) ||
+    displayDescription.trim().length > 0 ||
     paragraphs.some((paragraph) => paragraph.trim().length > 0);
 
   return (
@@ -1006,7 +1099,7 @@ function PmsSourceReport({
                   </div>
                   <span className="hidden rounded-full bg-[#e4f1ef] px-3 py-1.5 text-xs font-semibold text-[#0b7772] sm:inline-flex">No local PMS template</span>
                 </div>
-                {description && <p className="rounded-xl bg-[#f4f8f8] p-4 text-sm leading-6 text-slate-600 dark:bg-slate-800/70 dark:text-slate-300">{description}</p>}
+                {displayDescription && <p className="rounded-xl bg-[#f4f8f8] p-4 text-sm leading-6 text-slate-600 dark:bg-slate-800/70 dark:text-slate-300">{displayDescription}</p>}
                 {paragraphs.some((paragraph) => paragraph.trim().length > 0) && (
                   <div className="mt-6 space-y-4">
                     {paragraphs.filter((paragraph) => paragraph.trim().length > 0).map((paragraph, index) => (
@@ -1066,6 +1159,21 @@ function PmsSourceReport({
               ))}
             </div>
           </section>
+        )}
+
+        {includeExitLoadDetails && (
+          <ReportSection
+            number="05"
+            icon={Info}
+            title="Exit Load details"
+            description="Terms are shown only when published in the fetched PMS source."
+            className="mt-7"
+          >
+            <ExitLoadDetailsContent
+              sourceTerms={exitLoadTerms}
+              unavailableMessage="No Exit Load terms were found in the fetched PMS source. Check the manager's current official documents; missing data does not mean that no Exit Load applies."
+            />
+          </ReportSection>
         )}
 
         {!embedded && <ImportantDisclosure categories={["PMS"]} />}
@@ -1193,15 +1301,18 @@ function AifStandardReport({
   router,
   investorDetails,
   embedded = false,
+  includeExitLoadDetails = false,
 }: {
   data: JsonRecord;
   productName: string;
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
   embedded?: boolean;
+  includeExitLoadDetails?: boolean;
 }) {
   const ReportRoot = embedded ? "article" : "main";
   const entry = isRecord(data.entry) ? data.entry : {};
+  const exitLoadTerms = getPublishedExitLoadTerms(data);
   const value = (key: string) => {
     const current = entry[key];
     return hasValue(current) ? String(current) : "Data Not Available";
@@ -1323,6 +1434,20 @@ function AifStandardReport({
           </div>
         </ReportSection>
 
+        {includeExitLoadDetails && (
+          <ReportSection
+            number="05"
+            icon={Info}
+            title="Exit Load details"
+            description="The uploaded AIF registry is checked for fund-specific terms; no standard Exit Load assumption is substituted."
+          >
+            <ExitLoadDetailsContent
+              sourceTerms={exitLoadTerms}
+              unavailableMessage="The uploaded SEBI registry does not include Exit Load terms for this AIF. Check its official offering documents; missing registry data does not mean that no Exit Load applies."
+            />
+          </ReportSection>
+        )}
+
         {!embedded && (
           <ImportantDisclosure
             categories={["AIF"]}
@@ -1340,12 +1465,14 @@ function InvestmentProductReport({
   investorDetails,
   embedded = false,
   showSifBrandingHeader = true,
+  includeExitLoadDetails = false,
 }: {
   selection: ReportSelection;
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
   embedded?: boolean;
   showSifBrandingHeader?: boolean;
+  includeExitLoadDetails?: boolean;
 }) {
   const sifProduct =
     selection.category === "SIF"
@@ -1525,6 +1652,7 @@ function InvestmentProductReport({
         router={router}
         investorDetails={investorDetails}
         embedded={embedded}
+        includeExitLoadDetails={includeExitLoadDetails}
       />
     );
   }
@@ -1537,6 +1665,7 @@ function InvestmentProductReport({
         router={router}
         investorDetails={investorDetails}
         embedded={embedded}
+        includeExitLoadDetails={includeExitLoadDetails}
       />
     );
   }
@@ -1550,6 +1679,7 @@ function InvestmentProductReport({
       investorDetails={investorDetails}
       embedded={embedded}
       showBrandingHeader={showSifBrandingHeader}
+      includeExitLoadDetails={includeExitLoadDetails}
     />
   );
 }
@@ -1559,11 +1689,13 @@ function ConsolidatedProductReports({
   invalidCount,
   router,
   investorDetails,
+  includeExitLoadDetails,
 }: {
   selections: ReportSelection[];
   invalidCount: number;
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
+  includeExitLoadDetails: boolean;
 }) {
   const hasSifSelection = selections.some((selection) => selection.category === "SIF");
 
@@ -1653,6 +1785,7 @@ function ConsolidatedProductReports({
                 investorDetails={investorDetails}
                 embedded
                 showSifBrandingHeader={index === 0}
+                includeExitLoadDetails={includeExitLoadDetails}
               />
             </section>
           ))
@@ -1746,6 +1879,7 @@ function SifPmsAifReportContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
+  const includeExitLoadDetails = searchParams.get("includeExitLoadDetails") === "1";
   const { selections, invalidCount } = useMemo(
     () => parseReportSelections(queryString),
     [queryString],
@@ -1866,6 +2000,7 @@ function SifPmsAifReportContent() {
   const portfolio = data && isRecord(data.portfolio) ? data.portfolio : null;
   const scheme = data && isRecord(data.scheme_details) ? data.scheme_details : null;
   const term = data && isRecord(data.fund_term) ? data.fund_term : null;
+  const exitLoadTerms = data ? getPublishedExitLoadTerms(data) : null;
   const hasSelection = Boolean(categoryParam && productParam);
 
   if (isConsolidatedSelection) {
@@ -1875,6 +2010,7 @@ function SifPmsAifReportContent() {
         invalidCount={invalidCount}
         router={router}
         investorDetails={investorDetails}
+        includeExitLoadDetails={includeExitLoadDetails}
       />
     );
   }
@@ -1978,6 +2114,7 @@ function SifPmsAifReportContent() {
         productName={productParam ?? "Selected PMS"}
         router={router}
         investorDetails={investorDetails}
+        includeExitLoadDetails={includeExitLoadDetails}
       />
     );
   }
@@ -1989,6 +2126,7 @@ function SifPmsAifReportContent() {
         productName={productParam ?? "Selected AIF"}
         router={router}
         investorDetails={investorDetails}
+        includeExitLoadDetails={includeExitLoadDetails}
       />
     );
   }
@@ -2002,6 +2140,7 @@ function SifPmsAifReportContent() {
         category={category}
         router={router}
         investorDetails={investorDetails}
+        includeExitLoadDetails={includeExitLoadDetails}
       />
     );
   }
@@ -2217,9 +2356,11 @@ function SifPmsAifReportContent() {
         {scheme && (
           <div className="grid gap-6 lg:grid-cols-2">
             <ReportSection number="11" icon={WalletCards} title="Fees & charges" description="Fees and minimums as stated in the source.">
-              <InfoGrid rows={directRows(scheme).concat(
+              <InfoGrid rows={directRows(scheme)
+                .filter((row) => !/exit\s*load/i.test(row.label))
+                .concat(
                 Object.entries(scheme)
-                  .filter(([key, value]) => isRecord(value) && ["management_fee", "performance_fee", "exit_load", "minimum_commitments", "minimum_commitment"].includes(key))
+                  .filter(([key, value]) => isRecord(value) && ["management_fee", "performance_fee", "minimum_commitments", "minimum_commitment"].includes(key))
                   .map(([key, value]) => ({ label: formatKey(key), value: JSON.stringify(value).replace(/[{}"]/g, "").replace(/,/g, " • ") })),
               )} />
             </ReportSection>
@@ -2244,6 +2385,26 @@ function SifPmsAifReportContent() {
                 </div>
               ))}
             </div>
+          </ReportSection>
+        )}
+
+        {includeExitLoadDetails && (
+          <ReportSection
+            number="14"
+            icon={Info}
+            title="Exit Load details"
+            description="Source-reported terms only; missing data is not confirmation that no Exit Load applies."
+          >
+            <ExitLoadDetailsContent
+              sourceTerms={exitLoadTerms}
+              unavailableMessage={
+                category === "PMS"
+                  ? "No Exit Load terms were found in the fetched PMS source. Check the manager's current official documents; missing data does not mean that no Exit Load applies."
+                  : category === "AIF"
+                    ? "The uploaded SEBI registry does not include Exit Load terms for this AIF. Check its official offering documents; missing registry data does not mean that no Exit Load applies."
+                    : "Exit Load terms are not present in the selected SIF source. This does not confirm that no Exit Load applies."
+              }
+            />
           </ReportSection>
         )}
 

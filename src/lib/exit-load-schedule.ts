@@ -70,6 +70,29 @@ function normalizeTimeWords(text: string) {
     .replace(/\btwelve\s+(days?|months?|years?)\b/gi, "12 $1");
 }
 
+function hasUnitSpecificNoLoadException(text: string) {
+  return (
+    /\b(?:qualifying|eligible|specified|particular|specific)\s+units?\b|\bunits?\s+(?:qualifying|eligible|specified|particular|specific)\b/i.test(text) ||
+    /\b(?:redemption|redeem(?:ed|ing)?|units?)\b[^.;]{0,100}\d+(?:\.\d+)?\s*%/i.test(text)
+  );
+}
+
+function hasUnassignableNoLoadClause(clause: string) {
+  const normalized = normalizeTimeWords(clause.toLowerCase());
+  if (!NO_LOAD_PATTERN.test(normalized)) return false;
+  return (
+    /(?:exit\s+load(?:\s+of)?|load\s+(?:of|@))\s*\d+(?:\.\d+)?\s*%/i.test(normalized) ||
+    hasUnitSpecificNoLoadException(normalized)
+  );
+}
+
+function findExitLoadRate(text: string) {
+  const tiedToExitLoad = text.match(
+    /(?:exit\s+load(?:\s+of)?|load\s+(?:of|@))[^%]{0,100}?(\d+(?:\.\d+)?\s*%)/i,
+  );
+  return tiedToExitLoad?.[1] ?? text.match(RATE_PATTERN)?.[0] ?? null;
+}
+
 function durationInMonths(value: string, unit: string) {
   const amount = Number(value);
   const normalizedUnit = unit.toLowerCase();
@@ -88,15 +111,12 @@ function parseTerm(clause: string): ExitLoadTerm | null {
   const normalized = normalizeTimeWords(clause.toLowerCase());
   const noLoadMatch = normalized.match(NO_LOAD_PATTERN);
   const isNoLoad = Boolean(noLoadMatch);
-  const hasAmbiguousChargeAndExemption =
-    isNoLoad &&
-    /(?:exit\s+load(?:\s+of)?|load\s+(?:of|@))\s*\d+(?:\.\d+)?\s*%/i.test(normalized);
-  if (hasAmbiguousChargeAndExemption) return null;
+  if (hasUnassignableNoLoadClause(normalized)) return null;
 
-  const rateMatch = normalized.match(RATE_PATTERN);
-  if (!isNoLoad && !rateMatch) return null;
+  const rate = findExitLoadRate(normalized);
+  if (!isNoLoad && !rate) return null;
 
-  const value = isNoLoad ? "No Exit Load" : rateMatch![0].replace(/\s+/g, "");
+  const value = isNoLoad ? "No Exit Load" : rate!.replace(/\s+/g, "");
   const betweenMatch = normalized.match(
     /\b(?:between|from)\s+(\d+(?:\.\d+)?)\s*-?\s*(days?|months?|years?)\s+(?:and|to)\s+(\d+(?:\.\d+)?)\s*-?\s*(days?|months?|years?)\b/i,
   );
@@ -157,6 +177,7 @@ function splitSourceTerms(source: string) {
   const normalized = normalizeTimeWords(normalizeExitLoadText(source))
     .replace(/[•●▪]/g, ";")
     .replace(/\n\s*[lI]\s+(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|\d+(?:\.\d+)?\s*%))/gi, "\n; ")
+    .replace(/\n+/g, "; ")
     .replace(
       /\s+and\s+(?=(?:no\s+exit\s+load\b|no\s+load\b|nil\b|\d+(?:\.\d+)?\s*%[^,;\n]{0,120}\b(?:within|after|beyond|between|from|thereafter|upto|up to|before|until|till)\b))/gi,
       "; ",
@@ -166,7 +187,7 @@ function splitSourceTerms(source: string) {
       "; ",
     )
     .replace(
-      /\.(?=\s*(?:no\s+exit\s+load\b|no\s+load\b|nil\b|zero(?:\s+exit\s+load)?\b|not\s+applicable\b|\d+(?:\.\d+)?\s*%))/gi,
+      /(?<!\d)\.(?=\s*(?:no\s+exit\s+load\b|no\s+load\b|nil\b|zero(?:\s+exit\s+load)?\b|not\s+applicable\b|\d+(?:\.\d+)?\s*%))/gi,
       ";",
     )
     .replace(/\s+/g, " ")
@@ -259,13 +280,7 @@ function describeTerm(term: ExitLoadTerm) {
 
 export function parseExitLoadSchedule(source: string | null | undefined): ExitLoadScheduleEntry[] {
   const clauses = typeof source === "string" ? splitSourceTerms(source) : [];
-  const hasAmbiguousClause = clauses.some((clause) => {
-    const noLoadMatch = clause.match(NO_LOAD_PATTERN);
-    return Boolean(
-      noLoadMatch &&
-      /(?:exit\s+load(?:\s+of)?|load\s+(?:of|@))\s*\d+(?:\.\d+)?\s*%/i.test(clause),
-    );
-  });
+  const hasAmbiguousClause = clauses.some(hasUnassignableNoLoadClause);
   const terms = clauses.map(parseTerm).filter((term): term is ExitLoadTerm => term !== null);
   applyTierStarts(terms);
   const positiveBoundaries = terms
@@ -287,7 +302,7 @@ export function parseExitLoadSchedule(source: string | null | undefined): ExitLo
         return {
           key: checkpoint.key,
           label: checkpoint.label,
-          value: "Source wording combines a rate and a no-load condition; see the original terms.",
+          value: "Source condition that cannot be assigned to a period; see the original terms.",
           status: "partial",
         };
       }
@@ -301,7 +316,7 @@ export function parseExitLoadSchedule(source: string | null | undefined): ExitLo
       key: checkpoint.key,
       label: checkpoint.label,
       value: hasAmbiguousClause
-        ? `${value}; another source clause combines a rate and a no-load condition, so that clause was not assigned to a period.`
+        ? `${value}; a source condition that cannot be assigned to this period is also present; see the original terms.`
         : termsCoverWindow
           ? value
           : `${value}; Other timing in this period is not specified by source.`,
