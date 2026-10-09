@@ -1241,6 +1241,26 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
                     onBenchmarkData={handleBenchmarkData}
                     hideTypeAndMutualFund
                    />
+                {hasSelectedFundsForExitLoad && (
+                  <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+                    <Checkbox
+                      id="include-exit-load-details-full-planner"
+                      checked={reportSections.exitLoadDetails}
+                      onCheckedChange={(checked) =>
+                        setReportSections((previous) => ({
+                          ...previous,
+                          exitLoadDetails: checked === true,
+                        }))
+                      }
+                    />
+                    <Label
+                      htmlFor="include-exit-load-details-full-planner"
+                      className="cursor-pointer text-sm font-medium leading-5"
+                    >
+                      Include Exit Load details in the report and PDF
+                    </Label>
+                  </div>
+                )}
               </div>
             </div>
             <div className="xl:col-span-2">
@@ -1307,10 +1327,8 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
                   { id: 'equityWeightAnalysis', label: 'Equity Fund Weight Analysis', allocationOnly: true },
                   { id: 'debtWeightAnalysis', label: 'Debt Fund Weight Analysis', allocationOnly: true },
                   { id: 'hybridWeightAnalysis', label: 'Hybrid Fund Weight Analysis', allocationOnly: true },
-                   { id: 'exitLoadDetails', label: 'Include Exit Load Details', allocationOnly: false },
                  ].filter(section =>
-                    (isAllocationView ? section.allocationOnly : true) &&
-                    (section.id !== 'exitLoadDetails' || (!isAllocationView && hasSelectedFundsForExitLoad))
+                     isAllocationView ? section.allocationOnly : true
                  ).map((section) => (
                   <div key={section.id} className="flex items-center space-x-3 p-3 glass rounded-xl border border-transparent hover:border-primary/30 transition-all duration-200">
                     <Checkbox 
