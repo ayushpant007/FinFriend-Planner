@@ -85,6 +85,14 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
   const [retirementInputs, setRetirementInputs] = useState<RetirementInputs>(initialRetirementInputs);
   const [assetAllocationProfile, setAssetAllocationProfile] = useState<AssetAllocationProfile>(initialAssetAllocation);
   const [fundAllocations, setFundAllocations] = useState<FundAllocation[]>(initialFundAllocations);
+  const hasSelectedFundsForExitLoad = fundAllocations.some(
+    (allocation) =>
+      Boolean(
+        allocation.schemeCode.trim() &&
+        allocation.schemeName.trim() &&
+        allocation.fundName.trim(),
+      ),
+  );
   const [chartDataCache, setChartDataCache] = useState<{
     equity?: import('@/lib/types').ChartDataPoint[];
     debt?: import('@/lib/types').ChartDataPoint[];
@@ -585,7 +593,7 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
         solutionOrientedWeightAnalysis: reportSections.solutionOrientedWeightAnalysis && fundAllocations.some(a => categoryMatches(a.fundCategory, 'Solution') && a.schemeCode),
         othersWeightAnalysis: reportSections.othersWeightAnalysis && fundAllocations.some(a => (categoryMatches(a.fundCategory, 'Other') || categoryMatches(a.fundCategory, 'Commodities')) && a.schemeCode),
         liquidAssetAllocation: reportSections.liquidAssetAllocation,
-        exitLoadDetails: false,
+        exitLoadDetails: reportSections.exitLoadDetails,
       };
 
       const allocationReportData: SipOptimizerReportData & { goalsWithCalculations: GoalWithCalculations[] } = {
@@ -1142,6 +1150,26 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
                 hideTypeAndMutualFund
                 viewMode={viewMode}
                />
+            {hasSelectedFundsForExitLoad && (
+              <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+                <Checkbox
+                  id="include-exit-load-details-allocation"
+                  checked={reportSections.exitLoadDetails}
+                  onCheckedChange={(checked) =>
+                    setReportSections((previous) => ({
+                      ...previous,
+                      exitLoadDetails: checked === true,
+                    }))
+                  }
+                />
+                <Label
+                  htmlFor="include-exit-load-details-allocation"
+                  className="cursor-pointer text-sm font-medium leading-5"
+                >
+                  Include Exit Load details in the report and PDF
+                </Label>
+              </div>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
@@ -1281,8 +1309,8 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
                   { id: 'hybridWeightAnalysis', label: 'Hybrid Fund Weight Analysis', allocationOnly: true },
                    { id: 'exitLoadDetails', label: 'Include Exit Load Details', allocationOnly: false },
                  ].filter(section =>
-                   (isAllocationView ? section.allocationOnly : true) &&
-                   (section.id !== 'exitLoadDetails' || fundAllocations.length > 0)
+                    (isAllocationView ? section.allocationOnly : true) &&
+                    (section.id !== 'exitLoadDetails' || (!isAllocationView && hasSelectedFundsForExitLoad))
                  ).map((section) => (
                   <div key={section.id} className="flex items-center space-x-3 p-3 glass rounded-xl border border-transparent hover:border-primary/30 transition-all duration-200">
                     <Checkbox 
