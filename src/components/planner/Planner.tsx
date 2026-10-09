@@ -88,9 +88,9 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
   const hasSelectedFundsForExitLoad = fundAllocations.some(
     (allocation) =>
       Boolean(
-        allocation.schemeCode.trim() &&
-        allocation.schemeName.trim() &&
-        allocation.fundName.trim(),
+        String(allocation.schemeCode ?? "").trim() &&
+        String(allocation.schemeName ?? "").trim() &&
+        String(allocation.fundName ?? "").trim(),
       ),
   );
   const [chartDataCache, setChartDataCache] = useState<{

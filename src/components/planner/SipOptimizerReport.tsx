@@ -751,7 +751,9 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
   const [otherChartData, setOtherChartData] = useState<ChartDataPoint[] | null>(data.chartDataCache?.other ?? null);
 
   const [exitLoadResults, setExitLoadResults] = useState<FundExitLoadResult[]>([]);
-  const [isLoadingExitLoads, setIsLoadingExitLoads] = useState((data.fundAllocations?.length ?? 0) > 0);
+  const [isLoadingExitLoads, setIsLoadingExitLoads] = useState(
+    sections.exitLoadDetails && (data.fundAllocations?.length ?? 0) > 0,
+  );
   const exitLoadLookupRequestRef = useRef<Promise<void>>(Promise.resolve());
   const uniqueExitLoadAllocations = useMemo(() => {
     const seen = new Set<string>();
@@ -773,7 +775,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
       planType: String(allocation.planType ?? ''),
     }));
 
-    if (funds.length === 0) {
+    if (!sections.exitLoadDetails || funds.length === 0) {
       setExitLoadResults([]);
       setIsLoadingExitLoads(false);
       exitLoadLookupRequestRef.current = Promise.resolve();
@@ -814,7 +816,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
     return () => {
       cancelled = true;
     };
-  }, [uniqueExitLoadAllocations]);
+  }, [sections.exitLoadDetails, uniqueExitLoadAllocations]);
   
 
   const handlePrint = () => {

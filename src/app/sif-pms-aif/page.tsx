@@ -603,21 +603,19 @@ export default function SifPmsAifPage() {
                       </div>
                     );
                   })}
-                  {hasCompleteSelection && (
-                    <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
-                      <Checkbox
-                        id="include-exit-load-details-sif-pms-aif"
-                        checked={includeExitLoadDetails}
-                        onCheckedChange={(checked) => setIncludeExitLoadDetails(checked === true)}
-                      />
-                      <label
-                        htmlFor="include-exit-load-details-sif-pms-aif"
-                        className="cursor-pointer text-sm font-medium leading-5"
-                      >
-                        Include Exit Load details in the report and PDF
-                      </label>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+                    <Checkbox
+                      id="include-exit-load-details-sif-pms-aif"
+                      checked={includeExitLoadDetails}
+                      onCheckedChange={(checked) => setIncludeExitLoadDetails(checked === true)}
+                    />
+                    <label
+                      htmlFor="include-exit-load-details-sif-pms-aif"
+                      className="cursor-pointer text-sm font-medium leading-5"
+                    >
+                      Include Exit Load details in the report and PDF
+                    </label>
+                  </div>
                   {hasCompleteSelection && !sifHoldingsLoading && (
                     <div className="flex justify-end pt-1">
                       <button
