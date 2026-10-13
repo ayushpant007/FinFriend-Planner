@@ -3,12 +3,17 @@
 import { useState } from "react";
 import { ArrowRight, Download, LoaderCircle, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createPaginatedReportPdf } from "@/lib/paginated-report-pdf";
+import {
+  createPaginatedReportPdf,
+  getInvestmentProposalTitle,
+} from "@/lib/paginated-report-pdf";
 
 type ReportActionsProps = {
   documentId: string;
   detailTargetId: string;
   fileName: string;
+  investorName?: string;
+  titleTargetSelector?: string;
   tone?: "dark" | "light";
 };
 
@@ -25,6 +30,8 @@ export function ReportActions({
   documentId,
   detailTargetId,
   fileName,
+  investorName,
+  titleTargetSelector,
   tone = "light",
 }: ReportActionsProps) {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -66,7 +73,10 @@ export function ReportActions({
         window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()));
       });
 
-      const pdf = await createPaginatedReportPdf(reportElement);
+      const pdf = await createPaginatedReportPdf(reportElement, {
+        title: getInvestmentProposalTitle(investorName),
+        titleTargetSelector,
+      });
       pdf.save(getSafePdfName(fileName));
       setMessage("PDF downloaded.");
     } catch (error) {

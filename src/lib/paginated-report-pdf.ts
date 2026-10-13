@@ -14,7 +14,16 @@ type TableContinuationBlock = PageRange & {
 type PaginatedReportOptions = {
   exportWidth?: number;
   scale?: number;
+  title?: string;
+  titleTargetSelector?: string;
 };
+
+export function getInvestmentProposalTitle(name?: string | null) {
+  const normalizedName = name?.trim().replace(/\s+/g, " ");
+  return normalizedName
+    ? `${normalizedName} Investment Proposal`
+    : "Investment Proposal";
+}
 
 const PDF_PAGE_BREAK_SELECTOR = [
   "header",
@@ -267,6 +276,8 @@ export async function createPaginatedReportPdf(
     format: "a4",
     compress: true,
   });
+  const pdfTitle = options.title?.trim().replace(/\s+/g, " ");
+  if (pdfTitle) pdf.setProperties({ title: pdfTitle });
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const marginX = 12;
@@ -342,6 +353,21 @@ export async function createPaginatedReportPdf(
       clonedReport.style.overflow = "visible";
       clonedReport.style.backgroundColor = "#ffffff";
       clonedReport.style.transform = "none";
+
+      if (pdfTitle) {
+        const titleTarget = options.titleTargetSelector
+          ? clonedReport.querySelector<HTMLElement>(options.titleTargetSelector)
+          : null;
+        if (titleTarget) {
+          titleTarget.textContent = pdfTitle;
+        } else {
+          const titleElement = clonedDocument.createElement("h1");
+          titleElement.textContent = pdfTitle;
+          titleElement.style.cssText =
+            "box-sizing:border-box;width:100%;max-width:100%;margin:0 0 20px;padding:0 8px;color:#1f2937;font-family:Arial,sans-serif;font-size:24px;font-weight:700;line-height:1.25;text-align:center;overflow-wrap:anywhere;";
+          clonedReport.insertBefore(titleElement, clonedReport.firstChild);
+        }
+      }
 
       clonedReport.querySelectorAll<HTMLElement>(".card").forEach((card) => {
         card.style.overflow = "visible";

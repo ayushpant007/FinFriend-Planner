@@ -20,7 +20,10 @@ import { getFundReturns } from '@/ai/flows/fund-returns-flow';
 import { getModelPortfolioData } from '@/ai/flows/model-portfolio-flow';
 import { PortfolioNiftyChart } from '../charts/PortfolioNiftyChart';
 import { useToast } from '@/hooks/use-toast';
-import { createPaginatedReportPdf } from '@/lib/paginated-report-pdf';
+import {
+  createPaginatedReportPdf,
+  getInvestmentProposalTitle,
+} from '@/lib/paginated-report-pdf';
 import { ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, ReferenceLine } from 'recharts';
 
 
@@ -839,7 +842,10 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
         // Wait for all charts and dynamic content to settle
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        const pdf = await createPaginatedReportPdf(reportElement);
+        const pdf = await createPaginatedReportPdf(reportElement, {
+          title: getInvestmentProposalTitle(data.personalDetails.name),
+          titleTargetSelector: "[data-pdf-document-title]",
+        });
 
         pdf.save(`${data.personalDetails.name.replace(/\s+/g, '_')}_financial_report.pdf`);
         toast({ title: "Success", description: "Report downloaded successfully!" });
@@ -1131,7 +1137,12 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
 
 
         <section className="text-center py-6 bg-white pdf-section px-4 print:bg-white print-avoid-break overflow-visible pb-2">
-            <h1 className="text-xl font-bold text-gray-800 tracking-wide">Financial Planning Proposal</h1>
+            <h1
+              data-pdf-document-title
+              className="text-xl font-bold text-gray-800 tracking-wide"
+            >
+              Financial Planning Proposal
+            </h1>
         </section>
 
         {/* Investor Details */}

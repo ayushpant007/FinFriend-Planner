@@ -780,6 +780,7 @@ function SifResearchReport({
                 documentId="sif-report-document"
                 detailTargetId="sif-report-document"
                 fileName={`${title}_report.pdf`}
+                investorName={investorDetails.name}
                 tone="dark"
               />
             </div>
@@ -1042,6 +1043,7 @@ function PmsSourceReport({
                 documentId="pms-report-document"
                 detailTargetId="pms-report-document"
                 fileName={`${productName}_report.pdf`}
+                investorName={investorDetails.name}
               />
             </div>
           </div>
@@ -1353,6 +1355,7 @@ function AifStandardReport({
             documentId="aif-report-document"
             detailTargetId="aif-report-document"
             fileName={`${productName}_report.pdf`}
+            investorName={investorDetails.name}
           />
         </div>
       )}
@@ -1717,6 +1720,8 @@ function ConsolidatedProductReports({
             documentId="consolidated-report-document"
             detailTargetId="consolidated-report-document"
             fileName="sif_pms_aif_reports.pdf"
+            investorName={investorDetails.name}
+            titleTargetSelector="[data-pdf-document-title]"
           />
         )}
       </div>
@@ -1736,7 +1741,9 @@ function ConsolidatedProductReports({
             Financial Friend · consolidated research
           </p>
           <h1 className="mt-2 font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+            <span data-pdf-document-title>
             Selected investment reports
+            </span>
           </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
             {selections.length} {selections.length === 1 ? "product" : "products"} · shown in selection order
@@ -2178,6 +2185,7 @@ function SifPmsAifReportContent() {
           documentId="generic-report-document"
           detailTargetId="generic-report-document"
           fileName={`${title}_report.pdf`}
+          investorName={investorDetails.name}
         />
       </div>
 

@@ -11,4 +11,4 @@
 - [Saved proposal categories](saved-proposal-categories.md) — Keep SIP optimizer distinct from SIF research; the drawer must include both plus PMS and AIF.
 - [AMFI Exit Load verification](amfi-exit-load-source.md) — Use official AMFI scheme details only after exact code, fund, and plan validation; blank is unavailable, not nil.
 - [Headless browser validation](headless-browser-validation.md) — Select the actual app tab in Replit Chromium; CSS text transforms can foil case-sensitive visible-text checks.
-- [PDF report layout expectations](pdf-report-layout.md) — Keep report PDFs aligned, paginate tables cleanly, and repeat table headers only on continuation pages.
+- [PDF report layout expectations](pdf-report-layout.md) — Keep PDFs aligned and paginated cleanly, and title proposals with the entered investor name.

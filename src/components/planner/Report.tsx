@@ -11,7 +11,10 @@ import { Button } from '../ui/button';
 import { Printer, FileText, Wallet, PiggyBank, ShieldCheck, TrendingUp, Bot, CheckCircle, AlertTriangle, Download, Share2, Info } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
-import { createPaginatedReportPdf } from '@/lib/paginated-report-pdf';
+import {
+  createPaginatedReportPdf,
+  getInvestmentProposalTitle,
+} from '@/lib/paginated-report-pdf';
 
 interface Props {
   data: ReportData;
@@ -48,7 +51,9 @@ export function Report({ data }: Props) {
       );
     });
 
-    return createPaginatedReportPdf(reportElement);
+    return createPaginatedReportPdf(reportElement, {
+      title: getInvestmentProposalTitle(data.personalDetails.name),
+    });
   }
 
 

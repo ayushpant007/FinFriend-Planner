@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getReportPageRanges } from "@/lib/paginated-report-pdf";
+import {
+  getInvestmentProposalTitle,
+  getReportPageRanges,
+} from "@/lib/paginated-report-pdf";
+
+test("builds a personalized proposal title from the entered name", () => {
+  assert.equal(getInvestmentProposalTitle("  Surekh   Patel "), "Surekh Patel Investment Proposal");
+  assert.equal(getInvestmentProposalTitle(""), "Investment Proposal");
+  assert.equal(getInvestmentProposalTitle(null), "Investment Proposal");
+});
 
 test("uses nearby content boundaries without exceeding the printable page height", () => {
   assert.deepEqual(getReportPageRanges(2400, 1000, [950, 2050]), [
