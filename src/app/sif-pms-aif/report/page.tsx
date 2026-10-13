@@ -688,6 +688,7 @@ function SifResearchReport({
   embedded = false,
   showBrandingHeader = true,
   includeExitLoadDetails = false,
+  includeHoldingsDetails = false,
 }: {
   data: JsonRecord;
   title: string;
@@ -697,6 +698,7 @@ function SifResearchReport({
   embedded?: boolean;
   showBrandingHeader?: boolean;
   includeExitLoadDetails?: boolean;
+  includeHoldingsDetails?: boolean;
 }) {
   const ReportRoot = embedded ? "article" : "main";
   const current = isRecord(data.current_data) ? data.current_data : {};
@@ -901,7 +903,7 @@ function SifResearchReport({
             </section>
           )}
 
-          {holdings.length > 0 && (
+          {includeHoldingsDetails && holdings.length > 0 && (
             <section>
               <div className="report-section-lead flex flex-wrap items-baseline justify-between gap-2">
                 <SifSectionTitle>Portfolio holdings</SifSectionTitle>
@@ -1469,6 +1471,7 @@ function InvestmentProductReport({
   embedded = false,
   showSifBrandingHeader = true,
   includeExitLoadDetails = false,
+  includeHoldingsDetails = false,
 }: {
   selection: ReportSelection;
   router: ReturnType<typeof useRouter>;
@@ -1476,6 +1479,7 @@ function InvestmentProductReport({
   embedded?: boolean;
   showSifBrandingHeader?: boolean;
   includeExitLoadDetails?: boolean;
+  includeHoldingsDetails?: boolean;
 }) {
   const sifProduct =
     selection.category === "SIF"
@@ -1683,6 +1687,7 @@ function InvestmentProductReport({
       embedded={embedded}
       showBrandingHeader={showSifBrandingHeader}
       includeExitLoadDetails={includeExitLoadDetails}
+      includeHoldingsDetails={includeHoldingsDetails}
     />
   );
 }
@@ -1693,12 +1698,14 @@ function ConsolidatedProductReports({
   router,
   investorDetails,
   includeExitLoadDetails,
+  includeHoldingsDetails,
 }: {
   selections: ReportSelection[];
   invalidCount: number;
   router: ReturnType<typeof useRouter>;
   investorDetails: InvestorDetails;
   includeExitLoadDetails: boolean;
+  includeHoldingsDetails: boolean;
 }) {
   const hasSifSelection = selections.some((selection) => selection.category === "SIF");
 
@@ -1793,6 +1800,7 @@ function ConsolidatedProductReports({
                 embedded
                 showSifBrandingHeader={index === 0}
                 includeExitLoadDetails={includeExitLoadDetails}
+                includeHoldingsDetails={includeHoldingsDetails}
               />
             </section>
           ))
@@ -1887,6 +1895,7 @@ function SifPmsAifReportContent() {
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
   const includeExitLoadDetails = searchParams.get("includeExitLoadDetails") === "1";
+  const includeHoldingsDetails = searchParams.get("includeHoldingsDetails") === "1";
   const { selections, invalidCount } = useMemo(
     () => parseReportSelections(queryString),
     [queryString],
@@ -2018,6 +2027,7 @@ function SifPmsAifReportContent() {
         router={router}
         investorDetails={investorDetails}
         includeExitLoadDetails={includeExitLoadDetails}
+        includeHoldingsDetails={includeHoldingsDetails}
       />
     );
   }
@@ -2148,6 +2158,7 @@ function SifPmsAifReportContent() {
         router={router}
         investorDetails={investorDetails}
         includeExitLoadDetails={includeExitLoadDetails}
+        includeHoldingsDetails={includeHoldingsDetails}
       />
     );
   }
@@ -2326,7 +2337,7 @@ function SifPmsAifReportContent() {
               {allocationRows.length > 0 ? <AllocationBars rows={allocationRows} /> : <p className="text-sm text-slate-400">Data Not Available</p>}
               {hasValue(portfolioAllocationNote) && <p className="mt-5 text-xs leading-5 text-slate-400">{String(portfolioAllocationNote)}</p>}
             </ReportSection>
-            {holdings.length > 0 && (
+            {includeHoldingsDetails && holdings.length > 0 && (
               <ReportSection number="09" icon={WalletCards} title="Top holdings" description={hasValue(portfolio?.as_of) ? `As of ${formatDate(portfolio?.as_of)}` : "Largest disclosed positions."}>
                 <div className="space-y-1">
                   {holdings.slice(0, 10).map((holding, index) => (

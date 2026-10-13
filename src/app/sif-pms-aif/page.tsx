@@ -168,6 +168,7 @@ export default function SifPmsAifPage() {
   const [submitError, setSubmitError] = useState("");
   const [isSavingProposal, setIsSavingProposal] = useState(false);
   const [includeExitLoadDetails, setIncludeExitLoadDetails] = useState(false);
+  const [includeHoldingsDetails, setIncludeHoldingsDetails] = useState(false);
   const [selections, setSelections] = useState<InvestmentSelection[]>([
     { category: "", investment: "" },
   ]);
@@ -299,6 +300,7 @@ export default function SifPmsAifPage() {
         query.append("product", selection.investment.trim());
       });
       query.set("includeExitLoadDetails", includeExitLoadDetails ? "1" : "0");
+      query.set("includeHoldingsDetails", includeHoldingsDetails ? "1" : "0");
       router.push(`/sif-pms-aif/report?${query.toString()}`);
     } catch (error) {
       setSubmitError(
@@ -603,18 +605,33 @@ export default function SifPmsAifPage() {
                       </div>
                     );
                   })}
-                  <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
-                    <Checkbox
-                      id="include-exit-load-details-sif-pms-aif"
-                      checked={includeExitLoadDetails}
-                      onCheckedChange={(checked) => setIncludeExitLoadDetails(checked === true)}
-                    />
-                    <label
-                      htmlFor="include-exit-load-details-sif-pms-aif"
-                      className="cursor-pointer text-sm font-medium leading-5"
-                    >
-                      Include Exit Load details in the report and PDF
-                    </label>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+                      <Checkbox
+                        id="include-holdings-details-sif-pms-aif"
+                        checked={includeHoldingsDetails}
+                        onCheckedChange={(checked) => setIncludeHoldingsDetails(checked === true)}
+                      />
+                      <label
+                        htmlFor="include-holdings-details-sif-pms-aif"
+                        className="cursor-pointer text-sm font-medium leading-5"
+                      >
+                        Include Holdings details in the report and PDF
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+                      <Checkbox
+                        id="include-exit-load-details-sif-pms-aif"
+                        checked={includeExitLoadDetails}
+                        onCheckedChange={(checked) => setIncludeExitLoadDetails(checked === true)}
+                      />
+                      <label
+                        htmlFor="include-exit-load-details-sif-pms-aif"
+                        className="cursor-pointer text-sm font-medium leading-5"
+                      >
+                        Include Exit Load details in the report and PDF
+                      </label>
+                    </div>
                   </div>
                   {hasCompleteSelection && !sifHoldingsLoading && (
                     <div className="flex justify-end pt-1">

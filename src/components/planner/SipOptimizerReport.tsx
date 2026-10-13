@@ -713,6 +713,85 @@ const FundDetailCard = ({
   );
 };
 
+function StandaloneFundHoldings({ allocation }: { allocation: FundAllocation }) {
+  const [holdings, setHoldings] = useState<TopHolding[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!allocation.schemeCode) {
+      setHoldings([]);
+      setLoading(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setLoading(true);
+    fetch('/api/allocation/top-holdings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        schemeCode: allocation.schemeCode,
+        category: allocation.fundCategory,
+      }),
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Could not load holdings');
+        return response.json();
+      })
+      .then((result) => {
+        if (!cancelled) setHoldings(result.holdings ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setHoldings([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [allocation.schemeCode, allocation.fundCategory]);
+
+  return (
+    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+      <h4 className="mb-3 text-sm font-bold text-blue-900">
+        {allocation.schemeName || allocation.fundName} — Top Holdings
+      </h4>
+      {loading ? (
+        <p className="text-xs text-slate-500">Loading holdings…</p>
+      ) : holdings.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-blue-200 text-left text-blue-800">
+                <th className="py-2 pr-3">#</th>
+                <th className="py-2 pr-3">Company / Instrument</th>
+                <th className="py-2 text-right">% Assets</th>
+              </tr>
+            </thead>
+            <tbody>
+              {holdings.map((holding, index) => (
+                <tr key={`${holding.companyName}-${index}`} className="border-b border-blue-100 last:border-0">
+                  <td className="py-2 pr-3 text-slate-500">{index + 1}</td>
+                  <td className="py-2 pr-3 font-medium text-slate-800">{holding.companyName}</td>
+                  <td className="py-2 text-right font-semibold text-blue-700">
+                    {holding.percentOfAssets.toFixed(2)}%
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-xs text-slate-500">Top holdings data unavailable for this fund.</p>
+      )}
+    </div>
+  );
+}
+
 export function SipOptimizerReport({ data: reportData, isPreview = false }: Props) {
   const data = reportData;
   const router = useRouter();
@@ -734,7 +813,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
     retirementPlanning: true,
     modelPortfolioAnalysis: true,
     riskReturnMetrics: true,
-    topHoldings: true,
+    topHoldings: false,
     equityWeightAnalysis: true,
     debtWeightAnalysis: true,
     hybridWeightAnalysis: true,
@@ -1461,7 +1540,22 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
           </section>
         )}
 
-             {sections.mutualFundPortfolio && data.fundAllocations && data.fundAllocations.length > 0 && (
+        {sections.topHoldings &&
+          (!sections.modelPortfolioAnalysis || !sections.mutualFundPortfolio) &&
+          (data.fundAllocations?.length ?? 0) > 0 && (
+            <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
+              <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
+                <h3 className="font-bold text-gray-700">Top Holdings</h3>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                {data.fundAllocations.map((allocation) => (
+                  <StandaloneFundHoldings key={allocation.id} allocation={allocation} />
+                ))}
+              </div>
+            </section>
+          )}
+
+        {sections.mutualFundPortfolio && data.fundAllocations && data.fundAllocations.length > 0 && (
             <>
             <section className="mt-4 pdf-section print-avoid-break">
                 <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
@@ -1509,7 +1603,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                  </Card>
             </section>
  
-             {sections.modelPortfolioAnalysis && (
+              {sections.modelPortfolioAnalysis && (
                <section className="mt-4 pdf-section px-4 print-avoid-break overflow-visible pb-2">
                 <div className="p-3 rounded-lg bg-gray-100 text-center mb-3 print:bg-gray-100">
                     <h3 className="font-bold text-gray-700">Model Portfolio Analysis</h3>

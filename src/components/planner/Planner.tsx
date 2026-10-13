@@ -128,7 +128,7 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
     retirementPlanning: true,
     modelPortfolioAnalysis: true,
     riskReturnMetrics: true,
-    topHoldings: true,
+    topHoldings: false,
     equityWeightAnalysis: true,
     debtWeightAnalysis: true,
     hybridWeightAnalysis: true,
@@ -1151,23 +1151,37 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
                 viewMode={viewMode}
                />
             {hasSelectedFundsForExitLoad && (
-              <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
-                <Checkbox
-                  id="include-exit-load-details-allocation"
-                  checked={reportSections.exitLoadDetails}
-                  onCheckedChange={(checked) =>
-                    setReportSections((previous) => ({
-                      ...previous,
-                      exitLoadDetails: checked === true,
-                    }))
-                  }
-                />
-                <Label
-                  htmlFor="include-exit-load-details-allocation"
-                  className="cursor-pointer text-sm font-medium leading-5"
-                >
-                  Include Exit Load details in the report and PDF
-                </Label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+                  <Checkbox
+                    id="include-holdings-details-allocation"
+                    checked={reportSections.topHoldings}
+                    onCheckedChange={(checked) =>
+                      setReportSections((previous) => ({
+                        ...previous,
+                        topHoldings: checked === true,
+                      }))
+                    }
+                  />
+                  <Label htmlFor="include-holdings-details-allocation" className="cursor-pointer text-sm font-medium leading-5">
+                    Include Holdings details in the report and PDF
+                  </Label>
+                </div>
+                <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+                  <Checkbox
+                    id="include-exit-load-details-allocation"
+                    checked={reportSections.exitLoadDetails}
+                    onCheckedChange={(checked) =>
+                      setReportSections((previous) => ({
+                        ...previous,
+                        exitLoadDetails: checked === true,
+                      }))
+                    }
+                  />
+                  <Label htmlFor="include-exit-load-details-allocation" className="cursor-pointer text-sm font-medium leading-5">
+                    Include Exit Load details in the report and PDF
+                  </Label>
+                </div>
               </div>
             )}
           </div>
@@ -1242,23 +1256,37 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
                     hideTypeAndMutualFund
                    />
                 {hasSelectedFundsForExitLoad && (
-                  <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
-                    <Checkbox
-                      id="include-exit-load-details-full-planner"
-                      checked={reportSections.exitLoadDetails}
-                      onCheckedChange={(checked) =>
-                        setReportSections((previous) => ({
-                          ...previous,
-                          exitLoadDetails: checked === true,
-                        }))
-                      }
-                    />
-                    <Label
-                      htmlFor="include-exit-load-details-full-planner"
-                      className="cursor-pointer text-sm font-medium leading-5"
-                    >
-                      Include Exit Load details in the report and PDF
-                    </Label>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+                      <Checkbox
+                        id="include-holdings-details-full-planner"
+                        checked={reportSections.topHoldings}
+                        onCheckedChange={(checked) =>
+                          setReportSections((previous) => ({
+                            ...previous,
+                            topHoldings: checked === true,
+                          }))
+                        }
+                      />
+                      <Label htmlFor="include-holdings-details-full-planner" className="cursor-pointer text-sm font-medium leading-5">
+                        Include Holdings details in the report and PDF
+                      </Label>
+                    </div>
+                    <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+                      <Checkbox
+                        id="include-exit-load-details-full-planner"
+                        checked={reportSections.exitLoadDetails}
+                        onCheckedChange={(checked) =>
+                          setReportSections((previous) => ({
+                            ...previous,
+                            exitLoadDetails: checked === true,
+                          }))
+                        }
+                      />
+                      <Label htmlFor="include-exit-load-details-full-planner" className="cursor-pointer text-sm font-medium leading-5">
+                        Include Exit Load details in the report and PDF
+                      </Label>
+                    </div>
                   </div>
                 )}
               </div>
