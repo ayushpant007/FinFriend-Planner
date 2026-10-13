@@ -25,6 +25,7 @@ import {
 import { AppHeader } from "@/components/layout/AppHeader";
 import { ReportActions } from "@/components/sif-pms-aif/ReportActions";
 import { parseExitLoadSchedule } from "@/lib/exit-load-schedule";
+import { removeRepeatedPmsReturnColumns } from "@/lib/pms-report-rendering";
 const financialFriendLogo = "/financial-friend-logo.png";
 import {
   getInvestmentProduct,
@@ -843,16 +844,6 @@ function SifResearchReport({
           </section>
         )}
 
-        {availablePerformanceRows.length > 0 && (
-          <section className="border-b border-[#e0e2e4] bg-white px-8 py-5 sm:px-12 dark:border-slate-800 dark:bg-slate-900">
-            <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-5 sm:gap-y-0">
-              {availablePerformanceRows.map(([label, key]) => (
-                <SifMetric key={key} label={label === "Since Inception" ? <>Since inception<br />return</> : `${label} return`} value={formatReportReturn(returns?.[key])} />
-              ))}
-            </div>
-          </section>
-        )}
-
         <div className="space-y-12 px-8 pb-16 pt-10 sm:px-12 sm:pt-12">
           {strategyRows.length > 0 && (
             <section>
@@ -1015,7 +1006,7 @@ function PmsSourceReport({
       item.trim().length > 0 &&
       !/\bexit\s+load\b/i.test(item),
   );
-  const tables = asList(data.tables)
+  const parsedTables = asList(data.tables)
     .filter(Array.isArray)
     .map((table) =>
       table
@@ -1024,6 +1015,7 @@ function PmsSourceReport({
         .filter((row) => !row.some((cell) => /\bexit\s+load\b/i.test(cell))),
     )
     .filter((table) => table.length > 0);
+  const tables = removeRepeatedPmsReturnColumns(parsedTables);
   const displayDescription = /\bexit\s+load\b/i.test(description) ? "" : description;
   const fetchedAt = data.fetchedAt ? formatDate(data.fetchedAt) : "Just now";
   const exitLoadTerms = getPublishedExitLoadTerms(data);
