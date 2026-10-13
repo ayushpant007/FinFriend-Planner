@@ -9,4 +9,4 @@ Use the investor's entered name followed by “Investment Proposal” as the vis
 
 **Why:** These are client-facing planning reports; clipped or ambiguous pagination makes the information harder to use and can undermine confidence in the plan.
 
-**How to apply:** Verify the actual downloaded PDFs page by page for each report path; do not assume a clean in-app report screen guarantees a clean PDF. Keep screen layout changes separate unless the user also asks for them.
+**How to apply:** Verify the actual downloaded PDFs page by page for each report path; do not assume a clean in-app report screen guarantees a clean PDF. If a literal heading is inside the export root, make the source template render its final dynamic text rather than relying only on a cloned-DOM replacement.

@@ -1141,7 +1141,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
               data-pdf-document-title
               className="text-xl font-bold text-gray-800 tracking-wide"
             >
-              Financial Planning Proposal
+              {getInvestmentProposalTitle(data.personalDetails.name)}
             </h1>
         </section>
 
