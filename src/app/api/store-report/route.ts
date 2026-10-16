@@ -66,22 +66,28 @@ export async function POST(request: NextRequest) {
       sipReport: sanitizedSipReport,
     });
 
-    // Store both reports in parallel
+    // Supabase is the durable source of truth. Keep the local cache as a
+    // best-effort optimization: it may not be writable on a deployed instance.
     const [detailedResult, sipResult] = await Promise.all([
       storeDetailedReport(reportId, sanitizedDetailedReport),
       storeSipOptimizerReport(reportId, sanitizedSipReport),
     ]);
-
-    // Store latest report ID for user
-    if (userId && userId !== 'guest') {
-      await setLatestReportId(userId, reportId);
+    if (!detailedResult.ok || !sipResult.ok) {
+      console.warn('Local report cache write failed; durable Supabase save succeeded.', {
+        reportId,
+        detailedError: detailedResult.error,
+        sipError: sipResult.error,
+      });
     }
 
-    if (!detailedResult.ok || !sipResult.ok) {
-      return NextResponse.json(
-        { error: 'Failed to store one or more reports' },
-        { status: 500 }
-      );
+    if (userId && userId !== 'guest') {
+      const latestResult = await setLatestReportId(userId, reportId);
+      if (!latestResult.ok) {
+        console.warn('Local latest-report cache write failed.', {
+          reportId,
+          error: latestResult.error,
+        });
+      }
     }
 
     // Save to Google Drive (non-blocking, don't fail if Drive save fails)

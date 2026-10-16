@@ -1052,7 +1052,8 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
       // Generate a stable report record ID for the Supabase report history.
       const reportId = `report_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
-      // Store data in Replit Database via API for persistence
+      // Save to durable storage before navigating so a report is never shown
+      // as successfully generated when it cannot be accessed later.
       try {
         const storeResponse = await fetch('/api/store-report', {
           method: 'POST',
@@ -1067,10 +1068,19 @@ export function Planner({ viewMode = 'full' }: PlannerProps = {}) {
         });
 
         if (!storeResponse.ok) {
-          console.error('Failed to store report data');
+          const result = await storeResponse.json().catch(() => ({}));
+          throw new Error(result.error || 'The proposal could not be saved. Please try again.');
         }
       } catch (storeError) {
         console.error('Error storing report:', storeError);
+        toast({
+          title: "Proposal could not be saved",
+          description: storeError instanceof Error
+            ? storeError.message
+            : "Please check your connection and try again.",
+          variant: "destructive",
+        });
+        return;
       }
 
       // Navigate to report with report ID in URL

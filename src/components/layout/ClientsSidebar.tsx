@@ -93,7 +93,9 @@ export function ClientsSidebar({
     }
   };
 
-  useEffect(() => { loadInvestors(); }, []);
+  useEffect(() => {
+    if (open) void loadInvestors();
+  }, [open]);
 
   const clientGroups = useMemo<InvestorGroup[]>(() => {
     const groups = new Map<string, Investor[]>();
