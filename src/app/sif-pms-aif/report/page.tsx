@@ -391,6 +391,56 @@ function ReportSection({
   );
 }
 
+function ProductFundAnalysisSection({
+  description,
+  cardTitle,
+  headers,
+  rows,
+}: {
+  description: string;
+  cardTitle: string;
+  headers: string[];
+  rows: string[][];
+}) {
+  return (
+    <section className="mt-4 pdf-section print-avoid-break">
+      <div className="mb-3 rounded-lg bg-gray-100 p-3 text-center print:bg-gray-100">
+        <h3 className="font-bold text-gray-700">Fund Details &amp; Analysis</h3>
+      </div>
+      <p className="mb-3 text-xs text-gray-600">{description}</p>
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="border-b border-gray-100 px-5 py-4">
+          <h4 className="text-base font-semibold text-gray-800">{cardTitle}</h4>
+        </div>
+        <div className="overflow-x-auto px-5 pb-4">
+          <table className="w-full min-w-[520px] border-collapse text-xs">
+            <thead>
+              <tr className="bg-gray-50/70 text-left text-[10px] text-gray-600">
+                {headers.map((header, index) => (
+                  <th key={`${header}-${index}`} className="border-b border-gray-200 px-3 py-3 font-medium">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, rowIndex) => (
+                <tr key={`analysis-row-${rowIndex}`} className="border-b border-gray-200 last:border-0">
+                  {headers.map((header, cellIndex) => (
+                    <td key={`${header}-${cellIndex}`} className="px-3 py-3 align-top text-gray-700">
+                      {row[cellIndex] || "—"}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function getPublishedExitLoadTerms(data: JsonRecord): string | null {
   const directPaths = [
     "scheme_details.exit_load",
@@ -876,23 +926,19 @@ function SifResearchReport({
             </section>
           )}
 
-          {availablePerformanceRows.length > 0 && (
-            <section>
-              <SifSectionTitle>Performance returns</SifSectionTitle>
-              <div className="overflow-hidden rounded-[4px] border border-[#e0e2e4] dark:border-slate-700">
-                <div className="grid grid-cols-[1fr_110px] bg-[#f7f7f5] px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#6e7882] dark:bg-slate-800 dark:text-slate-400">
-                  <span>Period</span>
-                  <span className="text-right">Return</span>
-                </div>
-                {availablePerformanceRows.map(([label, key]) => (
-                  <div key={key} className="grid grid-cols-[1fr_110px] border-t border-[#eceef0] px-4 py-2.5 text-[12px] dark:border-slate-800">
-                    <span>{label}</span>
-                    <span className="text-right font-semibold text-[#1d6a4c]">{formatReportReturn(returns?.[key])}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+          <ProductFundAnalysisSection
+            description="This section summarizes the selected SIF using published fund details and performance data."
+            cardTitle="Selected Fund Details & Returns"
+            headers={["Period", "Return"]}
+            rows={
+              availablePerformanceRows.length > 0
+                ? availablePerformanceRows.map(([label, key]) => [
+                    label,
+                    formatReportReturn(returns?.[key]),
+                  ])
+                : [["Published performance", "Data Not Available"]]
+            }
+          />
 
           {includeHoldingsDetails && holdings.length > 0 && (
             <section>
@@ -1016,6 +1062,12 @@ function PmsSourceReport({
     )
     .filter((table) => table.length > 0);
   const tables = removeRepeatedPmsReturnColumns(parsedTables);
+  const trailingReturnsTable = tables.find((table) =>
+    table[0]?.some((cell) => /trailing\s+returns/i.test(cell)),
+  );
+  const otherTables = trailingReturnsTable
+    ? tables.filter((table) => table !== trailingReturnsTable)
+    : tables;
   const displayDescription = /\bexit\s+load\b/i.test(description) ? "" : description;
   const fetchedAt = data.fetchedAt ? formatDate(data.fetchedAt) : "Just now";
   const exitLoadTerms = getPublishedExitLoadTerms(data);
@@ -1129,14 +1181,23 @@ function PmsSourceReport({
           </p>
         )}
 
-        {tables.length > 0 && (
+        {trailingReturnsTable && (
+          <ProductFundAnalysisSection
+            description="This section presents the selected PMS product’s published trailing performance data."
+            cardTitle="Fund Returns & Benchmark"
+            headers={trailingReturnsTable[0] ?? []}
+            rows={trailingReturnsTable.slice(1)}
+          />
+        )}
+
+        {otherTables.length > 0 && (
           <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
             <div className="mb-6 border-b border-slate-200 pb-4 dark:border-slate-800">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0b7772]">Structured source data</p>
               <h2 className="mt-1 font-heading text-xl font-semibold">Tables published on the PMS page</h2>
             </div>
             <div className="grid gap-6 xl:grid-cols-2">
-              {tables.map((table, tableIndex) => (
+              {otherTables.map((table, tableIndex) => (
                 <div key={`table-${tableIndex}`} className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
                   <div className="overflow-x-auto">
                     <table className="w-full min-w-[420px] text-left text-sm">
@@ -1180,26 +1241,6 @@ function PmsSourceReport({
 
 const AIF_STANDARD_ASSUMPTION_NOTE =
   "Standard assumption — this is illustrative and may not be the actual term of the selected AIF.";
-
-function AifInfoGrid({
-  rows,
-}: {
-  rows: { label: string; value: string; source?: string }[];
-}) {
-  return (
-    <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
-      {rows.map((row) => (
-        <div key={row.label} className="border-b border-slate-100 pb-4 dark:border-slate-800">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">{row.label}</p>
-          <p className={`mt-1.5 text-sm font-semibold ${row.value === "Data Not Available" ? "text-slate-400" : "text-[#14263d] dark:text-slate-100"}`}>
-            {row.value}
-          </p>
-          {row.source && <p className="mt-1 text-[11px] text-slate-400">{row.source}</p>}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function AifAssumptionCard({
   label,
@@ -1395,11 +1436,16 @@ function AifStandardReport({
           <InvestorDetailsPanel details={investorDetails} />
         )}
 
-        {registryRows.length > 0 && (
-          <ReportSection number="01" icon={Info} title="AIF registry information" description="Basic details shown from the uploaded SEBI registration workbook.">
-            <AifInfoGrid rows={registryRows} />
-          </ReportSection>
-        )}
+        <ProductFundAnalysisSection
+          description="This section summarizes the selected AIF using the details available in the uploaded SEBI registration workbook."
+          cardTitle="AIF Registry Details"
+          headers={["Fund Detail", "Available Information", "Source"]}
+          rows={
+            registryRows.length > 0
+              ? registryRows.map((row) => [row.label, row.value, row.source ?? ""])
+              : [["AIF registry information", "Data Not Available", "Uploaded registry"]]
+          }
+        />
 
         <ReportSection number="02" icon={WalletCards} title="Investment basics" description="The same standardized assumptions are used for every AIF report.">
           {!embedded && (
