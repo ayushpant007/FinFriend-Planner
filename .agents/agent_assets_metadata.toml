@@ -6,15 +6,88 @@ id = "UFei3hrKmidRoyRXks_2v"
 uri = "file://FinFriend_Planner_PRD.docx"
 type = "word_document"
 title = "FinFriend Planner — Product Requirements Document (PRD)"
+logical_id = "18a0f0e5-c624-46ff-80d8-f4ef27fa78d1"
 
 [[outputs]]
 id = "0QX7_JJdTWkyNtJuGXbCH"
 uri = "file://FinFriend_Planner_PRD_v2.docx"
 type = "word_document"
 title = "FinFriend Planner — PRD v2 (50+ Pages, Fully Filled)"
+logical_id = "d571f572-e061-4b36-ad37-90f9c1c00f68"
 
 [[outputs]]
 id = "y2F_AF4NMUUD4WDjvL9_S"
 uri = "file://FinFriend_Updated_CSVs.zip"
 type = "unspecified"
 title = "FinFriend Updated CSVs (All 10 Files)"
+logical_id = "e165dff6-25e5-43f4-b86e-154ff382ec27"
+
+[[outputs]]
+id = "Dp08JGYMJdGknZyXhm637"
+uri = "file://Mutual%20Fund/Equity_Funds_Holdings.xlsx"
+type = "table"
+title = "Equity Fund Holdings"
+description = "Holdings extracted from the updated Equity fund CSV."
+logical_id = "4cb73af3-3b7f-4040-92f4-99e0636fb026"
+content_hash = "sha256:e666023d2377c094376b2cd596b2688b4c8dff4e411715fea3244445ef80e9d6"
+size = 1826942
+mtime_ms = 1792222636437
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:f7586153-b2c9-4749-83de-4e4b8752e2a0/4cb73af3-3b7f-4040-92f4-99e0636fb026/44336b1b-61b1-473c-ac75-9c1d4c887305"
+storage_version_token = "1792222760984241"
+content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+[[outputs]]
+id = "Hbuntq49fsaWdDLZlN_fP"
+uri = "file://Mutual%20Fund/Debt_Funds_Holdings.xlsx"
+type = "table"
+title = "Debt Fund Holdings"
+description = "Holdings extracted from the updated Debt fund CSV."
+logical_id = "6f8c9833-4ed6-419f-bff8-db7ae37c260d"
+content_hash = "sha256:682656200bf7a61581df2fb9136d69369cf757ea08b796207c2320e0f6f8477c"
+size = 683888
+mtime_ms = 1792222636412
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:f7586153-b2c9-4749-83de-4e4b8752e2a0/6f8c9833-4ed6-419f-bff8-db7ae37c260d/68c76712-1716-42df-b7cf-cdafc8d8a2fb"
+storage_version_token = "1792222762318248"
+content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+[[outputs]]
+id = "V1AWbS58nBoBpeuBqtQNy"
+uri = "file://Mutual%20Fund/Hybrid_Funds_Holdings.xlsx"
+type = "table"
+title = "Hybrid Fund Holdings"
+description = "Holdings extracted from the updated Hybrid fund CSV."
+logical_id = "1c0fd1bf-458b-453b-bd88-0d08d38b618f"
+content_hash = "sha256:9e925c38ed536f7944ef64623f37ff43e061636ea3dedf47b978e0233ed105b5"
+size = 1018541
+mtime_ms = 1792222636452
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:f7586153-b2c9-4749-83de-4e4b8752e2a0/1c0fd1bf-458b-453b-bd88-0d08d38b618f/9bd02f28-9ff3-4041-b68f-2c1906582c0b"
+storage_version_token = "1792222763689662"
+content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+[[outputs]]
+id = "NYhKoctNPTaAR8qj174Ys"
+uri = "file://Mutual%20Fund/Solution_Oriented_Holdings.xlsx"
+type = "table"
+title = "Solution-Oriented Fund Holdings"
+description = "Holdings extracted from the updated Solution-Oriented fund CSV."
+logical_id = "f53ed55b-9986-4cea-a054-65afcb6c66b5"
+content_hash = "sha256:87d53c2c9da09b4e75ee5b302a4168618fe8935780ebb37329b538a6c1c8b9fb"
+size = 638614
+mtime_ms = 1792222636470
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:f7586153-b2c9-4749-83de-4e4b8752e2a0/f53ed55b-9986-4cea-a054-65afcb6c66b5/e43c6d0f-57e6-45e5-b855-0a0ebf15f7b2"
+storage_version_token = "1792222765134675"
+content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+[[outputs]]
+id = "j2zqA1XPG32bjJEueyyQb"
+uri = "file://Mutual%20Fund/Commodities_Funds_Holdings.xlsx"
+type = "table"
+title = "Commodities Fund Holdings"
+description = "Holdings extracted from the updated Commodities fund CSV."
+logical_id = "df028eaa-b465-441a-b6c2-6a11ff2dcda8"
+content_hash = "sha256:67cd63e9193615bb6ef73ee101f778c79d84d41fdcb8ed63794224d5f76a0f89"
+size = 7993
+mtime_ms = 1792222636396
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:f7586153-b2c9-4749-83de-4e4b8752e2a0/df028eaa-b465-441a-b6c2-6a11ff2dcda8/c9319e4f-be6f-405b-adba-3105549136dc"
+storage_version_token = "1792222766414945"
+content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
