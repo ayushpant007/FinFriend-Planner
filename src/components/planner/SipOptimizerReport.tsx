@@ -523,7 +523,7 @@ const FundDetailCard = ({
       </CardHeader>
       
       <CardContent className="p-4 space-y-5">
-        <div className="flex justify-between items-center bg-primary/5 rounded-lg p-3">
+        <div className="pdf-keep-together flex justify-between items-center bg-primary/5 rounded-lg p-3">
           <div className="space-y-0.5">
             <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">SIP AMOUNT</p>
             <p className="text-lg font-black roboto text-primary">{formatCurrency(alloc.sipRequired)}</p>
@@ -540,7 +540,7 @@ const FundDetailCard = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="pdf-keep-together grid grid-cols-3 gap-3">
           {[
             { label: '3Y CAGR', val: returns?.threeYearReturn },
             { label: '5Y CAGR', val: returns?.fiveYearReturn },
@@ -556,7 +556,7 @@ const FundDetailCard = ({
         </div>
 
         {showRiskReturnMetrics && (
-          <div className="py-3 border-y border-dashed border-slate-200">
+          <div className="pdf-keep-together py-3 border-y border-dashed border-slate-200">
             <h4 className="text-[11px] font-black text-amber-700 uppercase tracking-wide mb-3">
               Risk & Return Metrics
             </h4>
@@ -667,7 +667,7 @@ const FundDetailCard = ({
           </div>
         )}
         
-        <div className="pt-2">
+        <div className="pdf-keep-together pt-2">
           <div className="flex items-center justify-between mb-3">
             <p className="text-[10px] font-black text-primary flex items-center gap-1.5 uppercase">
               <TrendingUp className="h-3 w-3" /> 10-Year Performance vs Benchmark

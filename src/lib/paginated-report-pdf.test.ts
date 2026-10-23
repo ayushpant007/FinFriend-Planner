@@ -35,6 +35,33 @@ test("moves a section that starts near the page bottom to the next page", () => 
   ]);
 });
 
+test("keeps multiple report cards intact across page boundaries", () => {
+  const cards = [
+    { start: 850, end: 1250 },
+    { start: 1450, end: 1750 },
+    { start: 1900, end: 2350 },
+  ];
+  const ranges = getReportPageRanges(
+    2800,
+    1000,
+    [850, 1250, 1450, 1750, 1900, 2350],
+    cards,
+  );
+
+  assert.deepEqual(ranges, [
+    { start: 0, end: 850 },
+    { start: 850, end: 1750 },
+    { start: 1750, end: 2350 },
+    { start: 2350, end: 2800 },
+  ]);
+  for (const card of cards) {
+    assert.ok(
+      ranges.some((range) => range.start <= card.start && range.end >= card.end),
+      `Expected card ${card.start}-${card.end} to remain on one page`,
+    );
+  }
+});
+
 test("reserves space for table headers on pages continuing a table", () => {
   const table = { start: 700, end: 2700, headerStart: 700, headerEnd: 780 };
   const ranges = getReportPageRanges(

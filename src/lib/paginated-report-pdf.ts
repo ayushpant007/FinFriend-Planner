@@ -35,6 +35,7 @@ const PDF_PAGE_BREAK_SELECTOR = [
   ".pdf-keep-together",
   ".consolidated-product",
   ".card",
+  "div[class*='rounded'][class*='border']",
   "figure",
   "table thead",
   "table tbody tr",
@@ -43,7 +44,7 @@ const PDF_PAGE_BREAK_SELECTOR = [
 const PDF_CONTENT_BOUNDARY_SELECTOR =
   "table tbody tr,p,li,blockquote,pre,td,th";
 const PDF_KEEP_TOGETHER_SELECTOR =
-  ".print-avoid-break,.pdf-section,.pdf-keep-together,.consolidated-product,section,article,.card,figure,table";
+  ".print-avoid-break,.pdf-section,.pdf-keep-together,.consolidated-product,section,article,.card,div[class*='rounded'][class*='border'],figure,table,.recharts-responsive-container";
 
 const PDF_EXPORT_STYLES = `
   [data-pdf-export-root] {
