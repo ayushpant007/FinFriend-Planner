@@ -74,7 +74,44 @@ const PDF_EXPORT_STYLES = `
   [data-pdf-export-root] th,
   [data-pdf-export-root] p,
   [data-pdf-export-root] a {
-    overflow-wrap: anywhere !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+  }
+  [data-pdf-export-root] .pdf-no-wrap {
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: keep-all !important;
+  }
+  [data-pdf-export-root] .fund-allocation-table {
+    table-layout: fixed !important;
+  }
+  [data-pdf-export-root] .fund-allocation-table th,
+  [data-pdf-export-root] .fund-allocation-table td {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    vertical-align: middle !important;
+  }
+  [data-pdf-export-root] .fund-allocation-table th:nth-child(1),
+  [data-pdf-export-root] .fund-allocation-table td:nth-child(1) {
+    width: 23% !important;
+  }
+  [data-pdf-export-root] .fund-allocation-table th:nth-child(2),
+  [data-pdf-export-root] .fund-allocation-table td:nth-child(2) {
+    width: 18% !important;
+  }
+  [data-pdf-export-root] .fund-allocation-table th:nth-child(3),
+  [data-pdf-export-root] .fund-allocation-table td:nth-child(3),
+  [data-pdf-export-root] .fund-allocation-table th:nth-child(4),
+  [data-pdf-export-root] .fund-allocation-table td:nth-child(4) {
+    width: 12% !important;
+  }
+  [data-pdf-export-root] .fund-allocation-table th:nth-child(5),
+  [data-pdf-export-root] .fund-allocation-table td:nth-child(5) {
+    width: 13% !important;
+  }
+  [data-pdf-export-root] .fund-allocation-table th:nth-child(n+6),
+  [data-pdf-export-root] .fund-allocation-table td:nth-child(n+6) {
+    width: 6.666% !important;
   }
   [data-pdf-export-root] .overflow-x-auto,
   [data-pdf-export-root] .overflow-auto {

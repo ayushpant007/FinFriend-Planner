@@ -318,16 +318,16 @@ const FundAllocationRow = ({ alloc, goalName, data }: { alloc: FundAllocation, g
                 <p className="leading-normal whitespace-normal break-words">{shortenedSchemeName}</p>
             </TableCell>
             <TableCell className="py-3 px-2">{getGoalDisplayName(alloc.goalId)}</TableCell>
-            <TableCell className="py-3 px-2 font-semibold roboto">{formatCurrency(alloc.sipRequired, '')}</TableCell>
-            <TableCell className="py-3 px-2 font-semibold roboto">{typeof alloc.lumpsumAmount === 'number' && alloc.lumpsumAmount > 0 ? formatCurrency(alloc.lumpsumAmount, '') : '-'}</TableCell>
+            <TableCell className="pdf-no-wrap py-3 px-2 font-semibold roboto">{formatCurrency(alloc.sipRequired, '')}</TableCell>
+            <TableCell className="pdf-no-wrap py-3 px-2 font-semibold roboto">{typeof alloc.lumpsumAmount === 'number' && alloc.lumpsumAmount > 0 ? formatCurrency(alloc.lumpsumAmount, '') : '-'}</TableCell>
             <TableCell className="py-3 px-2">{alloc.fundCategory}</TableCell>
-            <TableCell className="text-center py-3 px-2 font-semibold">
+            <TableCell className="pdf-no-wrap text-center py-3 px-2 font-semibold">
                 {isLoading ? <Loader2 className="h-3 w-3 animate-spin mx-auto" /> : (returns?.threeYearReturn ?? 'N/A')}
             </TableCell>
-            <TableCell className="text-center py-3 px-2 font-semibold">
+            <TableCell className="pdf-no-wrap text-center py-3 px-2 font-semibold">
                 {isLoading ? <Loader2 className="h-3 w-3 animate-spin mx-auto" /> : (returns?.fiveYearReturn ?? 'N/A')}
             </TableCell>
-            <TableCell className="text-center py-3 px-2 font-semibold">
+            <TableCell className="pdf-no-wrap text-center py-3 px-2 font-semibold">
                 {isLoading ? <Loader2 className="h-3 w-3 animate-spin mx-auto" /> : (returns?.tenYearReturn ?? 'N/A')}
             </TableCell>
         </TableRow>
@@ -1570,7 +1570,7 @@ export function SipOptimizerReport({ data: reportData, isPreview = false }: Prop
                         <CardTitle className="text-base">Fund Allocations by Goal & Returns (CAGR)</CardTitle>
                     </CardHeader>
                     <CardContent className="overflow-x-auto text-xs">
-                        <Table>
+                        <Table className="fund-allocation-table">
                             <TableHeader>
                                 <TableRow className="text-[10px] bg-gray-50/50">
                                     <TableHead className="w-[35%] py-2 px-1">Scheme</TableHead>
